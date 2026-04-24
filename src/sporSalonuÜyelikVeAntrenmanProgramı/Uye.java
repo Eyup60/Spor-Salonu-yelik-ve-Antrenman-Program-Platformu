@@ -1,0 +1,86 @@
+package sporSalonuÜyelikVeAntrenmanProgramı;
+
+public class Uye extends Kullanici {
+    private double boy;
+    private double kilo;
+    private int yas;
+    private double yağOrani;
+
+    public Uye(String email, String password, double boy, double kilo, int yas, double yağOrani) {
+        super(email, password, Role.UYE);
+        this.setBoy(boy);
+        this.setKilo(kilo);
+        this.setYas(yas);
+        this.setYağOrani(yağOrani);
+    }
+
+    public double getBoy() {
+        return this.boy;
+    }
+
+    public void setBoy(double boy) {
+        if (boy < 120.0) {
+            throw new IllegalArgumentException("Boy için minumum girdi 120 cm'dir");
+        } else if (boy > 250.0) {
+            throw new IllegalArgumentException("Boy için maksimum girdi 250 cm'dir.");
+        } else {
+            this.boy = boy;
+        }
+    }
+
+    public double getKilo() {
+        return this.kilo;
+    }
+
+    public void setKilo(double kilo) {
+        if (kilo < 40.0) {
+            throw new IllegalArgumentException("Kilo için minumum girdi 40 kg'dir.");
+        } else if (kilo > 250.0) {
+            throw new IllegalArgumentException("Kilo için maksimum girdi 250 kg'dir");
+        } else {
+            this.kilo = kilo;
+        }
+    }
+
+    public int getYas() {
+        return this.yas;
+    }
+
+    public void setYas(int yas) {
+        if (yas < 15) {
+            throw new IllegalArgumentException("Minumum yas 15 olmalıdır!");
+        } else if (yas > 65) {
+            throw new IllegalArgumentException("Maksimum yas 65 olmalıdır!");
+        } else {
+            this.yas = yas;
+        }
+    }
+
+    public double getYağOrani() {
+        return this.yağOrani;
+    }
+
+    public void setYağOrani(double yağOrani) {
+        if (yağOrani < 3.0) {
+            throw new IllegalArgumentException("Yağ oranı 3'ün altında olamaz!");
+        } else if (yağOrani > 55.0) {
+            throw new IllegalArgumentException("Yağ oranı 55'in üstünde olamaz!");
+        } else {
+            this.yağOrani = yağOrani;
+        }
+    }
+
+    @Override
+    public void displayInfo() {
+        System.out.println("--- ÜYE PROFİLİ ---");
+        System.out.println("ID: " + this.getId());
+        System.out.println("Email: " + this.getEmail());
+        System.out.println("Fiziksel Veriler: " + this.boy + " cm / " + this.kilo + " kg");
+        System.out.printf("Vücut Kitle Endeksi: %.2f\n", this.vucutKitleEndeksiHesapla());
+    }
+
+    public double vucutKitleEndeksiHesapla() {
+        double boyMetre = this.boy / 100.0;
+        return this.kilo / (boyMetre * boyMetre);
+    }
+}
