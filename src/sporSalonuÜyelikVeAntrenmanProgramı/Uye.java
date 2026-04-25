@@ -1,7 +1,8 @@
 package sporSalonuÜyelikVeAntrenmanProgramı;
 
 public class Uye extends Kullanici {
-    private double boy;
+    private static final long serialVersionUID = 1L;
+	private double boy;
     private double kilo;
     private int yas;
     private double yağOrani;

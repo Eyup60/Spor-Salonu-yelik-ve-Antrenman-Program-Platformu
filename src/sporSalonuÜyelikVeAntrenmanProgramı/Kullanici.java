@@ -2,9 +2,10 @@ package sporSalonuÜyelikVeAntrenmanProgramı;
 
 import java.util.UUID;
 
-public abstract class Kullanici {
+public abstract class Kullanici implements java.io.Serializable{
     
-    private String id;
+    private static final long serialVersionUID = 1L;
+	private String id;
     private String email;
     private String password;
     private Role role;
@@ -65,7 +66,7 @@ public abstract class Kullanici {
         if(obj == null || !(obj instanceof Kullanici)) return false;
         
         Kullanici k = (Kullanici) obj;
-        return getId().equals(k.getId()) || getEmail().equalsIgnoreCase(k.getEmail().trim());
+        return getId().equals(k.getId());
     }
     
     @Override

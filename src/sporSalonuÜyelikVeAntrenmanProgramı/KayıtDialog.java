@@ -64,11 +64,19 @@ public class KayıtDialog extends JDialog {
             int yas = Integer.parseInt(txtYas.getText());
             double yag = Double.parseDouble(txtYagOrani.getText());
 
-            // Exception'lar Uye sınıfındaki setter'lardan fırlayacaktır.
+
             yeniUye = new Uye(email, pwd, boy, kilo, yas, yag);
             
-            // Eğer başarıyla oluşturulduysa Admin statik listesine ekle.
-            Admin.getKullanicilar().add(yeniUye);
+            Kullanici adminObj = Admin.getKullanicilar().stream()
+                .filter(k -> k instanceof Admin)
+                .findFirst().orElse(null);
+                
+            if (adminObj != null) {
+                ((Admin) adminObj).ekle(yeniUye);
+            } else {
+                Admin.getKullanicilar().add(yeniUye);
+                DosyaYöneticisi.verileriKaydet();
+            }
             
             JOptionPane.showMessageDialog(this, "Kayıt Başarılı! Öğrenci eklendi.", "BİLGİ", JOptionPane.INFORMATION_MESSAGE);
             dispose();

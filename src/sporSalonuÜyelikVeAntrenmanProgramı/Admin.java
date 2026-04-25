@@ -3,19 +3,20 @@ package sporSalonuÜyelikVeAntrenmanProgramı;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.JOptionPane;
 
 public class Admin extends Kullanici implements VeriYöneticisi<Kullanici>{
 	
+	private static final long serialVersionUID = 1L;
 	private static List<Kullanici> kullanicilar = new ArrayList<>();
 	private LocalDateTime sonGiriş;
 
 	public Admin(String email,String password) {
 		super(email, password, Role.ADMIN);
-		// TODO Auto-generated constructor stub
 	}
 	
 	public static List<Kullanici> getKullanicilar() {
-		return kullanicilar;
+		return new ArrayList<>(kullanicilar);
 	}
 
 	public static void setKullanicilar(List<Kullanici> kullanicilar) {
@@ -41,7 +42,6 @@ public class Admin extends Kullanici implements VeriYöneticisi<Kullanici>{
 
 	@Override
 	public void displayInfo() {
-		// TODO Auto-generated method stub
 		System.out.println("--- YÖNETİCİ PANELİ ---");
         System.out.println("Email: " + getEmail());
         System.out.println("Son Erişim: " + sonGiriş);
@@ -50,20 +50,25 @@ public class Admin extends Kullanici implements VeriYöneticisi<Kullanici>{
 
 	@Override
 	public void ekle(Kullanici nesne) {
-		// TODO Auto-generated method stub
 		if(kullanicilar.contains(nesne)) {
 			System.out.println("Bu kullanici zaten var!");
 			return;
 		}
 		kullanicilar.add(nesne);
+		DosyaYöneticisi.verileriKaydet();
 		System.out.println("Ekleme işlemi başarılı. ID: "+nesne.getId());
 	}
 
 	@Override
 	public void sil(String id) {
-		// TODO Auto-generated method stub
+		Kullanici silinecek = bul(id);
+		if (silinecek instanceof Admin && kullanicilar.stream().filter(k -> k instanceof Admin).count() <= 1) {
+			JOptionPane.showMessageDialog(null, "Son yönetici hesabı silinemez!", "Kritik Yetki Hatası", JOptionPane.ERROR_MESSAGE);
+			throw new IllegalStateException("Sistemde en az 1 Admin kalmak zorundadır!");
+		}
 		boolean silindi = kullanicilar.removeIf(nesne -> nesne.getId().equals(id));
 		if(silindi) {
+			DosyaYöneticisi.verileriKaydet();
 			System.out.println("Silme işlemi başarılı. ID: "+id);
 		} else {
 			System.out.println("ID bulunamadı!");
@@ -73,10 +78,10 @@ public class Admin extends Kullanici implements VeriYöneticisi<Kullanici>{
 
 	@Override
 	public void guncelle(Kullanici nesne) {
-		// TODO Auto-generated method stub
 		for(int i = 0;i < kullanicilar.size();i++) {
 			if(kullanicilar.get(i).getId().equals(nesne.getId())) {
 				kullanicilar.set(i, nesne);
+				DosyaYöneticisi.verileriKaydet();
 				System.out.println("Güncelleme başarılı!");
 				return;
 			}
@@ -86,7 +91,6 @@ public class Admin extends Kullanici implements VeriYöneticisi<Kullanici>{
 
 	@Override
 	public List<Kullanici> listele() {
-		// TODO Auto-generated method stub
 		return new ArrayList<>(kullanicilar);
 	}
 	

@@ -10,13 +10,13 @@ public class GirişEkranı extends JFrame {
     private JPanel adminBtnPanel;
     private Kullanici loggedInUser = null;
     
-    // Components
+
     private JButton btnLoginHeader;
     private JButton btnRegister;
     private JLabel lblUyeOlmadiniz;
 
     public static void main(String[] args) {
-        // Varsayılan Admin Ekleme (Test amaçlı)
+
         if (Admin.getKullanicilar().isEmpty()) {
             Admin.getKullanicilar().add(new Admin("admin@gym.com", "123456"));
         }
@@ -40,7 +40,7 @@ public class GirişEkranı extends JFrame {
         getContentPane().setLayout(new BorderLayout());
         getContentPane().setBackground(Color.WHITE);
 
-        // --- NORTH PANEL: BAŞLIK VE GİRİŞ ---
+
         JPanel topPanel = new JPanel(new BorderLayout());
         topPanel.setBackground(new Color(245, 245, 245));
         topPanel.setBorder(new EmptyBorder(15, 20, 15, 20));
@@ -71,7 +71,7 @@ public class GirişEkranı extends JFrame {
         topPanel.add(loginPanel, BorderLayout.EAST);
         getContentPane().add(topPanel, BorderLayout.NORTH);
 
-        // --- WEST PANEL: BİLGİ KARTLARI ---
+
         JPanel cardsPanel = new JPanel();
         cardsPanel.setLayout(new BoxLayout(cardsPanel, BoxLayout.Y_AXIS));
         cardsPanel.setBorder(new EmptyBorder(30, 20, 30, 20));
@@ -94,7 +94,7 @@ public class GirişEkranı extends JFrame {
         
         getContentPane().add(cardsPanel, BorderLayout.WEST);
 
-        // --- CENTER / EAST PANEL: MOTİVASYON VE VİTRİN ---
+
         JPanel centerPanel = new JPanel(new GridBagLayout());
         centerPanel.setBackground(new Color(250, 250, 250));
         
@@ -105,7 +105,7 @@ public class GirişEkranı extends JFrame {
         
         getContentPane().add(centerPanel, BorderLayout.CENTER);
 
-        // --- SOUTH PANEL: KAYIT VE ADMIN YETKİLERİ ---
+
         JPanel bottomPanel = new JPanel(new BorderLayout());
         bottomPanel.setBorder(new EmptyBorder(15, 20, 15, 20));
         bottomPanel.setBackground(SystemColor.control);
@@ -125,7 +125,7 @@ public class GirişEkranı extends JFrame {
         registerPanel.add(lblUyeOlmadiniz);
         registerPanel.add(btnRegister);
         
-        // ADMIN GİZLİ BUTONLARI
+
         adminBtnPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         JButton btnAddAdmin = new JButton("+ Admin Ekle");
         JButton btnAddCoach = new JButton("+ Antrenör Ekle");
@@ -134,11 +134,11 @@ public class GirişEkranı extends JFrame {
         adminBtnPanel.add(btnAddAdmin);
         adminBtnPanel.add(btnAddCoach);
         adminBtnPanel.add(btnManageAll);
-        adminBtnPanel.setVisible(false); // Sadece admin ise TRUE olacak
+        adminBtnPanel.setVisible(false); 
 
         btnAddAdmin.addActionListener(e -> createSpecificUser(Role.ADMIN));
         btnAddCoach.addActionListener(e -> createSpecificUser(Role.ANTRENOR));
-        btnManageAll.addActionListener(e -> openDashboard()); // AdminPanelini açar
+        btnManageAll.addActionListener(e -> openDashboard()); 
         
         bottomPanel.add(adminBtnPanel, BorderLayout.WEST);
         bottomPanel.add(registerPanel, BorderLayout.EAST);
@@ -159,7 +159,7 @@ public class GirişEkranı extends JFrame {
     }
 
     private void performLogin() {
-        if (loggedInUser != null) { // Çıkış yap state'indeyse
+        if (loggedInUser != null) { 
             loggedInUser = null;
             btnLoginHeader.setText("Giriş Yap");
             btnRegister.setVisible(true);
@@ -176,14 +176,14 @@ public class GirişEkranı extends JFrame {
         if(k != null) {
             loggedInUser = k;
             btnLoginHeader.setText("Çıkış Yap ("+k.getEmail()+")");
-            // Eğer adminse ana sayfadaki gizli butonları aç
+
             if(k.getRole() == Role.ADMIN) {
                 btnRegister.setVisible(false);
                 lblUyeOlmadiniz.setVisible(false);
                 adminBtnPanel.setVisible(true);
             } 
             else {
-                // Değilse normal paneline yönlendir ve bu ekranı gizle (veya dispose et).
+
                 openDashboard();
             }
         }
@@ -197,7 +197,7 @@ public class GirişEkranı extends JFrame {
             case ANTRENOR -> new AntrenorPaneli((Antrenor) loggedInUser).setVisible(true);
             case UYE -> new UyePaneli((Uye) loggedInUser).setVisible(true);
         }
-        // Adminlerin Ana ekrana dönmesini sağla (Çünkü admin butonları ana ekranda), ama diğerlerini kapat
+
         if(loggedInUser.getRole() != Role.ADMIN) {
            this.dispose();
         }
@@ -206,16 +206,18 @@ public class GirişEkranı extends JFrame {
     private void performRegister() {
         KayıtDialog kd = new KayıtDialog(this);
         kd.setVisible(true);
-        // Eğer başarılı olduysa kayıt yapmıştır zaten
+
     }
     
-    // Quick admin buttons for Specific User Role
+
     private void createSpecificUser(Role type) {
-        // We can reuse KullaniciDialog here directly but trick the selected role.
+
         KullaniciDialog dialog = new KullaniciDialog(this, null);
-        // We know that KullaniciDialog sets the role combo. So let's add a helper setter or just let it be.
-        // Actually since Admin interface requires "Role.ADMIN" explicitly maybe it's better to show AdminPanel Add User
-        // But the prompt wants it specifically triggered from this interface.
+        dialog.setIsUyeUpdateOnly(false); // Make sure it's reset
+        dialog.setRoleSelection(type);
+
+
+
         dialog.setVisible(true);
         Kullanici yeni = dialog.getKullanici();
         if(yeni != null && yeni.getRole() == type) {

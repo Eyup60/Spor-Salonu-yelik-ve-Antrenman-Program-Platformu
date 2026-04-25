@@ -78,7 +78,6 @@ public class AntrenorPaneli extends JFrame {
     }
 
     private void uyeAta() {
-        // Sistemdeki tüm üyeleri al, ancak antrenörün kendi listesinde olmayanları
         List<Uye> potansiyel = new ArrayList<>();
         for(Kullanici k : Admin.getKullanicilar()) {
             if(k instanceof Uye && !antrenor.listele().contains(k)) {

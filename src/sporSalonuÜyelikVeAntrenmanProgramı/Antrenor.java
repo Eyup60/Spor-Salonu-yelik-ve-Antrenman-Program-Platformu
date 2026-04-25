@@ -5,13 +5,13 @@ import java.util.List;
 
 public class Antrenor extends Kullanici implements VeriYöneticisi<Uye> {
 
+	private static final long serialVersionUID = 1L;
 	private String uzmanlıkAlanı;
 	private List<Uye> uyeler = new ArrayList<>();
 	
 	public Antrenor(String email, String password,String uzmanlıkAlanı) {
 		super(email, password, Role.ANTRENOR);
 		setUzmanlıkAlanı(uzmanlıkAlanı);
-		// TODO Auto-generated constructor stub
 	}
 	
 	public String getUzmanlıkAlanı() {
@@ -27,7 +27,6 @@ public class Antrenor extends Kullanici implements VeriYöneticisi<Uye> {
 
 	@Override
 	public void displayInfo() {
-		// TODO Auto-generated method stub
 		System.out.println("--- ANTRENÖR ---");
 	    System.out.println("Email: " + getEmail());
 	    System.out.println("Uzmanlık: " + getUzmanlıkAlanı());
@@ -36,7 +35,6 @@ public class Antrenor extends Kullanici implements VeriYöneticisi<Uye> {
 
 	@Override
 	public void ekle(Uye nesne) {
-		// TODO Auto-generated method stub
 		if (nesne == null) return;
 		
 	    if (!Admin.getKullanicilar().contains(nesne)) {
@@ -55,14 +53,15 @@ public class Antrenor extends Kullanici implements VeriYöneticisi<Uye> {
 	    }
 	    
 	    uyeler.add(nesne);
+	    DosyaYöneticisi.verileriKaydet();
 	    System.out.println("Üye antrenöre başarıyla atandı!");
 	}
 
 	@Override
 	public void sil(String id) {
-		// TODO Auto-generated method stub
-		boolean silindi = uyeler.removeIf(nesne -> nesne.getId().equals(id) && (nesne instanceof Kullanici && nesne.getRole() == Role.UYE));
+		boolean silindi = uyeler.removeIf(nesne -> nesne.getId().equals(id));
 		if(silindi){
+			DosyaYöneticisi.verileriKaydet();
 			System.out.println("Uye silme işlemi başarılı!");
 		} else {
 			System.out.println("ID bulunamadı!");
@@ -71,7 +70,6 @@ public class Antrenor extends Kullanici implements VeriYöneticisi<Uye> {
 
 	@Override
 	public void guncelle(Uye nesne) {
-		// TODO Auto-generated method stub
 		
 		if(nesne.getRole() != Role.UYE) {
 			return;
@@ -80,6 +78,7 @@ public class Antrenor extends Kullanici implements VeriYöneticisi<Uye> {
 		for(int i = 0;i < uyeler.size();i++) {
 			if(uyeler.get(i).getId().equals(nesne.getId())) {
 				uyeler.set(i, nesne);
+				DosyaYöneticisi.verileriKaydet();
 				System.out.println("Uye bilgilerini güncelleme başarılı!");
 				return;
 			}
@@ -89,8 +88,15 @@ public class Antrenor extends Kullanici implements VeriYöneticisi<Uye> {
 
 	@Override
 	public List<Uye> listele() {
-		// TODO Auto-generated method stub
 		return new ArrayList<>(uyeler);
+	}
+	
+	@Override
+	public Uye bul(String id) {
+		for (Uye u : uyeler) {
+			if (u.getId().equals(id)) return u;
+		}
+		return null;
 	}
 
 }

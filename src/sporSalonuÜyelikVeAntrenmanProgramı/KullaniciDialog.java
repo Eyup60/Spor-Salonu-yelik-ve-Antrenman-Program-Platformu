@@ -16,8 +16,8 @@ public class KullaniciDialog extends JDialog {
     private Kullanici sonucKullanici;
     private Kullanici guncellenecek;
     
-    // For specific roles
-    private boolean isUyeUpdateOnly = false; // from Antrenor panel
+
+    private boolean isUyeUpdateOnly = false; 
 
     public KullaniciDialog(JFrame parent, Kullanici guncellenecek) {
         super(parent, guncellenecek == null ? "Yeni Kullanıcı Ekle" : "Kullanıcı Güncelle", true);
@@ -44,18 +44,18 @@ public class KullaniciDialog extends JDialog {
 
         dynamicPanel = new JPanel(new CardLayout());
         
-        // Blank panel for Admin
+
         JPanel adminPanel = new JPanel();
         dynamicPanel.add(adminPanel, Role.ADMIN.name());
         
-        // Antrenor panel
+
         JPanel antrenorPanel = new JPanel(new GridLayout(0, 2, 5, 5));
         antrenorPanel.add(new JLabel("Uzmanlık Alanı:"));
         txtUzmanlik = new JTextField();
         antrenorPanel.add(txtUzmanlik);
         dynamicPanel.add(antrenorPanel, Role.ANTRENOR.name());
         
-        // Uye panel
+
         JPanel uyePanel = new JPanel(new GridLayout(0, 2, 5, 5));
         uyePanel.add(new JLabel("Boy (cm):"));
         txtBoy = new JTextField();
@@ -92,7 +92,7 @@ public class KullaniciDialog extends JDialog {
         if (guncellenecek != null) {
             verileriDoldur(guncellenecek);
         } else {
-            // tetiklemek için
+
             cbRole.setSelectedItem(Role.UYE); 
         }
     }
@@ -103,20 +103,27 @@ public class KullaniciDialog extends JDialog {
             cbRole.setSelectedItem(Role.UYE);
             cbRole.setEnabled(false);
             txtEmail.setEnabled(false);
-            // Antrenor cannot change Uye's password either, supposedly? Wait, Uye password can be kept or requested blank.
+
             txtPassword.setEnabled(false);
         }
+    }
+
+    public void setRoleSelection(Role type) {
+        cbRole.setSelectedItem(type);
+        cbRole.setEnabled(false);
+        CardLayout cl = (CardLayout) dynamicPanel.getLayout();
+        cl.show(dynamicPanel, type.name());
     }
 
     private void verileriDoldur(Kullanici k) {
         txtEmail.setText(k.getEmail());
         txtPassword.setText(k.getPassword());
         cbRole.setSelectedItem(k.getRole());
-        cbRole.setEnabled(false); // Update sırasında rol değiştirilmesin.
+        cbRole.setEnabled(false); 
         
         if (k instanceof Antrenor) {
             txtUzmanlik.setText(((Antrenor) k).getUzmanlıkAlanı());
-            txtPassword.setText(""); // Update ederken password girmeyebilir
+            txtPassword.setText(""); 
         } else if (k instanceof Uye) {
             Uye u = (Uye) k;
             txtBoy.setText(String.valueOf(u.getBoy()));
@@ -134,8 +141,8 @@ public class KullaniciDialog extends JDialog {
             Role r = (Role) cbRole.getSelectedItem();
             
             if (guncellenecek != null) {
-                // Sadece alanları güncelleyelim.
-                // Exceptions might be thrown by setters
+
+
                 if(!isUyeUpdateOnly) {
                    guncellenecek.setEmail(email);
                    if(!pwd.isEmpty()) {

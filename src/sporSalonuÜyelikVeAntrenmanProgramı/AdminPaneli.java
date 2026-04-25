@@ -30,7 +30,7 @@ public class AdminPaneli extends JFrame {
         tableModel = new DefaultTableModel(cols, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
-                return false; // Salt okunur
+                return false; 
             }
         };
         table = new JTable(tableModel);

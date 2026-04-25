@@ -53,6 +53,21 @@ public class UyePaneli extends JFrame {
         add(centerPanel, BorderLayout.CENTER);
 
         JPanel btnPanel = new JPanel();
+        
+        JButton btnGuncelle = new JButton("Profilimi Güncelle");
+        btnGuncelle.setFont(new Font("Arial", Font.BOLD, 14));
+        btnGuncelle.addActionListener(e -> {
+            KullaniciDialog dialog = new KullaniciDialog(UyePaneli.this, uye);
+            dialog.setIsUyeUpdateOnly(true);
+            dialog.setVisible(true);
+            // Güncelleme yapıldıysa paneli kapatıp güncel haliyle yeniden aç
+            if (dialog.getKullanici() != null) {
+                dispose();
+                new UyePaneli((Uye) dialog.getKullanici()).setVisible(true);
+            }
+        });
+        btnPanel.add(btnGuncelle);
+        
         JButton btnCikis = new JButton("Çıkış Yap");
         btnCikis.setFont(new Font("Arial", Font.BOLD, 14));
         btnCikis.addActionListener(e -> cikisYap());
