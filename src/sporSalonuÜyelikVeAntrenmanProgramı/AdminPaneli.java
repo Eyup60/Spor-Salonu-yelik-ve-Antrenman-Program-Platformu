@@ -106,8 +106,13 @@ public class AdminPaneli extends JFrame {
         int reply = JOptionPane.showConfirmDialog(this, "Bu kullanıcıyı silmek istediğinize emin misiniz?", "Sil", JOptionPane.YES_NO_OPTION);
         if (reply == JOptionPane.YES_OPTION) {
             String id = (String) tableModel.getValueAt(row, 0);
-            admin.sil(id);
-            verileriYukle();
+            try {
+                admin.sil(id);
+                verileriYukle();
+            } catch (IllegalStateException ex) {
+                JOptionPane.showMessageDialog(this, ex.getMessage(), 
+                    "Silme Hatası", JOptionPane.ERROR_MESSAGE);
+            }
         }
     }
 

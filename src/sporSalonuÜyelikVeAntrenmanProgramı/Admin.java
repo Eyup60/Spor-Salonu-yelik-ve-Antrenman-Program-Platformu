@@ -3,15 +3,17 @@ package sporSalonuÜyelikVeAntrenmanProgramı;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
+
 import javax.swing.JOptionPane;
 
 public class Admin extends Kullanici implements VeriYöneticisi<Kullanici>{
 	
 	private static final long serialVersionUID = 1L;
-	private static List<Kullanici> kullanicilar = new ArrayList<>();
+	private static List<Kullanici> kullanicilar = new CopyOnWriteArrayList<>();
 	private LocalDateTime sonGiriş;
 
-	public Admin(String email,String password) {
+	protected Admin(String email,String password) {
 		super(email, password, Role.ADMIN);
 	}
 	
@@ -40,6 +42,13 @@ public class Admin extends Kullanici implements VeriYöneticisi<Kullanici>{
 		this.sonGiriş = sonGiriş;
 	}
 
+	public static void doğrudanEkle(Kullanici k) {
+	    if (!kullanicilar.contains(k)) {
+	        kullanicilar.add(k);
+	        DosyaYoneticisi.verileriKaydet();
+	    }
+	}
+	
 	@Override
 	public void displayInfo() {
 		System.out.println("--- YÖNETİCİ PANELİ ---");
@@ -55,7 +64,7 @@ public class Admin extends Kullanici implements VeriYöneticisi<Kullanici>{
 			return;
 		}
 		kullanicilar.add(nesne);
-		DosyaYöneticisi.verileriKaydet();
+		DosyaYoneticisi.verileriKaydet();
 		System.out.println("Ekleme işlemi başarılı. ID: "+nesne.getId());
 	}
 
@@ -68,7 +77,7 @@ public class Admin extends Kullanici implements VeriYöneticisi<Kullanici>{
 		}
 		boolean silindi = kullanicilar.removeIf(nesne -> nesne.getId().equals(id));
 		if(silindi) {
-			DosyaYöneticisi.verileriKaydet();
+			DosyaYoneticisi.verileriKaydet();
 			System.out.println("Silme işlemi başarılı. ID: "+id);
 		} else {
 			System.out.println("ID bulunamadı!");
@@ -81,7 +90,7 @@ public class Admin extends Kullanici implements VeriYöneticisi<Kullanici>{
 		for(int i = 0;i < kullanicilar.size();i++) {
 			if(kullanicilar.get(i).getId().equals(nesne.getId())) {
 				kullanicilar.set(i, nesne);
-				DosyaYöneticisi.verileriKaydet();
+				DosyaYoneticisi.verileriKaydet();
 				System.out.println("Güncelleme başarılı!");
 				return;
 			}
@@ -94,6 +103,7 @@ public class Admin extends Kullanici implements VeriYöneticisi<Kullanici>{
 		return new ArrayList<>(kullanicilar);
 	}
 	
+	@Override
 	public Kullanici bul(String id) {
 		for(Kullanici nesne : kullanicilar) {
 			if(nesne.getId().equals(id)) {

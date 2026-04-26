@@ -64,27 +64,15 @@ public class KayıtDialog extends JDialog {
             int yas = Integer.parseInt(txtYas.getText());
             double yag = Double.parseDouble(txtYagOrani.getText());
 
-
             yeniUye = new Uye(email, pwd, boy, kilo, yas, yag);
-            
-            Kullanici adminObj = Admin.getKullanicilar().stream()
-                .filter(k -> k instanceof Admin)
-                .findFirst().orElse(null);
-                
-            if (adminObj != null) {
-                ((Admin) adminObj).ekle(yeniUye);
-            } else {
-                Admin.getKullanicilar().add(yeniUye);
-                DosyaYöneticisi.verileriKaydet();
-            }
-            
-            JOptionPane.showMessageDialog(this, "Kayıt Başarılı! Öğrenci eklendi.", "BİLGİ", JOptionPane.INFORMATION_MESSAGE);
+            Admin.doğrudanEkle(yeniUye); // tek satır, hem ekler hem kaydeder
+
+            JOptionPane.showMessageDialog(this, "Kayıt Başarılı!", "BİLGİ", JOptionPane.INFORMATION_MESSAGE);
             dispose();
-            
         } catch (IllegalArgumentException ex) {
             JOptionPane.showMessageDialog(this, ex.getMessage(), "Geçersiz Girdi", JOptionPane.ERROR_MESSAGE);
         } catch (Exception ex) {
-            JOptionPane.showMessageDialog(this, "Lütfen sayısal değerleri belirtilen formatta giriniz.", "Girdi Hatası", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Sayısal değerleri doğru giriniz.", "Girdi Hatası", JOptionPane.ERROR_MESSAGE);
         }
     }
 

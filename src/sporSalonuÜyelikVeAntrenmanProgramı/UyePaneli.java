@@ -27,19 +27,21 @@ public class UyePaneli extends JFrame {
         Font labelFont = new Font("Arial", Font.BOLD, 14);
         Font valFont = new Font("Arial", Font.PLAIN, 14);
 
-        String[] labels = {"Boy (cm):", "Kilo (kg):", "Yaş:", "Yağ Oranı (%):", "Vücut Kitle Endeksi (BMI):"};
+        String[] labels = {"Email:", "Boy (cm):", "Kilo (kg):", "Yaş:", "Yağ Oranı (%):", "Vücut Kitle Endeksi (BMI):"};
         String[] values = {
+            uye.getEmail(),                                          
             String.valueOf(uye.getBoy()),
             String.valueOf(uye.getKilo()),
             String.valueOf(uye.getYas()),
             String.valueOf(uye.getYağOrani()),
             String.format("%.2f", uye.vucutKitleEndeksiHesapla())
         };
+        JPanel centerPanel1 = new JPanel(new GridLayout(7, 2, 10, 15));
 
         for (int i = 0; i < labels.length; i++) {
             JLabel lbl = new JLabel(labels[i], SwingConstants.RIGHT);
             lbl.setFont(labelFont);
-            centerPanel.add(lbl);
+            centerPanel1.add(lbl);
 
             JLabel val = new JLabel(values[i]);
             val.setFont(valFont);
@@ -47,10 +49,10 @@ public class UyePaneli extends JFrame {
                 val.setForeground(new Color(0, 102, 204));
                 val.setFont(new Font("Arial", Font.BOLD, 16));
             }
-            centerPanel.add(val);
+            centerPanel1.add(val);
         }
 
-        add(centerPanel, BorderLayout.CENTER);
+        add(centerPanel1, BorderLayout.CENTER);
 
         JPanel btnPanel = new JPanel();
         
@@ -60,7 +62,6 @@ public class UyePaneli extends JFrame {
             KullaniciDialog dialog = new KullaniciDialog(UyePaneli.this, uye);
             dialog.setIsUyeUpdateOnly(true);
             dialog.setVisible(true);
-            // Güncelleme yapıldıysa paneli kapatıp güncel haliyle yeniden aç
             if (dialog.getKullanici() != null) {
                 dispose();
                 new UyePaneli((Uye) dialog.getKullanici()).setVisible(true);

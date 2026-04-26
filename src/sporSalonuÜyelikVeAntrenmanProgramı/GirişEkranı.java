@@ -16,10 +16,12 @@ public class GirişEkranı extends JFrame {
     private JLabel lblUyeOlmadiniz;
 
     public static void main(String[] args) {
+    	
+    	DosyaYoneticisi.verileriYukle();
 
-        if (Admin.getKullanicilar().isEmpty()) {
-            Admin.getKullanicilar().add(new Admin("admin@gym.com", "123456"));
-        }
+    	if (Admin.getKullanicilar().isEmpty()) {
+    	    Admin.doğrudanEkle(new Admin("admin@gym.com", "123456"));
+    	}
 
         EventQueue.invokeLater(() -> {
             try {
@@ -206,14 +208,13 @@ public class GirişEkranı extends JFrame {
     private void performRegister() {
         KayıtDialog kd = new KayıtDialog(this);
         kd.setVisible(true);
-
     }
     
 
     private void createSpecificUser(Role type) {
 
         KullaniciDialog dialog = new KullaniciDialog(this, null);
-        dialog.setIsUyeUpdateOnly(false); // Make sure it's reset
+        dialog.setIsUyeUpdateOnly(false);
         dialog.setRoleSelection(type);
 
 

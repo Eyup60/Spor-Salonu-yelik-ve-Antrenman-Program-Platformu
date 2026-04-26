@@ -1,18 +1,32 @@
 package sporSalonuÜyelikVeAntrenmanProgramı;
 
+import java.time.LocalDate;
+
 public class Uye extends Kullanici {
     private static final long serialVersionUID = 1L;
-	private double boy;
+
+    private double boy;
     private double kilo;
     private int yas;
     private double yağOrani;
+    private LocalDate kayitTarihi;
 
-    public Uye(String email, String password, double boy, double kilo, int yas, double yağOrani) {
+    protected Uye(String email, String password, double boy, double kilo, int yas, double yağOrani) {
         super(email, password, Role.UYE);
         this.setBoy(boy);
         this.setKilo(kilo);
         this.setYas(yas);
         this.setYağOrani(yağOrani);
+        this.setKayitTarihi(LocalDate.now());
+    }
+
+    public Uye(String email, String password, double boy, double kilo, int yas, double yağOrani, LocalDate kayitTarihi) {
+        super(email, password, Role.UYE);
+        this.setBoy(boy);
+        this.setKilo(kilo);
+        this.setYas(yas);
+        this.setYağOrani(yağOrani);
+        this.setKayitTarihi(kayitTarihi);
     }
 
     public double getBoy() {
@@ -21,7 +35,7 @@ public class Uye extends Kullanici {
 
     public void setBoy(double boy) {
         if (boy < 120.0) {
-            throw new IllegalArgumentException("Boy için minumum girdi 120 cm'dir");
+            throw new IllegalArgumentException("Boy için minimum girdi 120 cm'dir.");
         } else if (boy > 250.0) {
             throw new IllegalArgumentException("Boy için maksimum girdi 250 cm'dir.");
         } else {
@@ -35,9 +49,9 @@ public class Uye extends Kullanici {
 
     public void setKilo(double kilo) {
         if (kilo < 40.0) {
-            throw new IllegalArgumentException("Kilo için minumum girdi 40 kg'dir.");
+            throw new IllegalArgumentException("Kilo için minimum girdi 40 kg'dir.");
         } else if (kilo > 250.0) {
-            throw new IllegalArgumentException("Kilo için maksimum girdi 250 kg'dir");
+            throw new IllegalArgumentException("Kilo için maksimum girdi 250 kg'dir.");
         } else {
             this.kilo = kilo;
         }
@@ -49,9 +63,9 @@ public class Uye extends Kullanici {
 
     public void setYas(int yas) {
         if (yas < 15) {
-            throw new IllegalArgumentException("Minumum yas 15 olmalıdır!");
+            throw new IllegalArgumentException("Minimum yaş 15 olmalıdır!");
         } else if (yas > 65) {
-            throw new IllegalArgumentException("Maksimum yas 65 olmalıdır!");
+            throw new IllegalArgumentException("Maksimum yaş 65 olmalıdır!");
         } else {
             this.yas = yas;
         }
@@ -71,11 +85,26 @@ public class Uye extends Kullanici {
         }
     }
 
+    public LocalDate getKayitTarihi() {
+        return this.kayitTarihi;
+    }
+
+    public void setKayitTarihi(LocalDate kayitTarihi) {
+        if (kayitTarihi == null) {
+            throw new IllegalArgumentException("Kayıt tarihi boş olamaz!");
+        } else if (kayitTarihi.isAfter(LocalDate.now())) {
+            throw new IllegalArgumentException("Kayıt tarihi bugünden ileri bir tarih olamaz!");
+        } else {
+            this.kayitTarihi = kayitTarihi;
+        }
+    }
+
     @Override
     public void displayInfo() {
         System.out.println("--- ÜYE PROFİLİ ---");
         System.out.println("ID: " + this.getId());
         System.out.println("Email: " + this.getEmail());
+        System.out.println("Kayıt Tarihi: " + this.kayitTarihi);
         System.out.println("Fiziksel Veriler: " + this.boy + " cm / " + this.kilo + " kg");
         System.out.printf("Vücut Kitle Endeksi: %.2f\n", this.vucutKitleEndeksiHesapla());
     }

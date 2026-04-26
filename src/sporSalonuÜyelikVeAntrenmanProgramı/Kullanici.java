@@ -10,7 +10,7 @@ public abstract class Kullanici implements java.io.Serializable{
     private String password;
     private Role role;
     
-    public Kullanici(String email, String password, Role role) {
+    protected Kullanici(String email, String password, Role role) {
         this.id = UUID.randomUUID().toString();
         setEmail(email);
         setPassword(password);
@@ -25,7 +25,7 @@ public abstract class Kullanici implements java.io.Serializable{
             throw new IllegalArgumentException("Email boş olamaz!");
         }
         if(!email.contains("@") || !email.contains(".") || email.indexOf("@") > email.lastIndexOf(".")) {
-            throw new IllegalArgumentException("Geçerisiz giriş");
+        	throw new IllegalArgumentException("Geçersiz email formatı! Örnek: kullanici@domain.com");
         }
         this.email = email.trim();
     }

@@ -38,9 +38,10 @@ public class LoginDialog extends JDialog {
 
         btnCancel.addActionListener(e -> dispose());
         btnLogin.addActionListener(e -> {
-            String email = txtEmail.getText();
-            String pwd = new String(txtPassword.getPassword());
-            loggedInUser = yetkiYöneticisi.giriş(email, pwd);
+        	String email = txtEmail.getText().trim();
+        	String pwd = new String(txtPassword.getPassword()).trim();
+
+        	loggedInUser = yetkiYöneticisi.giriş(email, pwd);
             
             if(loggedInUser != null) {
                 JOptionPane.showMessageDialog(this, "Giriş Başarılı! Rol: " + loggedInUser.getRole());

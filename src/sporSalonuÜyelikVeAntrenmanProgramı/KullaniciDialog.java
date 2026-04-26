@@ -115,22 +115,20 @@ public class KullaniciDialog extends JDialog {
         cl.show(dynamicPanel, type.name());
     }
 
+ 
     private void verileriDoldur(Kullanici k) {
         txtEmail.setText(k.getEmail());
-        txtPassword.setText(k.getPassword());
+        txtPassword.setText(""); 
         cbRole.setSelectedItem(k.getRole());
-        cbRole.setEnabled(false); 
+        cbRole.setEnabled(false);
         
         if (k instanceof Antrenor) {
             txtUzmanlik.setText(((Antrenor) k).getUzmanlıkAlanı());
-            txtPassword.setText(""); 
-        } else if (k instanceof Uye) {
-            Uye u = (Uye) k;
+        } else if (k instanceof Uye u) {
             txtBoy.setText(String.valueOf(u.getBoy()));
             txtKilo.setText(String.valueOf(u.getKilo()));
             txtYas.setText(String.valueOf(u.getYas()));
             txtYagOrani.setText(String.valueOf(u.getYağOrani()));
-            txtPassword.setText("");
         }
     }
 

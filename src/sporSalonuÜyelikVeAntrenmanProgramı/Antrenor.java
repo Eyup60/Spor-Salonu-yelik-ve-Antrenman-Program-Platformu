@@ -9,7 +9,7 @@ public class Antrenor extends Kullanici implements VeriYöneticisi<Uye> {
 	private String uzmanlıkAlanı;
 	private List<Uye> uyeler = new ArrayList<>();
 	
-	public Antrenor(String email, String password,String uzmanlıkAlanı) {
+	protected Antrenor(String email, String password,String uzmanlıkAlanı) {
 		super(email, password, Role.ANTRENOR);
 		setUzmanlıkAlanı(uzmanlıkAlanı);
 	}
@@ -53,7 +53,7 @@ public class Antrenor extends Kullanici implements VeriYöneticisi<Uye> {
 	    }
 	    
 	    uyeler.add(nesne);
-	    DosyaYöneticisi.verileriKaydet();
+	    DosyaYoneticisi.verileriKaydet();
 	    System.out.println("Üye antrenöre başarıyla atandı!");
 	}
 
@@ -61,7 +61,7 @@ public class Antrenor extends Kullanici implements VeriYöneticisi<Uye> {
 	public void sil(String id) {
 		boolean silindi = uyeler.removeIf(nesne -> nesne.getId().equals(id));
 		if(silindi){
-			DosyaYöneticisi.verileriKaydet();
+			DosyaYoneticisi.verileriKaydet();
 			System.out.println("Uye silme işlemi başarılı!");
 		} else {
 			System.out.println("ID bulunamadı!");
@@ -78,7 +78,7 @@ public class Antrenor extends Kullanici implements VeriYöneticisi<Uye> {
 		for(int i = 0;i < uyeler.size();i++) {
 			if(uyeler.get(i).getId().equals(nesne.getId())) {
 				uyeler.set(i, nesne);
-				DosyaYöneticisi.verileriKaydet();
+				DosyaYoneticisi.verileriKaydet();
 				System.out.println("Uye bilgilerini güncelleme başarılı!");
 				return;
 			}
