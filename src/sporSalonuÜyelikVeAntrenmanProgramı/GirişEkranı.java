@@ -195,9 +195,9 @@ public class GirişEkranı extends JFrame {
         if(loggedInUser == null) return;
         
         switch (loggedInUser.getRole()) {
-            case ADMIN -> new AdminPaneli((Admin) loggedInUser).setVisible(true);
-            case ANTRENOR -> new AntrenorPaneli((Antrenor) loggedInUser).setVisible(true);
-            case UYE -> new UyePaneli((Uye) loggedInUser).setVisible(true);
+        case ADMIN -> new AdminPaneli((Admin) loggedInUser).setVisible(true);
+        case ANTRENOR -> { new AntrenorPaneli((Antrenor) loggedInUser).setVisible(true); this.dispose(); }
+        case UYE -> { new UyePaneli((Uye) loggedInUser).setVisible(true); this.dispose(); }
         }
 
         if(loggedInUser.getRole() != Role.ADMIN) {
@@ -221,14 +221,8 @@ public class GirişEkranı extends JFrame {
 
         dialog.setVisible(true);
         Kullanici yeni = dialog.getKullanici();
-        if(yeni != null && yeni.getRole() == type) {
-            if(loggedInUser instanceof Admin) {
-                ((Admin)loggedInUser).ekle(yeni);
-            }
-        } else if (yeni != null) {
-             if(loggedInUser instanceof Admin) {
-                ((Admin)loggedInUser).ekle(yeni);
-            }
+        if (yeni != null && loggedInUser instanceof Admin a) {
+            a.ekle(yeni);
         }
     }
 }

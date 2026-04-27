@@ -36,12 +36,11 @@ public class UyePaneli extends JFrame {
             String.valueOf(uye.getYağOrani()),
             String.format("%.2f", uye.vucutKitleEndeksiHesapla())
         };
-        JPanel centerPanel1 = new JPanel(new GridLayout(7, 2, 10, 15));
 
         for (int i = 0; i < labels.length; i++) {
             JLabel lbl = new JLabel(labels[i], SwingConstants.RIGHT);
             lbl.setFont(labelFont);
-            centerPanel1.add(lbl);
+            centerPanel.add(lbl);
 
             JLabel val = new JLabel(values[i]);
             val.setFont(valFont);
@@ -49,10 +48,11 @@ public class UyePaneli extends JFrame {
                 val.setForeground(new Color(0, 102, 204));
                 val.setFont(new Font("Arial", Font.BOLD, 16));
             }
-            centerPanel1.add(val);
+            add(centerPanel, BorderLayout.CENTER);
+            centerPanel.add(val);
         }
 
-        add(centerPanel1, BorderLayout.CENTER);
+        add(centerPanel, BorderLayout.CENTER);
 
         JPanel btnPanel = new JPanel();
         

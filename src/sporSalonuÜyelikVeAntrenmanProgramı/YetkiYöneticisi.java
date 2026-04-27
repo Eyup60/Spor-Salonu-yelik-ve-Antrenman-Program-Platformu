@@ -1,24 +1,23 @@
 package sporSalonuÜyelikVeAntrenmanProgramı;
 
 public class YetkiYöneticisi {
+    private int basarisizGirisSayisi = 0;
+    private static final int MAX_DENEME = 5;
 
     public Kullanici giriş(String email, String password) {
-        if (email == null || password == null) {
-            return null;
+        if (basarisizGirisSayisi >= MAX_DENEME) {
+            throw new IllegalStateException("Çok fazla başarısız deneme! Lütfen bekleyin.");
         }
-
+        if (email == null || password == null) return null;
+        
         email = email.trim();
-        password = password.trim();
-
         for (Kullanici k : Admin.getKullanicilar()) {
-            System.out.println(k.getEmail() + " - " + k.getPassword() + " - " + k.getRole());
-
-            if (k.getEmail().trim().equalsIgnoreCase(email)
-                    && k.getPassword().trim().equals(password)) {
+            if (k.login(email, password)) {
+                basarisizGirisSayisi = 0; 
                 return k;
             }
         }
-
+        basarisizGirisSayisi++;
         return null;
     }
 }
