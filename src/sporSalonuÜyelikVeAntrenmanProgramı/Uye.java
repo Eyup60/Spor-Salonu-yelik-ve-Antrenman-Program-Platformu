@@ -11,24 +11,15 @@ public class Uye extends Kullanici {
     private double yağOrani;
     private LocalDate kayitTarihi;
 
-    protected Uye(String email, String password, double boy, double kilo, int yas, double yağOrani) {
-        super(email, password, Role.UYE);
-        this.setBoy(boy);
-        this.setKilo(kilo);
-        this.setYas(yas);
-        this.setYağOrani(yağOrani);
-        this.setKayitTarihi(LocalDate.now());
+    protected Uye(String isim,String soyisim,String email, String password, double boy, double kilo, int yas, double yağOrani) {
+        super(isim,soyisim,email, password, Role.UYE);
+        setBoy(boy);
+        setKilo(kilo);
+        setYas(yas);
+        setYağOrani(yağOrani);
+        setKayitTarihi(LocalDate.now());
     }
-
-    public Uye(String email, String password, double boy, double kilo, int yas, double yağOrani, LocalDate kayitTarihi) {
-        super(email, password, Role.UYE);
-        this.setBoy(boy);
-        this.setKilo(kilo);
-        this.setYas(yas);
-        this.setYağOrani(yağOrani);
-        this.setKayitTarihi(kayitTarihi);
-    }
-
+    
     public double getBoy() {
         return this.boy;
     }
@@ -98,11 +89,17 @@ public class Uye extends Kullanici {
             this.kayitTarihi = kayitTarihi;
         }
     }
+    
+    public String antrenorum() {
+        return Admin.anternorBulUyeIle(this);
+    }
 
     @Override
     public void displayInfo() {
         System.out.println("--- ÜYE PROFİLİ ---");
-        System.out.println("ID: " + this.getId());
+        System.out.println("İsim :"+getIsim());
+        System.out.println("Soyisim: "+getSoyisim());
+        System.out.println("Atanan Koc: "+this.antrenorum());
         System.out.println("Email: " + this.getEmail());
         System.out.println("Kayıt Tarihi: " + this.kayitTarihi);
         System.out.println("Fiziksel Veriler: " + this.boy + " cm / " + this.kilo + " kg");

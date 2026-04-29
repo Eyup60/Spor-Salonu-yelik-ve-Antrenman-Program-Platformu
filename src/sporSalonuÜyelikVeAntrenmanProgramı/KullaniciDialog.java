@@ -6,6 +6,8 @@ import java.awt.event.ActionEvent;
 
 public class KullaniciDialog extends JDialog {
     private static final long serialVersionUID = 1L;
+    private JTextField txtIsim;
+    private JTextField txtSoyisim;
 	private JTextField txtEmail;
     private JPasswordField txtPassword;
     private JComboBox<Role> cbRole;
@@ -29,6 +31,14 @@ public class KullaniciDialog extends JDialog {
         
         JPanel mainPanel = new JPanel(new GridLayout(0, 2, 10, 10));
         mainPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        
+        mainPanel.add(new JLabel("Isim:"));
+        txtIsim = new JTextField();
+        mainPanel.add(txtIsim);
+        
+        mainPanel.add(new JLabel("Soyisim:"));
+        txtSoyisim = new JTextField();
+        mainPanel.add(txtSoyisim);
 
         mainPanel.add(new JLabel("Email:"));
         txtEmail = new JTextField();
@@ -117,6 +127,8 @@ public class KullaniciDialog extends JDialog {
 
  
     private void verileriDoldur(Kullanici k) {
+    	txtIsim.setText(k.getIsim());
+    	txtSoyisim.setText(k.getSoyisim());
         txtEmail.setText(k.getEmail());
         txtPassword.setText(""); 
         cbRole.setSelectedItem(k.getRole());
@@ -134,46 +146,51 @@ public class KullaniciDialog extends JDialog {
 
     private void kaydet(ActionEvent e) {
         try {
+            String isim = txtIsim.getText();
+            String soyisim = txtSoyisim.getText();
             String email = txtEmail.getText();
             String pwd = new String(txtPassword.getPassword());
             Role r = (Role) cbRole.getSelectedItem();
             
             if (guncellenecek != null) {
-
-
-                if(!isUyeUpdateOnly) {
-                   guncellenecek.setEmail(email);
-                   if(!pwd.isEmpty()) {
-                       guncellenecek.setPassword(pwd);
-                   }
+                if (!isUyeUpdateOnly) {
+                    guncellenecek.setEmail(email);
+                }
+                if (!isim.isBlank()) {
+                    guncellenecek.setIsim(isim);
+                }
+                if (!soyisim.isBlank()) {
+                    guncellenecek.setSoyisim(soyisim);
+                }
+                if (!pwd.isEmpty()) {
+                    guncellenecek.setPassword(pwd);
                 }
                 
-                if (guncellenecek instanceof Antrenor) {
-                    ((Antrenor) guncellenecek).setUzmanlıkAlanı(txtUzmanlik.getText());
-                } else if (guncellenecek instanceof Uye) {
-                    Uye u = (Uye) guncellenecek;
+                if (guncellenecek instanceof Uye u) {
                     u.setBoy(Double.parseDouble(txtBoy.getText()));
                     u.setKilo(Double.parseDouble(txtKilo.getText()));
                     u.setYas(Integer.parseInt(txtYas.getText()));
                     u.setYağOrani(Double.parseDouble(txtYagOrani.getText()));
                 }
+                
                 sonucKullanici = guncellenecek;
             } else {
                 switch(r) {
-                    case ADMIN -> sonucKullanici = new Admin(email, pwd);
-                    case ANTRENOR -> sonucKullanici = new Antrenor(email, pwd, txtUzmanlik.getText());
-                    case UYE -> sonucKullanici = new Uye(email, pwd, 
+                    case ADMIN -> sonucKullanici = new Admin(isim,soyisim,email, pwd);
+                    case ANTRENOR -> sonucKullanici = new Antrenor(isim,soyisim,email, pwd, txtUzmanlik.getText());
+                    case UYE -> sonucKullanici = new Uye(isim,soyisim,email, pwd, 
                                     Double.parseDouble(txtBoy.getText()), 
                                     Double.parseDouble(txtKilo.getText()), 
                                     Integer.parseInt(txtYas.getText()), 
                                     Double.parseDouble(txtYagOrani.getText()));
                 }
+                Admin.doğrudanEkle(sonucKullanici);
             }
             dispose();
         } catch (IllegalArgumentException ex) {
             JOptionPane.showMessageDialog(this, ex.getMessage(), "Geçersiz Girdi", JOptionPane.ERROR_MESSAGE);
         } catch (Exception ex) {
-            JOptionPane.showMessageDialog(this, "Lütfen sayısal değerleri doğru formattata girin.", "Girdi Hatası", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Lütfen verileri kontrol edin: " + ex.getMessage(), "Girdi Hatası", JOptionPane.ERROR_MESSAGE);
         }
     }
 

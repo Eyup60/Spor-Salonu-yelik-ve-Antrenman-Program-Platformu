@@ -5,7 +5,7 @@ import java.awt.*;
 
 public class KayıtDialog extends JDialog {
     private static final long serialVersionUID = 1L;
-	private JTextField txtEmail, txtBoy, txtKilo, txtYas, txtYagOrani;
+	private JTextField txtIsim,txtSoyIsim,txtEmail, txtBoy, txtKilo, txtYas, txtYagOrani;
     private JPasswordField txtPassword;
     private Kullanici yeniUye;
 
@@ -15,8 +15,16 @@ public class KayıtDialog extends JDialog {
         setLocationRelativeTo(parent);
         setLayout(new BorderLayout());
 
-        JPanel formPanel = new JPanel(new GridLayout(6, 2, 10, 10));
+        JPanel formPanel = new JPanel(new GridLayout(8, 2, 10, 10));
         formPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+        
+        formPanel.add(new JLabel("Isim:"));
+        txtIsim = new JTextField();
+        formPanel.add(txtIsim);
+        
+        formPanel.add(new JLabel("Soyisim:"));
+        txtSoyIsim = new JTextField();
+        formPanel.add(txtSoyIsim);
 
         formPanel.add(new JLabel("Email:"));
         txtEmail = new JTextField();
@@ -57,6 +65,8 @@ public class KayıtDialog extends JDialog {
 
     private void kayitOl() {
         try {
+        	String isim = txtIsim.getText();
+        	String soyIsim = txtSoyIsim.getText();
             String email = txtEmail.getText();
             String pwd = new String(txtPassword.getPassword());
             double boy = Double.parseDouble(txtBoy.getText());
@@ -64,8 +74,8 @@ public class KayıtDialog extends JDialog {
             int yas = Integer.parseInt(txtYas.getText());
             double yag = Double.parseDouble(txtYagOrani.getText());
 
-            yeniUye = new Uye(email, pwd, boy, kilo, yas, yag);
-            Admin.doğrudanEkle(yeniUye); // tek satır, hem ekler hem kaydeder
+            yeniUye = new Uye(isim,soyIsim,email, pwd, boy, kilo, yas, yag);
+            Admin.doğrudanEkle(yeniUye);
 
             JOptionPane.showMessageDialog(this, "Kayıt Başarılı!", "BİLGİ", JOptionPane.INFORMATION_MESSAGE);
             dispose();

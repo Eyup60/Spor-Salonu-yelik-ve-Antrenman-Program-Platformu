@@ -13,8 +13,8 @@ public class Admin extends Kullanici implements VeriYöneticisi<Kullanici>{
 	private static List<Kullanici> kullanicilar = new CopyOnWriteArrayList<>();
 	private LocalDateTime sonGiriş;
 
-	protected Admin(String email,String password) {
-		super(email, password, Role.ADMIN);
+	protected Admin(String isim ,String soyisim,String email,String password) {
+		super(isim ,soyisim,email, password, Role.ADMIN);
 	}
 	
 	public static List<Kullanici> getKullanicilar() {
@@ -41,6 +41,23 @@ public class Admin extends Kullanici implements VeriYöneticisi<Kullanici>{
 		}
 		this.sonGiriş = sonGiriş;
 	}
+	
+	public static String anternorBulUyeIle(Uye uye) {
+	    if (uye == null) return "Henüz Atanmadı";
+
+	    for (Kullanici k : Admin.getKullanicilar()) {
+	        if (k instanceof Antrenor antrenor) {
+	            
+	            for (Uye u : antrenor.listele()) {
+	                if (u.getId().equals(uye.getId())) { 
+	                   
+	                    return antrenor.getIsim() + " " + antrenor.getSoyisim();
+	                }
+	            }
+	        }
+	    }
+	    return "Henüz Atanmadı";
+	}
 
 	public static void doğrudanEkle(Kullanici k) {
 	    if (!kullanicilar.contains(k)) {
@@ -52,6 +69,8 @@ public class Admin extends Kullanici implements VeriYöneticisi<Kullanici>{
 	@Override
 	public void displayInfo() {
 		System.out.println("--- YÖNETİCİ PANELİ ---");
+		System.out.println("İsim: "+getIsim());
+		System.out.println("Soyisim: "+getSoyisim());
         System.out.println("Email: " + getEmail());
         System.out.println("Son Erişim: " + sonGiriş);
 

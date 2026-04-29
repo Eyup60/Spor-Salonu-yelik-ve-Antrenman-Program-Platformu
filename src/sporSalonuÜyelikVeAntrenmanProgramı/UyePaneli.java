@@ -21,14 +21,17 @@ public class UyePaneli extends JFrame {
         lblTitle.setBorder(BorderFactory.createEmptyBorder(15, 0, 15, 0));
         add(lblTitle, BorderLayout.NORTH);
 
-        JPanel centerPanel = new JPanel(new GridLayout(6, 2, 10, 15));
+        JPanel centerPanel = new JPanel(new GridLayout(9, 2, 10, 15));
         centerPanel.setBorder(new EmptyBorder(10, 30, 20, 30));
         
         Font labelFont = new Font("Arial", Font.BOLD, 14);
         Font valFont = new Font("Arial", Font.PLAIN, 14);
 
-        String[] labels = {"Email:", "Boy (cm):", "Kilo (kg):", "Yaş:", "Yağ Oranı (%):", "Vücut Kitle Endeksi (BMI):"};
+        String[] labels = {"İsim:","Soyisim:","Atanan Koç:","Email:", "Boy (cm):", "Kilo (kg):", "Yaş:", "Yağ Oranı (%):", "Vücut Kitle Endeksi (BMI):"};
         String[] values = {
+        	uye.getIsim(),
+        	uye.getSoyisim(),
+        	uye.antrenorum(),
             uye.getEmail(),                                          
             String.valueOf(uye.getBoy()),
             String.valueOf(uye.getKilo()),
@@ -48,7 +51,6 @@ public class UyePaneli extends JFrame {
                 val.setForeground(new Color(0, 102, 204));
                 val.setFont(new Font("Arial", Font.BOLD, 16));
             }
-            add(centerPanel, BorderLayout.CENTER);
             centerPanel.add(val);
         }
 

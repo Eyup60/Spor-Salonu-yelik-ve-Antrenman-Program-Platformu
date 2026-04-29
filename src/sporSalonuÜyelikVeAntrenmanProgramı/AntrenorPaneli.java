@@ -33,7 +33,7 @@ public class AntrenorPaneli extends JFrame {
         baslikPaneli.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
         add(baslikPaneli, BorderLayout.NORTH);
 
-        String[] cols = {"ID", "Email", "Boy", "Kilo", "Yaş", "VKE"};
+        String[] cols = {"Isim","Soyisim", "Email", "Boy", "Kilo", "Yaş", "VKE"};
         tableModel = new DefaultTableModel(cols, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -66,8 +66,9 @@ public class AntrenorPaneli extends JFrame {
     private void verileriYukle() {
         tableModel.setRowCount(0);
         for (Uye u : antrenor.listele()) {
-            tableModel.addRow(new Object[]{
-                u.getId(), 
+            tableModel.addRow(new Object[]{ 
+                u.getIsim(),
+                u.getSoyisim(),
                 u.getEmail(), 
                 u.getBoy(), 
                 u.getKilo(), 

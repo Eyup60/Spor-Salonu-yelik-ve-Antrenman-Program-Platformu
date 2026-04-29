@@ -20,7 +20,7 @@ public class GirişEkranı extends JFrame {
     	DosyaYoneticisi.verileriYukle();
 
     	if (Admin.getKullanicilar().isEmpty()) {
-    	    Admin.doğrudanEkle(new Admin("admin@gym.com", "123456"));
+    	    Admin.doğrudanEkle(new Admin("Admin","ADMIN","admin@gym.com", "123456"));
     	}
 
         EventQueue.invokeLater(() -> {
@@ -195,13 +195,9 @@ public class GirişEkranı extends JFrame {
         if(loggedInUser == null) return;
         
         switch (loggedInUser.getRole()) {
-        case ADMIN -> new AdminPaneli((Admin) loggedInUser).setVisible(true);
+        case ADMIN -> {new AdminPaneli((Admin) loggedInUser).setVisible(true); this.dispose(); }
         case ANTRENOR -> { new AntrenorPaneli((Antrenor) loggedInUser).setVisible(true); this.dispose(); }
         case UYE -> { new UyePaneli((Uye) loggedInUser).setVisible(true); this.dispose(); }
-        }
-
-        if(loggedInUser.getRole() != Role.ADMIN) {
-           this.dispose();
         }
     }
 

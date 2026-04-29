@@ -6,12 +6,16 @@ public abstract class Kullanici implements java.io.Serializable{
     
     private static final long serialVersionUID = 1L;
 	private String id;
+	private String isim;
+	private String soyisim;
     private String email;
     private String password;
     private Role role;
     
-    protected Kullanici(String email, String password, Role role) {
+    protected Kullanici(String isim,String soyisim,String email, String password, Role role) {
         this.id = UUID.randomUUID().toString();
+        setIsim(isim);
+        setSoyisim(soyisim);
         setEmail(email);
         setPassword(password);
         setRole(role);
@@ -19,6 +23,28 @@ public abstract class Kullanici implements java.io.Serializable{
     
     public String getId() { return id; }
     public String getEmail() { return email; }
+    
+	public String getIsim() {
+		return isim;
+	}
+
+	public void setIsim(String isim) {
+		if(isim == null || isim.isEmpty()) {
+			throw new IllegalArgumentException("İsim bos olamaz");
+		}
+		this.isim = isim;
+	}
+	
+	public String getSoyisim() {
+		return soyisim;
+	}
+
+	public void setSoyisim(String soyisim) {
+		if(soyisim == null || soyisim.isEmpty()) {
+			throw new IllegalArgumentException("Soyisim bos olamaz");
+		}
+		this.soyisim = soyisim;
+	}
     
     public void setEmail(String email) {
         if(email == null || email.isEmpty()) {
@@ -78,4 +104,5 @@ public abstract class Kullanici implements java.io.Serializable{
     public String toString() {
         return "Email: " + email + " | Role: " + role;
     }
+
 }

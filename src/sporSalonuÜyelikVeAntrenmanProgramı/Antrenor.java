@@ -9,8 +9,8 @@ public class Antrenor extends Kullanici implements VeriYöneticisi<Uye> {
 	private String uzmanlıkAlanı;
 	private List<Uye> uyeler = new ArrayList<>();
 	
-	protected Antrenor(String email, String password,String uzmanlıkAlanı) {
-		super(email, password, Role.ANTRENOR);
+	protected Antrenor(String isim,String soyisim,String email, String password,String uzmanlıkAlanı) {
+		super(isim,soyisim,email, password, Role.ANTRENOR);
 		setUzmanlıkAlanı(uzmanlıkAlanı);
 	}
 	
@@ -24,10 +24,20 @@ public class Antrenor extends Kullanici implements VeriYöneticisi<Uye> {
 		}
 		this.uzmanlıkAlanı = uzmanlıkAlanı;
 	}
+	
+	
+	
+	public void kontrol() {
+		if(uyeler == null || uyeler.isEmpty()) {
+			uyeler = new ArrayList<>();
+		}
+	}
 
 	@Override
 	public void displayInfo() {
 		System.out.println("--- ANTRENÖR ---");
+		System.out.println("İsim :"+getIsim());
+		System.out.println("Soyisim: "+getSoyisim());
 	    System.out.println("Email: " + getEmail());
 	    System.out.println("Uzmanlık: " + getUzmanlıkAlanı());
 	    System.out.println("Üye sayısı: "+ uyeler.size());
@@ -35,7 +45,7 @@ public class Antrenor extends Kullanici implements VeriYöneticisi<Uye> {
 
 	@Override
 	public void ekle(Uye nesne) {
-		if (nesne == null) return;
+		kontrol();
 		
 	    if (!Admin.getKullanicilar().contains(nesne)) {
 	        System.out.println("Bu üye sistemde kayıtlı değil!");
@@ -59,6 +69,7 @@ public class Antrenor extends Kullanici implements VeriYöneticisi<Uye> {
 
 	@Override
 	public void sil(String id) {
+		kontrol();
 		boolean silindi = uyeler.removeIf(nesne -> nesne.getId().equals(id));
 		if(silindi){
 			DosyaYoneticisi.verileriKaydet();
@@ -70,7 +81,7 @@ public class Antrenor extends Kullanici implements VeriYöneticisi<Uye> {
 
 	@Override
 	public void guncelle(Uye nesne) {
-		
+		kontrol();
 		if(nesne.getRole() != Role.UYE) {
 			return;
 		}
