@@ -5,109 +5,120 @@ import java.util.List;
 
 public class Antrenor extends Kullanici implements VeriYöneticisi<Uye> {
 
-	private static final long serialVersionUID = 1L;
-	private String uzmanlıkAlanı;
-	private List<Uye> uyeler = new ArrayList<>();
-	
-	protected Antrenor(String isim,String soyisim,String email, String password,String uzmanlıkAlanı) {
-		super(isim,soyisim,email, password, Role.ANTRENOR);
-		setUzmanlıkAlanı(uzmanlıkAlanı);
-	}
-	
-	public String getUzmanlıkAlanı() {
-		return uzmanlıkAlanı;
-	}
+    private static final long serialVersionUID = 1L;
+    private String uzmanlıkAlanı;
+    
+    // ANTRENÖRÜN SORUMLU OLDUĞU ÜYELERİ TUTAN ÖZEL LİSTE
+    private List<Uye> uyeler = new ArrayList<>();
+    
+    // ANTRENÖR NESNESİNİ OLUŞTURUR VE UZMANLIK ALANINI DOĞRULAR
+    protected Antrenor(String isim,String soyisim,String email, String password,String uzmanlıkAlanı) {
+        super(isim,soyisim,email, password, Role.ANTRENOR);
+        setUzmanlıkAlanı(uzmanlıkAlanı);
+    }
+    
+    public String getUzmanlıkAlanı() {
+        return uzmanlıkAlanı;
+    }
 
-	public void setUzmanlıkAlanı(String uzmanlıkAlanı) {
-		if(uzmanlıkAlanı == null || uzmanlıkAlanı.isEmpty()) {
-			throw new IllegalArgumentException("Uzmanlık alanı boş olamaz!");
-		}
-		this.uzmanlıkAlanı = uzmanlıkAlanı;
-	}
-	
-	
-	
-	public void kontrol() {
-		if(uyeler == null || uyeler.isEmpty()) {
-			uyeler = new ArrayList<>();
-		}
-	}
+    // UZMANLIK ALANININ BOŞ BIRAKILMASINI ENGELLEYEN KONTROL MEKANİZMASI
+    public void setUzmanlıkAlanı(String uzmanlıkAlanı) {
+        if(uzmanlıkAlanı == null || uzmanlıkAlanı.isEmpty()) {
+            throw new IllegalArgumentException("Uzmanlık alanı boş olamaz!");
+        }
+        this.uzmanlıkAlanı = uzmanlıkAlanı;
+    }
+    
+    // NULL POINTER EXCEPTION HATASINI ÖNLEMEK İÇİN LİSTE GÜVENLİK KONTROLÜ
+    public void kontrol() {
+        if(uyeler == null || uyeler.isEmpty()) {
+            uyeler = new ArrayList<>();
+        }
+    }
 
-	@Override
-	public void displayInfo() {
-		System.out.println("--- ANTRENÖR ---");
-		System.out.println("İsim :"+getIsim());
-		System.out.println("Soyisim: "+getSoyisim());
-	    System.out.println("Email: " + getEmail());
-	    System.out.println("Uzmanlık: " + getUzmanlıkAlanı());
-	    System.out.println("Üye sayısı: "+ uyeler.size());
-	}
+    // ANTRENÖRÜN KİŞİSEL BİLGİLERİNİ VE BAĞLI ÜYE SAYISINI KONSOLA YAZDIRIR
+    @Override
+    public void displayInfo() {
+        System.out.println("--- ANTRENÖR ---");
+        System.out.println("İsim :"+getIsim());
+        System.out.println("Soyisim: "+getSoyisim());
+        System.out.println("Email: " + getEmail());
+        System.out.println("Uzmanlık: " + getUzmanlıkAlanı());
+        System.out.println("Üye sayısı: "+ uyeler.size());
+    }
 
-	@Override
-	public void ekle(Uye nesne) {
-		kontrol();
-		
-	    if (!Admin.getKullanicilar().contains(nesne)) {
-	        System.out.println("Bu üye sistemde kayıtlı değil!");
-	        return;
-	    }
-	    
-	    if (uyeler.contains(nesne)) {
-	        System.out.println("Bu üye zaten listende!");
-	        return;
-	    }
-	    
-	    if (nesne.getRole() != Role.UYE) {
-	        System.out.println("Sadece üye rolündekiler eklenebilir!");
-	        return;
-	    }
-	    
-	    uyeler.add(nesne);
-	    DosyaYoneticisi.verileriKaydet();
-	    System.out.println("Üye antrenöre başarıyla atandı!");
-	}
+    // ANTRENÖRE YENİ BİR ÜYE ATAR (SİSTEMDE KAYITLI VE ROLÜ ÜYE OLMAK ZORUNDADIR)
+    @Override
+    public void ekle(Uye nesne) {
+        kontrol();
+        
+        // ÜYENİN ANA SİSTEMDE (ADMIN LİSTESİNDE) VARLIĞINI KONTROL EDER
+        if (!Admin.getKullanicilar().contains(nesne)) {
+            System.out.println("Bu üye sistemde kayıtlı değil!");
+            return;
+        }
+        
+        // MÜKERRER KAYIT KONTROLÜ: AYNI ÜYE İKİ KEZ EKLENEMEZ
+        if (uyeler.contains(nesne)) {
+            System.out.println("Bu üye zaten listende!");
+            return;
+        }
+        
+        // ROL DOĞRULAMA: SADECE ÜYE ROLÜNDEKİ KİŞİLER ANTRENÖRE ATANABİLİR
+        if (nesne.getRole() != Role.UYE) {
+            System.out.println("Sadece üye rolündekiler eklenebilir!");
+            return;
+        }
+        
+        uyeler.add(nesne);
+        DosyaYoneticisi.verileriKaydet(); // İLİŞKİYİ KALICI OLARAK KAYDEDER
+        System.out.println("Üye antrenöre başarıyla atandı!");
+    }
 
-	@Override
-	public void sil(String id) {
-		kontrol();
-		boolean silindi = uyeler.removeIf(nesne -> nesne.getId().equals(id));
-		if(silindi){
-			DosyaYoneticisi.verileriKaydet();
-			System.out.println("Uye silme işlemi başarılı!");
-		} else {
-			System.out.println("ID bulunamadı!");
-		}
-	}
+    // ÜYEYİ ANTRENÖRÜN ÖZEL LİSTESİNDEN ÇIKARIR
+    @Override
+    public void sil(String id) {
+        kontrol();
+        boolean silindi = uyeler.removeIf(nesne -> nesne.getId().equals(id));
+        if(silindi){
+            DosyaYoneticisi.verileriKaydet();
+            System.out.println("Uye silme işlemi başarılı!");
+        } else {
+            System.out.println("ID bulunamadı!");
+        }
+    }
 
-	@Override
-	public void guncelle(Uye nesne) {
-		kontrol();
-		if(nesne.getRole() != Role.UYE) {
-			return;
-		}
-		
-		for(int i = 0;i < uyeler.size();i++) {
-			if(uyeler.get(i).getId().equals(nesne.getId())) {
-				uyeler.set(i, nesne);
-				DosyaYoneticisi.verileriKaydet();
-				System.out.println("Uye bilgilerini güncelleme başarılı!");
-				return;
-			}
-		}
-		System.out.println("Uye bilgilerini guncelleme başarısız!");
-	}
+    // ANTRENÖRE BAĞLI ÜYENİN BİLGİLERİNİ LİSTE İÇİNDE GÜNCELLER
+    @Override
+    public void guncelle(Uye nesne) {
+        kontrol();
+        if(nesne.getRole() != Role.UYE) {
+            return;
+        }
+        
+        for(int i = 0;i < uyeler.size();i++) {
+            if(uyeler.get(i).getId().equals(nesne.getId())) {
+                uyeler.set(i, nesne);
+                DosyaYoneticisi.verileriKaydet();
+                System.out.println("Uye bilgilerini güncelleme başarılı!");
+                return;
+            }
+        }
+        System.out.println("Uye bilgilerini guncelleme başarısız!");
+    }
 
-	@Override
-	public List<Uye> listele() {
-		return new ArrayList<>(uyeler);
-	}
-	
-	@Override
-	public Uye bul(String id) {
-		for (Uye u : uyeler) {
-			if (u.getId().equals(id)) return u;
-		}
-		return null;
-	}
-
+    // ANTRENÖRÜN TÜM ÜYELERİNİ LİSTE OLARAK DÖNDÜRÜR
+    @Override
+    public List<Uye> listele() {
+        return new ArrayList<>(uyeler);
+    }
+    
+    // BELİRTİLEN ID'YE SAHİP ÜYEYİ ANTRENÖRÜN LİSTESİNDE ARAR
+    @Override
+    public Uye bul(String id) {
+        for (Uye u : uyeler) {
+            if (u.getId().equals(id)) return u;
+        }
+        return null;
+    }
 }

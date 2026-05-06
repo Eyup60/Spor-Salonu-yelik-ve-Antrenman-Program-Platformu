@@ -26,7 +26,7 @@ public class AdminPaneli extends JFrame {
         lblTitle.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
         add(lblTitle, BorderLayout.NORTH);
 
-        String[] cols = {"ID", "Email", "Rol"};
+        String[] cols = {"ID","İsim","Soyisim", "Email", "Rol"};
         tableModel = new DefaultTableModel(cols, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -59,7 +59,7 @@ public class AdminPaneli extends JFrame {
     private void verileriYukle() {
         tableModel.setRowCount(0);
         for (Kullanici k : Admin.getKullanicilar()) {
-            tableModel.addRow(new Object[]{k.getId(), k.getEmail(), k.getRole().name()});
+            tableModel.addRow(new Object[]{k.getId(),k.getIsim(),k.getSoyisim(), k.getEmail(), k.getRole().name()});
         }
     }
 
