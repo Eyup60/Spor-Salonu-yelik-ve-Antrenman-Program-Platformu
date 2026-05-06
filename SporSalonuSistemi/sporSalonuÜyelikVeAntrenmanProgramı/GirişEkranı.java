@@ -21,7 +21,7 @@ public class GirişEkranı extends JFrame {
 
         // EĞER SİSTEMDE HİÇ KULLANICI YOKSA VARSAYILAN BİR ADMİN HESABI OLUŞTURUR
         if (Admin.getKullanicilar().isEmpty()) {
-            Admin.doğrudanEkle(new Admin("Admin","ADMIN","admin@gym.com", "123456"));
+            Admin.doğrudanEkle(new Admin("ilk","Admin","admin@gym.com", "123456"));
         }
 
         // ARAYÜZÜN GÜVENLİ BİR ŞEKİLDE BAŞLATILMASINI SAĞLAR

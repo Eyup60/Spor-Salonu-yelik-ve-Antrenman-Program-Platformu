@@ -8,7 +8,7 @@ public class KullaniciDialog extends JDialog {
     private static final long serialVersionUID = 1L;
     private JTextField txtIsim;
     private JTextField txtSoyisim;
-	private JTextField txtEmail;
+    private JTextField txtEmail;
     private JPasswordField txtPassword;
     private JComboBox<Role> cbRole;
     private JTextField txtBoy, txtKilo, txtYas, txtYagOrani;
@@ -18,7 +18,6 @@ public class KullaniciDialog extends JDialog {
     private Kullanici sonucKullanici;
     private Kullanici guncellenecek;
     
-
     private boolean isUyeUpdateOnly = false; 
 
     public KullaniciDialog(JFrame parent, Kullanici guncellenecek) {
@@ -54,18 +53,15 @@ public class KullaniciDialog extends JDialog {
 
         dynamicPanel = new JPanel(new CardLayout());
         
-
         JPanel adminPanel = new JPanel();
         dynamicPanel.add(adminPanel, Role.ADMIN.name());
         
-
         JPanel antrenorPanel = new JPanel(new GridLayout(0, 2, 5, 5));
         antrenorPanel.add(new JLabel("Uzmanlık Alanı:"));
         txtUzmanlik = new JTextField();
         antrenorPanel.add(txtUzmanlik);
         dynamicPanel.add(antrenorPanel, Role.ANTRENOR.name());
         
-
         JPanel uyePanel = new JPanel(new GridLayout(0, 2, 5, 5));
         uyePanel.add(new JLabel("Boy (cm):"));
         txtBoy = new JTextField();
@@ -102,19 +98,23 @@ public class KullaniciDialog extends JDialog {
         if (guncellenecek != null) {
             verileriDoldur(guncellenecek);
         } else {
-
             cbRole.setSelectedItem(Role.UYE); 
         }
     }
     
+    // ANTRENÖR PANELİNDEN ÇAĞRILDIĞINDA YETKİLERİ KISITLAYAN METOT
     public void setIsUyeUpdateOnly(boolean isOnly) {
         this.isUyeUpdateOnly = isOnly;
         if(isOnly) {
-            cbRole.setSelectedItem(Role.UYE);
+            // Antrenörün değiştiremeyeceği alanları kapatıyoruz
+            txtIsim.setEditable(false);
+            txtSoyisim.setEditable(false);
+            txtEmail.setEditable(false);
+            txtPassword.setEnabled(false); // Şifre kutusunu tamamen devre dışı bırak
             cbRole.setEnabled(false);
-            txtEmail.setEnabled(false);
-
-            txtPassword.setEnabled(false);
+            
+            // Antrenörün odaklanması gereken alanları vurgula (isteğe bağlı renk değişimi)
+            txtKilo.requestFocus();
         }
     }
 
@@ -125,14 +125,17 @@ public class KullaniciDialog extends JDialog {
         cl.show(dynamicPanel, type.name());
     }
 
- 
     private void verileriDoldur(Kullanici k) {
-    	txtIsim.setText(k.getIsim());
-    	txtSoyisim.setText(k.getSoyisim());
+        txtIsim.setText(k.getIsim());
+        txtSoyisim.setText(k.getSoyisim());
         txtEmail.setText(k.getEmail());
         txtPassword.setText(""); 
         cbRole.setSelectedItem(k.getRole());
-        cbRole.setEnabled(false);
+        
+        // Güncelleme modunda rol değişimi genellikle Admin panelinde de kısıtlanır
+        if (guncellenecek != null && !isUyeUpdateOnly) {
+             cbRole.setEnabled(false); 
+        }
         
         if (k instanceof Antrenor) {
             txtUzmanlik.setText(((Antrenor) k).getUzmanlıkAlanı());
@@ -146,51 +149,58 @@ public class KullaniciDialog extends JDialog {
 
     private void kaydet(ActionEvent e) {
         try {
-            String isim = txtIsim.getText();
-            String soyisim = txtSoyisim.getText();
-            String email = txtEmail.getText();
-            String pwd = new String(txtPassword.getPassword());
-            Role r = (Role) cbRole.getSelectedItem();
-            
-            if (guncellenecek != null) {
-                if (!isUyeUpdateOnly) {
-                    guncellenecek.setEmail(email);
-                }
-                if (!isim.isBlank()) {
-                    guncellenecek.setIsim(isim);
-                }
-                if (!soyisim.isBlank()) {
-                    guncellenecek.setSoyisim(soyisim);
-                }
-                if (!pwd.isEmpty()) {
-                    guncellenecek.setPassword(pwd);
-                }
-                
+            // Eğer Antrenör güncelliyorsa, sadece fiziksel verileri set etmeliyiz
+            if (guncellenecek != null && isUyeUpdateOnly) {
                 if (guncellenecek instanceof Uye u) {
                     u.setBoy(Double.parseDouble(txtBoy.getText()));
                     u.setKilo(Double.parseDouble(txtKilo.getText()));
                     u.setYas(Integer.parseInt(txtYas.getText()));
                     u.setYağOrani(Double.parseDouble(txtYagOrani.getText()));
+                    
+                    sonucKullanici = u;
                 }
-                
-                sonucKullanici = guncellenecek;
             } else {
-                switch(r) {
-                    case ADMIN -> sonucKullanici = new Admin(isim,soyisim,email, pwd);
-                    case ANTRENOR -> sonucKullanici = new Antrenor(isim,soyisim,email, pwd, txtUzmanlik.getText());
-                    case UYE -> sonucKullanici = new Uye(isim,soyisim,email, pwd, 
-                                    Double.parseDouble(txtBoy.getText()), 
-                                    Double.parseDouble(txtKilo.getText()), 
-                                    Integer.parseInt(txtYas.getText()), 
-                                    Double.parseDouble(txtYagOrani.getText()));
+                // NORMAL KAYIT/ADMİN GÜNCELLEME MANTIĞI
+                String isim = txtIsim.getText();
+                String soyisim = txtSoyisim.getText();
+                String email = txtEmail.getText();
+                String pwd = new String(txtPassword.getPassword());
+                Role r = (Role) cbRole.getSelectedItem();
+
+                if (guncellenecek != null) {
+                    guncellenecek.setEmail(email);
+                    guncellenecek.setIsim(isim);
+                    guncellenecek.setSoyisim(soyisim);
+                    if (!pwd.isEmpty()) {
+                        guncellenecek.setPassword(pwd);
+                    }
+                    
+                    if (guncellenecek instanceof Uye u) {
+                        u.setBoy(Double.parseDouble(txtBoy.getText()));
+                        u.setKilo(Double.parseDouble(txtKilo.getText()));
+                        u.setYas(Integer.parseInt(txtYas.getText()));
+                        u.setYağOrani(Double.parseDouble(txtYagOrani.getText()));
+                    } else if (guncellenecek instanceof Antrenor a) {
+                        a.setUzmanlıkAlanı(txtUzmanlik.getText());
+                    }
+                    sonucKullanici = guncellenecek;
+                } else {
+                    // YENİ KAYIT
+                    switch(r) {
+                        case ADMIN -> sonucKullanici = new Admin(isim,soyisim,email, pwd);
+                        case ANTRENOR -> sonucKullanici = new Antrenor(isim,soyisim,email, pwd, txtUzmanlik.getText());
+                        case UYE -> sonucKullanici = new Uye(isim,soyisim,email, pwd, 
+                                        Double.parseDouble(txtBoy.getText()), 
+                                        Double.parseDouble(txtKilo.getText()), 
+                                        Integer.parseInt(txtYas.getText()), 
+                                        Double.parseDouble(txtYagOrani.getText()));
+                    }
+                    Admin.doğrudanEkle(sonucKullanici);
                 }
-                Admin.doğrudanEkle(sonucKullanici);
             }
             dispose();
-        } catch (IllegalArgumentException ex) {
-            JOptionPane.showMessageDialog(this, ex.getMessage(), "Geçersiz Girdi", JOptionPane.ERROR_MESSAGE);
         } catch (Exception ex) {
-            JOptionPane.showMessageDialog(this, "Lütfen verileri kontrol edin: " + ex.getMessage(), "Girdi Hatası", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Hata: " + ex.getMessage(), "Girdi Hatası", JOptionPane.ERROR_MESSAGE);
         }
     }
 

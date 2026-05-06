@@ -44,8 +44,8 @@ public class DosyaYoneticisi {
             
             // HER KULLANICIYI TİPİYLE (ADMİN/ÜYE/ANTRENÖR) BİRLİKTE JSON'A DÖNÜŞTÜRÜR
             for (Kullanici k : Admin.getKullanicilar()) {
-                JsonObject obj = gson.toJsonTree(k).getAsJsonObject();
-                obj.addProperty("tip", k.getClass().getSimpleName()); // POLİMORFİZM KORUMASI
+                JsonObject obj = gson.toJsonTree(k).getAsJsonObject(); // KULLANICI NESNESİ JSON NESNESİNE DÖNÜŞTÜRLÜR
+                obj.addProperty("tip", k.getClass().getSimpleName()); // JSON NESNESİNE TİP ATANIR POLİMORFİZM SAĞLANIR
                 
                 // ANTRENÖR VE ÜYE ARASINDAKİ BAĞLARI SADECE ID OLARAK SAKLAR
                 if (k instanceof Antrenor antrenor) {
@@ -87,22 +87,25 @@ public class DosyaYoneticisi {
             List<Kullanici> liste = new ArrayList<>();
             Map<String, List<String>> antrenorMap = new HashMap<>();
 
-            // DOSYADAN OKUNAN HER JSON ÖGESİNİ DOĞRU JAVA SINIFINA (CLASS) ÇEVİRİR
+         // DOSYADAN OKUNAN HER JSON ÖGESİNİ DOĞRU JAVA SINIFINA (CLASS) ÇEVİRİR
             for (JsonElement el : dizi) {
                 JsonObject obj = el.getAsJsonObject();
-                String tip = obj.get("tip").getAsString();
                 
-                // TİP ETİKETİNE GÖRE NESNE ÜRETİMİ (SWITCH-CASE YAPISI)
-                Kullanici k = switch (tip) {
-                    case "Admin"    -> gson.fromJson(obj, Admin.class);
-                    case "Antrenor" -> gson.fromJson(obj, Antrenor.class);
-                    case "Uye"      -> gson.fromJson(obj, Uye.class);
-                    default -> throw new IllegalStateException("Bilinmeyen kullanıcı tipi: " + tip);
+                // TİP VERİSİNİ ALIR
+                String tipRaw = obj.get("tip").getAsString().trim().toLowerCase();
+                
+                // TEMİZLENMİŞ VE KÜÇÜK HARFE SABİTLENMİŞ VERİYE GÖRE NESNE OLUŞTURUR
+                Kullanici k = switch (tipRaw) {
+                    case "admin"    -> gson.fromJson(obj, Admin.class);
+                    case "antrenor" -> gson.fromJson(obj, Antrenor.class);
+                    case "uye"      -> gson.fromJson(obj, Uye.class);
+                    default -> throw new IllegalStateException("BİLİNMEYEN KULLANICI TİPİ: " + tipRaw);
                 };
 
                 liste.add(k);
-                // ANTRENÖRÜN ÖĞRENCİ LİSTESİNİ (ID OLARAK) GEÇİCİ BELLEĞE ALIR
-                if (tip.equals("Antrenor") && obj.has("antrenorUyeIds")) {
+                
+                // ANTRENÖR İLİŞKİLERİNİ KONTROL EDERKEN DE AYNI TEMİZLENMİŞ VERİYİ KULLANIR
+                if (tipRaw.equals("antrenor") && obj.has("antrenorUyeIds")) {
                     List<String> ids = new ArrayList<>();
                     obj.get("antrenorUyeIds").getAsJsonArray()
                        .forEach(e -> ids.add(e.getAsString()));
@@ -126,6 +129,17 @@ public class DosyaYoneticisi {
                     }
                 }
             }
+            
+            for (Kullanici k : Admin.getKullanicilar()) {
+                if (k instanceof Uye uye) {
+                    // Eğer üyenin hocası yoksa (Admin sınıfındaki sorgu ile kontrol et)
+                    if (Admin.anternorBulUyeIle(uye).equals("Henüz Atanmadı")) {
+                        System.out.println("Hocasız üye tespit edildi, atama yapılıyor: " + uye.getIsim());
+                        AtamaMotoru.otomatikAtamaYap(uye);
+                    }
+                }
+            }
+            
             System.out.println("Veriler yüklendi. Toplam kullanıcı: " + liste.size());
         } catch (IOException e) {
             System.err.println(" Dosya okuma hatası: " + e.getMessage());

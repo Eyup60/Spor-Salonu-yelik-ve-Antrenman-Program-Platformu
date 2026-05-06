@@ -50,29 +50,16 @@ public class Antrenor extends Kullanici implements VeriYöneticisi<Uye> {
     // ANTRENÖRE YENİ BİR ÜYE ATAR (SİSTEMDE KAYITLI VE ROLÜ ÜYE OLMAK ZORUNDADIR)
     @Override
     public void ekle(Uye nesne) {
-        kontrol();
+    	kontrol();
         
-        // ÜYENİN ANA SİSTEMDE (ADMIN LİSTESİNDE) VARLIĞINI KONTROL EDER
-        if (!Admin.getKullanicilar().contains(nesne)) {
-            System.out.println("Bu üye sistemde kayıtlı değil!");
-            return;
-        }
+        // YETKİ KONTROLÜ: BU METODUN SADECE ATAMAMOTORU TARAFINDAN ÇAĞRILDIĞINDAN EMİN OLUNMALI
         
-        // MÜKERRER KAYIT KONTROLÜ: AYNI ÜYE İKİ KEZ EKLENEMEZ
-        if (uyeler.contains(nesne)) {
-            System.out.println("Bu üye zaten listende!");
-            return;
-        }
-        
-        // ROL DOĞRULAMA: SADECE ÜYE ROLÜNDEKİ KİŞİLER ANTRENÖRE ATANABİLİR
-        if (nesne.getRole() != Role.UYE) {
-            System.out.println("Sadece üye rolündekiler eklenebilir!");
-            return;
-        }
+        if (!Admin.getKullanicilar().contains(nesne)) return;
+        if (uyeler.contains(nesne)) return;
+        if (nesne.getRole() != Role.UYE) return;
         
         uyeler.add(nesne);
-        DosyaYoneticisi.verileriKaydet(); // İLİŞKİYİ KALICI OLARAK KAYDEDER
-        System.out.println("Üye antrenöre başarıyla atandı!");
+        DosyaYoneticisi.verileriKaydet();
     }
 
     // ÜYEYİ ANTRENÖRÜN ÖZEL LİSTESİNDEN ÇIKARIR

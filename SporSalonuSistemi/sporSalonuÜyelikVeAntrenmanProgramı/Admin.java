@@ -86,16 +86,23 @@ public class Admin extends Kullanici implements VeriYöneticisi<Kullanici>{
     // VERİ YÖNETİCİSİ ARARYÜZÜ (INTERFACE) METODLARI: YENİ KULLANICI EKLEME
     @Override
     public void ekle(Kullanici nesne) {
-        if(kullanicilar.contains(nesne)) {
+    	if(kullanicilar.contains(nesne)) {
             System.out.println("Bu kullanici zaten var!");
             return;
         }
+        
         kullanicilar.add(nesne);
-        DosyaYoneticisi.verileriKaydet();
-        System.out.println("Ekleme işlemi başarılı. ID: "+nesne.getId());
+        
+        // KULLANICI UYE İSE OTOMATİK ATAMA YAPILIR
+        if (nesne instanceof Uye yeniUye) {
+            AtamaMotoru.otomatikAtamaYap(yeniUye);
+        }
+        
+        DosyaYoneticisi.verileriKaydet(); // VERİLER KAYDEDİLİR
+        System.out.println("Ekleme işlemi başarılı.");
     }
 
-    // KRİTİK SİSTEM KONTROLÜ: SİSTEMİN YÖNETİCİSİZ KALMASINI ENGELLER
+    // SİSTEMİN YÖNETİCİSİZ KALMASINI ENGELLER
     @Override
     public void sil(String id) {
         Kullanici silinecek = bul(id);
@@ -141,31 +148,5 @@ public class Admin extends Kullanici implements VeriYöneticisi<Kullanici>{
             }
         }
         return null;
-    }
-
-    // OTOMATİK ATAMA MEKANİZMASI: VIP OLMAYAN ÜYELERE RASTGELE ANTRENÖR ATAR
-    public static void otomatikAntrenorAta(Uye yeniUye) {
-        // SİSTEMDEKİ TÜM KULLANICILAR ARASINDAN SADECE ANTRENÖR OLANLARI FİLTRELER
-        List<Antrenor> tumAntrenorler = getKullanicilar().stream()
-            .filter(k -> k instanceof Antrenor)
-            .map(k -> (Antrenor) k)
-            .toList();
-
-        // EĞER SİSTEMDE ANTRENÖR YOKSA İŞLEMİ GÜVENLİ ŞEKİLDE SONLANDIRIR
-        if (tumAntrenorler.isEmpty()) {
-            System.out.println("UYARI: ATAMA YAPILACAK ANTRENÖR BULUNAMADI!");
-            return;
-        }
-
-        // JAVA RANDOM KÜTÜPHANESİ İLE LİSTEDEN RASTGELE BİR İNDEX SEÇER
-        Random random = new Random();
-        int rastgeleIndex = random.nextInt(tumAntrenorler.size());
-        Antrenor secilenAntrenor = tumAntrenorler.get(rastgeleIndex);
-
-        // SEÇİLEN ANTRENÖRÜN LİSTESİNE ÜYEYİ EKLER VE VERİLERİ KALICI HALE GETİRİR
-        secilenAntrenor.ekle(yeniUye);
-        DosyaYoneticisi.verileriKaydet();
-        
-        System.out.println("OTOMATİK SİSTEM: " + yeniUye.getIsim() + " -> " + secilenAntrenor.getIsim() + " eşleşti.");
     }
 }
