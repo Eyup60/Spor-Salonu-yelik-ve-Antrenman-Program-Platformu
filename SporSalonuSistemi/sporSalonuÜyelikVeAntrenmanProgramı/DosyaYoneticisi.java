@@ -2,6 +2,7 @@ package sporSalonuÜyelikVeAntrenmanProgramı;
 import com.google.gson.*;
 import java.io.*;
 import java.time.LocalDate;
+import java.time.LocalDateTime; // Saat hatasını çözmek için bu eklendi
 import java.util.*;
 
 public class DosyaYoneticisi {
@@ -13,14 +14,24 @@ public class DosyaYoneticisi {
     private static Gson buildGson() {
         return new GsonBuilder()
             .setPrettyPrinting()
+            // Eyüp'ün yazdığı normal tarih ayarı
             .registerTypeAdapter(LocalDate.class,
                 (JsonSerializer<LocalDate>) (src, t, ctx) ->
                     new JsonPrimitive(src.toString()))
             .registerTypeAdapter(LocalDate.class,
                 (JsonDeserializer<LocalDate>) (json, t, ctx) ->
                     LocalDate.parse(json.getAsString()))
+            // --- HATA VEREN YER İÇİN YENİ EKLENEN SAAT AYARI ---
+            .registerTypeAdapter(LocalDateTime.class,
+                (JsonSerializer<LocalDateTime>) (src, t, ctx) ->
+                    new JsonPrimitive(src.toString()))
+            .registerTypeAdapter(LocalDateTime.class,
+                (JsonDeserializer<LocalDateTime>) (json, t, ctx) ->
+                    LocalDateTime.parse(json.getAsString()))
+            // ----------------------------------------------------
             .create();
     }
+    
     public static void verileriKaydet() {
         try {
             File dosya = new File(DOSYA_YOLU);
@@ -49,6 +60,7 @@ public class DosyaYoneticisi {
             e.printStackTrace();
         }
     }
+    
     public static void verileriYukle() {
         File dosya = new File(DOSYA_YOLU);
         if (!dosya.exists()) {
