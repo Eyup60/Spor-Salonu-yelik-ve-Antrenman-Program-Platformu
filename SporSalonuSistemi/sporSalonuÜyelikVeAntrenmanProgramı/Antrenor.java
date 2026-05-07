@@ -3,6 +3,7 @@ package sporSalonuÜyelikVeAntrenmanProgramı;
 import java.util.ArrayList;
 import java.util.List;
 
+// ANTRENÖR SINIFI
 public class Antrenor extends Kullanici implements VeriYöneticisi<Uye> {
 
     private static final long serialVersionUID = 1L;
@@ -11,17 +12,18 @@ public class Antrenor extends Kullanici implements VeriYöneticisi<Uye> {
     // ANTRENÖRÜN SORUMLU OLDUĞU ÜYELERİ TUTAN ÖZEL LİSTE
     private List<Uye> uyeler = new ArrayList<>();
     
-    // ANTRENÖR NESNESİNİ OLUŞTURUR VE UZMANLIK ALANINI DOĞRULAR
+    // ANTRENÖR YAPICI METOT
     protected Antrenor(String isim,String soyisim,String email, String password,String uzmanlıkAlanı) {
         super(isim,soyisim,email, password, Role.ANTRENOR);
         setUzmanlıkAlanı(uzmanlıkAlanı);
     }
     
+    // UZMANLIK ALANI GETİR
     public String getUzmanlıkAlanı() {
         return uzmanlıkAlanı;
     }
 
-    // UZMANLIK ALANININ BOŞ BIRAKILMASINI ENGELLEYEN KONTROL MEKANİZMASI
+    // UZMANLIK ALANI AYARLA
     public void setUzmanlıkAlanı(String uzmanlıkAlanı) {
         if(uzmanlıkAlanı == null || uzmanlıkAlanı.isEmpty()) {
             throw new IllegalArgumentException("Uzmanlık alanı boş olamaz!");
@@ -29,14 +31,14 @@ public class Antrenor extends Kullanici implements VeriYöneticisi<Uye> {
         this.uzmanlıkAlanı = uzmanlıkAlanı;
     }
     
-    // NULL POINTER EXCEPTION HATASINI ÖNLEMEK İÇİN LİSTE GÜVENLİK KONTROLÜ
+    // KONTROL
     public void kontrol() {
         if(uyeler == null || uyeler.isEmpty()) {
             uyeler = new ArrayList<>();
         }
     }
-
-    // ANTRENÖRÜN KİŞİSEL BİLGİLERİNİ VE BAĞLI ÜYE SAYISINI KONSOLA YAZDIRIR
+    
+    // BİLGİ GÖSTER
     @Override
     public void displayInfo() {
         System.out.println("--- ANTRENÖR ---");
@@ -47,7 +49,7 @@ public class Antrenor extends Kullanici implements VeriYöneticisi<Uye> {
         System.out.println("Üye sayısı: "+ uyeler.size());
     }
 
-    // ANTRENÖRE YENİ BİR ÜYE ATAR (SİSTEMDE KAYITLI VE ROLÜ ÜYE OLMAK ZORUNDADIR)
+    // EKLE
     @Override
     public void ekle(Uye nesne) {
     	kontrol();
@@ -62,7 +64,7 @@ public class Antrenor extends Kullanici implements VeriYöneticisi<Uye> {
         DosyaYoneticisi.verileriKaydet();
     }
 
-    // ÜYEYİ ANTRENÖRÜN ÖZEL LİSTESİNDEN ÇIKARIR
+    // SİL
     @Override
     public void sil(String id) {
         kontrol();
@@ -75,7 +77,7 @@ public class Antrenor extends Kullanici implements VeriYöneticisi<Uye> {
         }
     }
 
-    // ANTRENÖRE BAĞLI ÜYENİN BİLGİLERİNİ LİSTE İÇİNDE GÜNCELLER
+    // GÜNCELLE
     @Override
     public void guncelle(Uye nesne) {
         kontrol();
@@ -94,13 +96,13 @@ public class Antrenor extends Kullanici implements VeriYöneticisi<Uye> {
         System.out.println("Uye bilgilerini guncelleme başarısız!");
     }
 
-    // ANTRENÖRÜN TÜM ÜYELERİNİ LİSTE OLARAK DÖNDÜRÜR
+    // LİSTELE
     @Override
     public List<Uye> listele() {
         return new ArrayList<>(uyeler);
     }
     
-    // BELİRTİLEN ID'YE SAHİP ÜYEYİ ANTRENÖRÜN LİSTESİNDE ARAR
+    // BUL
     @Override
     public Uye bul(String id) {
         for (Uye u : uyeler) {

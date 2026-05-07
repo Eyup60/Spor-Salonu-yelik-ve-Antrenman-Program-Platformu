@@ -4,8 +4,9 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 
+// GÜVENLİK YARDIMCISI SINIFI
 public class GuvenlikYardimcisi {
-    // ŞİFREYİ SHA-256 ALGORİTMASI İLE GERİ DÖNDÜRÜLEMEZ BİR ÖZET (HASH) HALİNE GETİRİR
+    // ŞİFRELE
     public static String sifrele(String sifre) {
         try {
             MessageDigest md = MessageDigest.getInstance("SHA-256");

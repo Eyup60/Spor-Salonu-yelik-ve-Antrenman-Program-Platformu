@@ -4,6 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 
+// KULLANICI DİALOG SINIFI
 public class KullaniciDialog extends JDialog {
     private static final long serialVersionUID = 1L;
     private JTextField txtIsim;
@@ -20,6 +21,7 @@ public class KullaniciDialog extends JDialog {
     
     private boolean isUyeUpdateOnly = false; 
 
+    // KULLANICI DİALOG YAPICI METOT
     public KullaniciDialog(JFrame parent, Kullanici guncellenecek) {
         super(parent, guncellenecek == null ? "Yeni Kullanıcı Ekle" : "Kullanıcı Güncelle", true);
         this.guncellenecek = guncellenecek;
@@ -78,8 +80,11 @@ public class KullaniciDialog extends JDialog {
         dynamicPanel.add(uyePanel, Role.UYE.name());
         
         cbRole.addActionListener(e -> {
-            CardLayout cl = (CardLayout) dynamicPanel.getLayout();
-            cl.show(dynamicPanel, ((Role) cbRole.getSelectedItem()).name());
+            Object selected = cbRole.getSelectedItem();
+            if (selected != null) {
+                CardLayout cl = (CardLayout) dynamicPanel.getLayout();
+                cl.show(dynamicPanel, ((Role) selected).name());
+            }
         });
 
         add(mainPanel, BorderLayout.NORTH);
@@ -102,7 +107,7 @@ public class KullaniciDialog extends JDialog {
         }
     }
     
-    // ANTRENÖR PANELİNDEN ÇAĞRILDIĞINDA YETKİLERİ KISITLAYAN METOT
+    // ÜYE GÜNCELLE SADECE
     public void setIsUyeUpdateOnly(boolean isOnly) {
         this.isUyeUpdateOnly = isOnly;
         if(isOnly) {
@@ -118,13 +123,23 @@ public class KullaniciDialog extends JDialog {
         }
     }
 
+    // ROL SEÇİMİ AYARLA
     public void setRoleSelection(Role type) {
         cbRole.setSelectedItem(type);
         cbRole.setEnabled(false);
         CardLayout cl = (CardLayout) dynamicPanel.getLayout();
         cl.show(dynamicPanel, type.name());
     }
-
+    
+    // KISITLI ROLLER AYARLA
+    public void setRestrictedRoles(Role[] allowedRoles) {
+        cbRole.removeAllItems(); // Mevcut tüm rolleri (Admin, Antrenör, Üye) temizle
+        for (Role role : allowedRoles) {
+            cbRole.addItem(role); // Sadece izin verilenleri ekle
+        }
+    }
+    
+    // VERİLERİ DOLDUR
     private void verileriDoldur(Kullanici k) {
         txtIsim.setText(k.getIsim());
         txtSoyisim.setText(k.getSoyisim());
@@ -147,6 +162,7 @@ public class KullaniciDialog extends JDialog {
         }
     }
 
+    // KAYDET
     private void kaydet(ActionEvent e) {
         try {
             // Eğer Antrenör güncelliyorsa, sadece fiziksel verileri set etmeliyiz
@@ -204,6 +220,7 @@ public class KullaniciDialog extends JDialog {
         }
     }
 
+    // KULLANICI GETİR
     public Kullanici getKullanici() {
         return sonucKullanici;
     }

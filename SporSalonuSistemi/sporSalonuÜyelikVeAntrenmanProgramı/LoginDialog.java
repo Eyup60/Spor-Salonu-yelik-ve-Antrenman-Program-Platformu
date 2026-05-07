@@ -3,6 +3,7 @@ package sporSalonuÜyelikVeAntrenmanProgramı;
 import javax.swing.*;
 import java.awt.*;
 
+// GİRİŞ DİALOG SINIFI
 public class LoginDialog extends JDialog {
     private static final long serialVersionUID = 1L;
 	private JTextField txtEmail;
@@ -10,6 +11,7 @@ public class LoginDialog extends JDialog {
     private Kullanici loggedInUser;
     private YetkiYöneticisi yetkiYöneticisi = new YetkiYöneticisi();
 
+    // GİRİŞ DİALOG YAPICI METOT
     public LoginDialog(JFrame parent) {
         super(parent, "Giriş Yap", true);
         setSize(300, 200);
@@ -52,6 +54,7 @@ public class LoginDialog extends JDialog {
         });
     }
 
+    // GİRİŞ YAPAN KULLANICI GETİR
     public Kullanici getLoggedInUser() {
         return loggedInUser;
     }

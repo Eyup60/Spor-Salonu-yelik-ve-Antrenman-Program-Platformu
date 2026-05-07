@@ -2,19 +2,20 @@ package sporSalonuÜyelikVeAntrenmanProgramı;
 
 import java.util.List;
 
+// VERİ YÖNETİCİSİ ARAYÜZÜ
 public interface VeriYöneticisi<T> {
-    // TİPTEN BAĞIMSIZ OLARAK HERHANGİ BİR NESNEYİ SİSTEME EKLER
+    // EKLE
     void ekle(T nesne);
     
-    // BENZERSİZ KİMLİK NUMARASI ÜZERİNDEN SİLME İŞLEMİ YAPAR
+    // SİL
     void sil(String id);
     
-    // MEVCUT VERİLERİ YENİ NESNE BİLGİLERİYLE GÜNCELLER
+    // GÜNCELLE
     void guncelle(T nesne);
     
-    // TÜM KAYITLARI BİR LİSTE İÇERİSİNDE TOPLU OLARAK GETİRİR
+    // LİSTELE
     List<T> listele();
     
-    // BELİRLİ BİR ID DEĞERİNE SAHİP NESNEYİ LİSTEDE BULUR
+    // BUL
     T bul(String id);
 }

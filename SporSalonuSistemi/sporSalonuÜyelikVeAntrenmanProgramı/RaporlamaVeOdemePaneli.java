@@ -7,11 +7,13 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.List;
 
+// RAPORLAMA VE ÖDEME PANELİ SINIFI
 public class RaporlamaVeOdemePaneli extends JFrame {
     private static final long serialVersionUID = 1L;
     private JTable tablo;
     private DefaultTableModel tabloModeli;
 
+    // RAPORLAMA VE ÖDEME PANELİ YAPICI METOT
     public RaporlamaVeOdemePaneli() {
         setTitle("Raporlama ve Ödeme Yönetimi");
         setSize(750, 500);
@@ -84,7 +86,7 @@ public class RaporlamaVeOdemePaneli extends JFrame {
         });
     }
 
-    // Sistemdeki üyeleri çekip tabloyu dolduran metot
+    // VERİLERİ TABLOYA YÜKLE
     private void verileriTabloyaYukle() {
         tabloModeli.setRowCount(0); 
         

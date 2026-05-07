@@ -2,6 +2,7 @@ package sporSalonuÜyelikVeAntrenmanProgramı;
 
 import java.time.LocalDate;
 
+// ÜYE SINIFI
 public class Uye extends Kullanici {
     private static final long serialVersionUID = 1L;
 
@@ -11,6 +12,7 @@ public class Uye extends Kullanici {
     private double yağOrani;
     private LocalDate kayitTarihi;
 
+    // ÜYE YAPICI METOT
     protected Uye(String isim,String soyisim,String email, String password, double boy, double kilo, int yas, double yağOrani) {
         // ÜST SINIFIN (KULLANICI) YAPICI METODUNU ÇAĞIRIR VE ROLÜ ÜYE OLARAK BELİRLER
         super(isim,soyisim,email, password, Role.UYE);
@@ -22,10 +24,12 @@ public class Uye extends Kullanici {
         setKayitTarihi(LocalDate.now());
     }
     
+    // BOY GETİR
     public double getBoy() {
         return this.boy;
     }
 
+    // BOY AYARLA
     public void setBoy(double boy) {
         // BOY VERİSİ İÇİN MANTIKSAL SINIRLARI KONTROL EDER (120-250 CM)
         if (boy < 120.0) {
@@ -37,10 +41,12 @@ public class Uye extends Kullanici {
         }
     }
 
+    // KİLO GETİR
     public double getKilo() {
         return this.kilo;
     }
 
+    // KİLO AYARLA
     public void setKilo(double kilo) {
         // KİLO VERİSİ İÇİN MANTIKSAL SINIRLARI KONTROL EDER (40-250 KG)
         if (kilo < 40.0) {
@@ -52,10 +58,12 @@ public class Uye extends Kullanici {
         }
     }
 
+    // YAŞ GETİR
     public int getYas() {
         return this.yas;
     }
 
+    // YAŞ AYARLA
     public void setYas(int yas) {
         // ÜYELİK İÇİN YAŞ SINIRLAMASINI DENETLER (15-65 YAŞ)
         if (yas < 15) {
@@ -67,10 +75,12 @@ public class Uye extends Kullanici {
         }
     }
 
+    // YAĞ ORANI GETİR
     public double getYağOrani() {
         return this.yağOrani;
     }
 
+    // YAĞ ORANI AYARLA
     public void setYağOrani(double yağOrani) {
         // YAĞ ORANI GİRDİSİNİN DOĞRULUĞUNU TEYİT EDER
         if (yağOrani < 3.0) {
@@ -82,10 +92,12 @@ public class Uye extends Kullanici {
         }
     }
 
+    // KAYIT TARİHİ GETİR
     public LocalDate getKayitTarihi() {
         return this.kayitTarihi;
     }
 
+    // KAYIT TARİHİ AYARLA
     public void setKayitTarihi(LocalDate kayitTarihi) {
         // KAYIT TARİHİNİN BOŞ OLMASINI VEYA GELECEK BİR TARİH OLMASINI ENGELLER
         if (kayitTarihi == null) {
@@ -97,6 +109,7 @@ public class Uye extends Kullanici {
         }
     }
     
+    // ANTRENORUM
     public String antrenorum() {
         // ADMİN ÜZERİNDEN BU ÜYEDEN SORUMLU OLAN ANTRENÖRÜN İSMİNİ GETİRİR
         return Admin.anternorBulUyeIle(this);
@@ -104,7 +117,7 @@ public class Uye extends Kullanici {
 
     @Override
     public void displayInfo() {
-        // ÜYENİN TÜM PROFİL BİLGİLERİNİ VE ANALİZ SONUÇLARINI KONSOLA YAZDIRIR
+        // BİLGİ GÖSTER
         System.out.println("--- ÜYE PROFİLİ ---");
         System.out.println("İsim :"+getIsim());
         System.out.println("Soyisim: "+getSoyisim());
@@ -115,6 +128,7 @@ public class Uye extends Kullanici {
         System.out.printf("Vücut Kitle Endeksi: %.2f\n", this.vucutKitleEndeksiHesapla());
     }
 
+    // VÜCUT KİTLE ENDEKSİ HESAPLA
     public double vucutKitleEndeksiHesapla() {
         // BOY VE KİLO VERİLERİNİ KULLANARAK VÜCUT KİTLE ENDEKSİNİ (BMI) HESAPLAR
         double boyMetre = this.boy / 100.0;

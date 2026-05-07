@@ -4,6 +4,7 @@ import java.awt.*;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
+// YÖNETİCİ PANELİ SINIFI
 public class AdminPaneli extends JFrame {
 
     private static final long serialVersionUID = 1L;
@@ -11,6 +12,7 @@ public class AdminPaneli extends JFrame {
     private JTable table;
     private DefaultTableModel tableModel;
 
+    // YÖNETİCİ PANELİ YAPICI METOT
     public AdminPaneli(Admin admin) {
         this.admin = admin;
 
@@ -37,8 +39,8 @@ public class AdminPaneli extends JFrame {
         add(new JScrollPane(table), BorderLayout.CENTER);
 
         JPanel btnPanel = new JPanel();
-        JButton btnEkle = new JButton("Yeni Ekle");
-        JButton btnGuncelle = new JButton("Güncelle");
+        JButton btnEkle = new JButton("Yeni Ekle(Admin / Antrenör)");
+        JButton btnGuncelle = new JButton("Profilimi Güncelle");
         JButton btnSil = new JButton("Sil");
         JButton btnCikis = new JButton("Çıkış Yap");
         JButton btnRaporlar = new JButton("Raporlar ve Ödemeler");
@@ -46,8 +48,8 @@ public class AdminPaneli extends JFrame {
         btnPanel.add(btnEkle);
         btnPanel.add(btnGuncelle);
         btnPanel.add(btnSil);
-        btnPanel.add(btnCikis);
         btnPanel.add(btnRaporlar);
+        btnPanel.add(btnCikis);
         add(btnPanel, BorderLayout.SOUTH);
 
         btnEkle.addActionListener(e -> ekleKullanici());
@@ -62,6 +64,7 @@ public class AdminPaneli extends JFrame {
         verileriYukle();
     }
 
+    // VERİLERİ YÜKLE
     private void verileriYukle() {
         tableModel.setRowCount(0);
         for (Kullanici k : Admin.getKullanicilar()) {
@@ -69,8 +72,12 @@ public class AdminPaneli extends JFrame {
         }
     }
 
+    // KULLANICI EKLE
     private void ekleKullanici() {
-        KullaniciDialog dialog = new KullaniciDialog(this, null);
+    	KullaniciDialog dialog = new KullaniciDialog(this, null);
+        
+        dialog.setRestrictedRoles(new Role[]{Role.ADMIN, Role.ANTRENOR});
+        
         dialog.setVisible(true);
         Kullanici yeni = dialog.getKullanici();
         
@@ -80,28 +87,24 @@ public class AdminPaneli extends JFrame {
         }
     }
 
+    // KULLANICI GÜNCELLE
     private void guncelleKullanici() {
-        int row = table.getSelectedRow();
-        if (row == -1) {
-            JOptionPane.showMessageDialog(this, "Değiştirmek için bir kullanıcı seçin.");
-            return;
-        }
+        Kullanici guncellenecek = this.admin; 
         
-        String id = (String) tableModel.getValueAt(row, 0);
-        Kullanici guncellenecek = admin.bul(id);
+        KullaniciDialog dialog = new KullaniciDialog(this, guncellenecek);
+        dialog.setTitle("Profilimi Güncelle");
+        dialog.setVisible(true);
         
-        if (guncellenecek != null) {
-            KullaniciDialog dialog = new KullaniciDialog(this, guncellenecek);
-            dialog.setVisible(true);
-            
-            Kullanici sonuc = dialog.getKullanici();
-            if(sonuc != null) {
-                admin.guncelle(sonuc);
-                verileriYukle();
-            }
+        Kullanici sonuc = dialog.getKullanici();
+        if(sonuc != null) {
+            admin.guncelle(sonuc);
+            setTitle("Yönetici Paneli - " + admin.getEmail());
+            verileriYukle();
+            JOptionPane.showMessageDialog(this, "Profil bilgileriniz başarıyla güncellendi.");
         }
     }
 
+    // KULLANICI SİL
     private void silKullanici() {
         int row = table.getSelectedRow();
         if (row == -1) {
@@ -122,6 +125,7 @@ public class AdminPaneli extends JFrame {
         }
     }
 
+    // ÇIKIŞ YAP
     private void cikisYap() {
         this.dispose();
         new GirişEkranı().setVisible(true);

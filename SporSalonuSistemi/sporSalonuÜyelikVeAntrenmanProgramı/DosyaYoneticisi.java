@@ -6,48 +6,51 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 
+// VERİ YÖNETİMİ VE KALICI SAKLAMA SINIFI
 public class DosyaYoneticisi {
 
-    // VERİ TABANI DOSYASININ BİLGİSAYARDAKİ FİZİKSEL ADRESİNİ BELİRLER
+    // DOSYA KONUMU VE FİZİKSEL ADRES TANIMI
     private static final String DOSYA_YOLU =
         System.getProperty("user.home") + File.separator + 
         ".sporSalonu" + File.separator + "kullanicilar.json";
 
-    // GSON NESNESİNİ ÖZEL AYARLARLA (TARİH FORMATLARI VE ŞIK YAZIM) YAPILANDIRIR
+    // JSON DÖNÜŞTÜRÜCÜ VE TARİH ADAPTÖRLERİ YAPILANDIRMASI
     private static Gson buildGson() {
         return new GsonBuilder()
             .setPrettyPrinting()
-            // JAVA LOCALDATE VE JSON METİN DÖNÜŞÜMÜNÜ SAĞLAYAN ADAPTÖRLER
+            // LOCALDATE TİPİNİ METNE ÇEVİRİR
             .registerTypeAdapter(LocalDate.class,
                 (JsonSerializer<LocalDate>) (src, t, ctx) ->
                     new JsonPrimitive(src.toString()))
+            // METNİ TEKRAR LOCALDATE NESNESİNE ÇEVİRİR
             .registerTypeAdapter(LocalDate.class,
                 (JsonDeserializer<LocalDate>) (json, t, ctx) ->
                     LocalDate.parse(json.getAsString()))
-            // JAVA LOCALDATETIME (SAAT VE TARİH) İÇİN DÖNÜŞÜM AYARLARI
+            // LOCALDATETIME NESNESİNİ JSON UYUMLU YAPAR
             .registerTypeAdapter(LocalDateTime.class,
                 (JsonSerializer<LocalDateTime>) (src, t, ctx) ->
                     new JsonPrimitive(src.toString()))
+            // JSON VERİSİNİ LOCALDATETIME NESNESİNE DÖNÜŞTÜRÜR
             .registerTypeAdapter(LocalDateTime.class,
                 (JsonDeserializer<LocalDateTime>) (json, t, ctx) ->
                     LocalDateTime.parse(json.getAsString()))
             .create();
     }
     
-    // RAM'DEKİ TÜM KULLANICI VE İLİŞKİ VERİLERİNİ JSON DOSYASINA KAYDEDER
+    // BELLEKTEKİ VERİLERİ DOSYAYA YAZMA İŞLEMİ
     public static void verileriKaydet() {
         try {
             File dosya = new File(DOSYA_YOLU);
-            dosya.getParentFile().mkdirs(); // EKSİK KLASÖRLERİ OLUŞTURUR
+            dosya.getParentFile().mkdirs(); // KLASÖR YOKSA OTOMATİK OLUŞTURMA
             Gson gson = buildGson(); 
             List<JsonObject> kayitlar = new ArrayList<>();
             
-            // HER KULLANICIYI TİPİYLE (ADMİN/ÜYE/ANTRENÖR) BİRLİKTE JSON'A DÖNÜŞTÜRÜR
+            // NESNE TİPİNİ KORUYARAK LİSTEYİ TARAMA
             for (Kullanici k : Admin.getKullanicilar()) {
-                JsonObject obj = gson.toJsonTree(k).getAsJsonObject(); // KULLANICI NESNESİ JSON NESNESİNE DÖNÜŞTÜRLÜR
-                obj.addProperty("tip", k.getClass().getSimpleName()); // JSON NESNESİNE TİP ATANIR POLİMORFİZM SAĞLANIR
+                JsonObject obj = gson.toJsonTree(k).getAsJsonObject(); 
+                obj.addProperty("tip", k.getClass().getSimpleName()); // ALT SINIF BİLGİSİNİ JSONA EKLEME
                 
-                // ANTRENÖR VE ÜYE ARASINDAKİ BAĞLARI SADECE ID OLARAK SAKLAR
+                // ANTRENÖR VE ÜYE BAĞLARINI ID ÜZERİNDEN SAKLAMA
                 if (k instanceof Antrenor antrenor) {
                     JsonArray ids = new JsonArray();
                     antrenor.listele().forEach(u -> ids.add(u.getId()));
@@ -56,7 +59,7 @@ public class DosyaYoneticisi {
 
                 kayitlar.add(obj);
             }
-            // TÜM LİSTEYİ DOSYAYA FİZİKSEL OLARAK YAZAR
+            // TÜM VERİLERİ JSON DOSYASINA AKTARMA
             try (Writer w = new FileWriter(dosya)) {
                 gson.toJson(kayitlar, w);
                 System.out.println("Veriler kaydedildi: " + DOSYA_YOLU);
@@ -68,11 +71,11 @@ public class DosyaYoneticisi {
         }
     }
     
-    // PROGRAM AÇILIŞINDA DOSYADAKİ VERİLERİ OKUYUP CANLI NESNELERE DÖNÜŞTÜRÜR
+    // DOSYADAN VERİ OKUMA VE NESNELEŞTİRME İŞLEMİ
     public static void verileriYukle() {
         File dosya = new File(DOSYA_YOLU);
         
-        // EĞER DOSYA YOKSA SİSTEMİ İLK KEZ ÇALIŞTIRIP VARSAYILAN ADMİN OLUŞTURUR
+        // DOSYA YOKSA İLK ADMİN HESABINI OLUŞTURMA
         if (!dosya.exists()) {
             System.out.println("Kayıt dosyası bulunamadı. İlk yönetici hesabı oluşturuluyor...");
             Admin ilkAdmin = new Admin("İlk","Admin","admin@gym.com", "123456");
@@ -87,14 +90,14 @@ public class DosyaYoneticisi {
             List<Kullanici> liste = new ArrayList<>();
             Map<String, List<String>> antrenorMap = new HashMap<>();
 
-         // DOSYADAN OKUNAN HER JSON ÖGESİNİ DOĞRU JAVA SINIFINA (CLASS) ÇEVİRİR
+            // JSON VERİSİNİ DOĞRU SINIF TİPİNE DÖNÜŞTÜRME
             for (JsonElement el : dizi) {
                 JsonObject obj = el.getAsJsonObject();
                 
-                // TİP VERİSİNİ ALIR
+                // TİP BİLGİSİNİ OKUMA VE FORMATLAMA
                 String tipRaw = obj.get("tip").getAsString().trim().toLowerCase();
                 
-                // TEMİZLENMİŞ VE KÜÇÜK HARFE SABİTLENMİŞ VERİYE GÖRE NESNE OLUŞTURUR
+                // SINIF TİPİNE GÖRE NESNE ÜRETME
                 Kullanici k = switch (tipRaw) {
                     case "admin"    -> gson.fromJson(obj, Admin.class);
                     case "antrenor" -> gson.fromJson(obj, Antrenor.class);
@@ -104,7 +107,7 @@ public class DosyaYoneticisi {
 
                 liste.add(k);
                 
-                // ANTRENÖR İLİŞKİLERİNİ KONTROL EDERKEN DE AYNI TEMİZLENMİŞ VERİYİ KULLANIR
+                // ANTRENÖR VE ÜYE İLİŞKİLERİNİ EŞLEŞTİRMEK İÇİN SAKLAMA
                 if (tipRaw.equals("antrenor") && obj.has("antrenorUyeIds")) {
                     List<String> ids = new ArrayList<>();
                     obj.get("antrenorUyeIds").getAsJsonArray()
@@ -113,10 +116,10 @@ public class DosyaYoneticisi {
                 }
             }
             
-            // TÜM KULLANICILARI MERKEZİ LİSTEYE AKTARIR
+            // YÜKLENEN LİSTEYİ SİSTEME AKTARMA
             Admin.setKullanicilar(liste);
             
-            // ID OLARAK OKUNAN İLİŞKİLERİ GERÇEK NESNE REFERANSLARINA DÖNÜŞTÜRÜR
+            // ID BİLGİLERİNİ GERÇEK NESNE BAĞLANTILARINA ÇEVİRME
             for (Kullanici k : liste) {
                 if (k instanceof Antrenor antrenor) {
                     List<String> uyeIds = antrenorMap.getOrDefault(k.getId(), List.of());
@@ -130,9 +133,9 @@ public class DosyaYoneticisi {
                 }
             }
             
+            // ANTRENÖRÜ OLMAYAN ÜYELERİ OTOMATİK ATAMA SİSTEMİNE GÖNDERME
             for (Kullanici k : Admin.getKullanicilar()) {
                 if (k instanceof Uye uye) {
-                    // Eğer üyenin hocası yoksa (Admin sınıfındaki sorgu ile kontrol et)
                     if (Admin.anternorBulUyeIle(uye).equals("Henüz Atanmadı")) {
                         System.out.println("Hocasız üye tespit edildi, atama yapılıyor: " + uye.getIsim());
                         AtamaMotoru.otomatikAtamaYap(uye);

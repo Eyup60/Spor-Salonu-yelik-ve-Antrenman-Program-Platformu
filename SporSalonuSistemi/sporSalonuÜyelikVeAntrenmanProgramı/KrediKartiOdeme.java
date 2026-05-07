@@ -1,13 +1,16 @@
 package sporSalonuÜyelikVeAntrenmanProgramı;
 
+// KREDİ KARTI ÖDEME SINIFI
 public class KrediKartiOdeme extends OdemeYontemi {
     private String kartNumarasi;
 
+    // KREDİ KARTI ÖDEME YAPICI METOT
     public KrediKartiOdeme(double tutar, String kartNumarasi) {
         super(tutar);
         this.kartNumarasi = kartNumarasi;
     }
 
+    // ÖDEME AL
     @Override
     public String odemeAl() throws GecersizOdemeException {
         if (tutar <= 0) {

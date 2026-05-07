@@ -7,6 +7,7 @@ import java.util.Random;
 import java.util.concurrent.CopyOnWriteArrayList;
 import javax.swing.JOptionPane;
 
+// YÖNETİCİ SINIFI
 public class Admin extends Kullanici implements VeriYöneticisi<Kullanici>{
     
     private static final long serialVersionUID = 1L;
@@ -16,17 +17,17 @@ public class Admin extends Kullanici implements VeriYöneticisi<Kullanici>{
     
     private LocalDateTime sonGiriş;
 
-    // YÖNETİCİ NESNESİNİ OLUŞTURUR VE ROLÜNÜ 'ADMIN' OLARAK ATAR
+    // YÖNETİCİ YAPICI METOT
     protected Admin(String isim ,String soyisim,String email,String password) {
         super(isim ,soyisim,email, password, Role.ADMIN);
     }
     
-    // KULLANICI LİSTESİNİN GÜVENLİ BİR KOPYASINI DIŞARIYA SUNAR (ENCAPSULATION)
+    // KULLANICILARI GETİR
     public static List<Kullanici> getKullanicilar() {
         return new ArrayList<>(kullanicilar);
     }
 
-    // DOSYADAN OKUNAN VERİLERİN SİSTEME ENJEKTE EDİLDİĞİ NOKTA
+    // KULLANICILARI AYARLA
     public static void setKullanicilar(List<Kullanici> kullanicilar) {
         if(kullanicilar == null) {
             throw new IllegalArgumentException("Kullanıcı listesi sisteme yüklenemedi!");
@@ -34,11 +35,12 @@ public class Admin extends Kullanici implements VeriYöneticisi<Kullanici>{
         Admin.kullanicilar = kullanicilar;
     }
     
+    // SON GİRİŞ GETİR
     public LocalDateTime getSonGiriş() {
         return sonGiriş;
     }
 
-    // GÜVENLİK KONTROLÜ: GİRİŞ ZAMANININ GELECEKTE OLMASINI ENGELLER
+    // SON GİRİŞ AYARLA
     public void setSonGiriş(LocalDateTime sonGiriş) {
         if(sonGiriş == null) {
             throw new IllegalArgumentException("Son giriş zamanı boş olamaz!");
@@ -49,7 +51,7 @@ public class Admin extends Kullanici implements VeriYöneticisi<Kullanici>{
         this.sonGiriş = sonGiriş;
     }
     
-    // İLİŞKİSEL SORGULAMA: BİR ÜYENİN HANGİ ANTRENÖRE BAĞLI OLDUĞUNU LİSTELERİ TARAYARAK BULUR
+    // ANTRENÖR BUL
     public static String anternorBulUyeIle(Uye uye) {
         if (uye == null) return "Henüz Atanmadı";
 
@@ -65,7 +67,7 @@ public class Admin extends Kullanici implements VeriYöneticisi<Kullanici>{
         return "Henüz Atanmadı";
     }
 
-    // SİSTEM BAŞLATILIRKEN VEYA KAYIT ESNASINDA KONTROLLÜ VERİ EKLEME
+    // DOĞRUDAN EKLE
     public static void doğrudanEkle(Kullanici k) {
         if (!kullanicilar.contains(k)) {
             kullanicilar.add(k);
@@ -73,7 +75,7 @@ public class Admin extends Kullanici implements VeriYöneticisi<Kullanici>{
         }
     }
     
-    // POLİMORFİK BİLGİ GÖSTERİMİ: ADMİNE ÖZEL VERİLERİ KONSOLA YAZAR
+    // BİLGİ GÖSTER
     @Override
     public void displayInfo() {
         System.out.println("--- YÖNETİCİ PANELİ ---");
@@ -83,7 +85,7 @@ public class Admin extends Kullanici implements VeriYöneticisi<Kullanici>{
         System.out.println("Son Erişim: " + sonGiriş);
     }
 
-    // VERİ YÖNETİCİSİ ARARYÜZÜ (INTERFACE) METODLARI: YENİ KULLANICI EKLEME
+    // EKLE
     @Override
     public void ekle(Kullanici nesne) {
     	if(kullanicilar.contains(nesne)) {
@@ -102,7 +104,7 @@ public class Admin extends Kullanici implements VeriYöneticisi<Kullanici>{
         System.out.println("Ekleme işlemi başarılı.");
     }
 
-    // SİSTEMİN YÖNETİCİSİZ KALMASINI ENGELLER
+    // SİL
     @Override
     public void sil(String id) {
         Kullanici silinecek = bul(id);
@@ -119,7 +121,7 @@ public class Admin extends Kullanici implements VeriYöneticisi<Kullanici>{
         }
     }
 
-    // MEVCUT KULLANICI VERİLERİNİ GÜNCELLEME VE SENKRONİZE ETME
+    // GÜNCELLE
     @Override
     public void guncelle(Kullanici nesne) {
         for(int i = 0; i < kullanicilar.size(); i++) {
@@ -133,13 +135,13 @@ public class Admin extends Kullanici implements VeriYöneticisi<Kullanici>{
         System.out.println("Güncelleme başarısız!");
     }
 
-    // TÜM KULLANICILARI LİSTE OLARAK DÖNDÜRÜR
+    // LİSTELE
     @Override
     public List<Kullanici> listele() {
         return new ArrayList<>(kullanicilar);
     }
     
-    // ID ÜZERİNDEN LİSTEDE ARAMA YAPARAK İLGİLİ NESNEYİ DÖNDÜRÜR
+    // BUL
     @Override
     public Kullanici bul(String id) {
         for(Kullanici nesne : kullanicilar) {

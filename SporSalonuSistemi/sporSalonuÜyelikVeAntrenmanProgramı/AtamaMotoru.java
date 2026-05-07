@@ -2,8 +2,10 @@ package sporSalonuÜyelikVeAntrenmanProgramı;
 
 import java.util.List;
 
+// ATAMA MOTORU SINIFI
 public class AtamaMotoru {
 
+    // OTOMATİK ATAMA YAP
 	public static void otomatikAtamaYap(Uye yeniUye) {
         // SİSTEMDEKİ TÜM ANTRENÖRLERİ BULUR
         List<Antrenor> antrenör = Admin.getKullanicilar().stream()

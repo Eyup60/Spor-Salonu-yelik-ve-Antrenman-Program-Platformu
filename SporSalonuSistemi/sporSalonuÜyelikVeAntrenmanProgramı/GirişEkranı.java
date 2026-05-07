@@ -4,6 +4,7 @@ import java.awt.*;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
+// GİRİŞ EKRANI SINIFI
 public class GirişEkranı extends JFrame {
 
     private static final long serialVersionUID = 1L;
@@ -14,6 +15,7 @@ public class GirişEkranı extends JFrame {
     private JButton btnRegister;
     private JLabel lblUyeOlmadiniz;
 
+    // ANA METOT
     public static void main(String[] args) {
         
         // UYGULAMA BAŞLATILIRKEN KAYITLI VERİLERİ DOSYADAN YÜKLER
@@ -37,6 +39,7 @@ public class GirişEkranı extends JFrame {
         });
     }
 
+    // GİRİŞ EKRANI YAPICI METOT
     public GirişEkranı() {
         // PENCERE GENEL AYARLARI
         setTitle("Spor Salonu Ana Giriş ve Kayıt Arayüzü");
@@ -156,7 +159,7 @@ public class GirişEkranı extends JFrame {
         getContentPane().add(bottomPanel, BorderLayout.SOUTH);
     }
 
-    // ORTAK BUTON TASARIMI OLUŞTURUCU
+    // KART BUTONU OLUŞTUR
     private JButton createCardButton(String text) {
         JButton btn = new JButton(text);
         btn.setPreferredSize(new Dimension(200, 60));
@@ -169,7 +172,7 @@ public class GirişEkranı extends JFrame {
         return btn;
     }
 
-    // GİRİŞ VE ÇIKIŞ İŞLEMLERİNİ YÖNETEN METOT
+    // GİRİŞ YAP
     private void performLogin() {
         if (loggedInUser != null) { 
             loggedInUser = null;
@@ -199,7 +202,7 @@ public class GirişEkranı extends JFrame {
         }
     }
 
-    // KULLANICI ROLÜNE GÖRE İLGİLİ PANELİ AÇAR
+    // PANEL AÇ
     private void openDashboard() {
         if(loggedInUser == null) return;
         
@@ -210,12 +213,13 @@ public class GirişEkranı extends JFrame {
         }
     }
 
+    // KAYIT OL
     private void performRegister() {
         KayıtDialog kd = new KayıtDialog(this);
         kd.setVisible(true);
     }
 
-    // ADMİN TARAFINDAN YENİ ANTRENÖR VEYA ADMİN EKLENMESİNİ SAĞLAR
+    // ÖZEL KULLANICI OLUŞTUR
     private void createSpecificUser(Role type) {
         KullaniciDialog dialog = new KullaniciDialog(this, null);
         dialog.setIsUyeUpdateOnly(false);

@@ -3,12 +3,14 @@ package sporSalonuÜyelikVeAntrenmanProgramı;
 import javax.swing.*;
 import java.awt.*;
 
+// KAYIT DİALOG SINIFI
 public class KayıtDialog extends JDialog {
     private static final long serialVersionUID = 1L;
 	private JTextField txtIsim,txtSoyIsim,txtEmail, txtBoy, txtKilo, txtYas, txtYagOrani;
     private JPasswordField txtPassword;
     private Kullanici yeniUye;
 
+    // KAYIT DİALOG YAPICI METOT
     public KayıtDialog(JFrame parent) {
         super(parent, "Yeni Üye Kaydı", true);
         setSize(350, 400);
@@ -63,6 +65,7 @@ public class KayıtDialog extends JDialog {
         btnKaydet.addActionListener(e -> kayitOl());
     }
 
+    // KAYIT OL
     private void kayitOl() {
         try {
         	String isim = txtIsim.getText();
@@ -86,6 +89,7 @@ public class KayıtDialog extends JDialog {
         }
     }
 
+    // YENİ KULLANICI GETİR
     public Kullanici getYeniKullanici() {
         return yeniUye;
     }

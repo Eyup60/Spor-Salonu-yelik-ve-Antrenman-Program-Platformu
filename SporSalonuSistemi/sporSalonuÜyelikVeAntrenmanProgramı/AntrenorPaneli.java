@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
+// ANTRENÖR PANELİ SINIFI
 public class AntrenorPaneli extends JFrame {
 
     private static final long serialVersionUID = 1L;
@@ -13,6 +14,7 @@ public class AntrenorPaneli extends JFrame {
     private JTable table;
     private DefaultTableModel tableModel;
 
+    // ANTRENÖR PANELİ YAPICI METOT
     public AntrenorPaneli(Antrenor antrenor) {
         this.antrenor = antrenor;
 
@@ -50,27 +52,48 @@ public class AntrenorPaneli extends JFrame {
 
         // ALT PANEL: YETKİLER SINIRLANDIRILDI
         JPanel btnPanel = new JPanel();
-        JButton btnGuncelle = new JButton("Gelişimi Güncelle"); // İsmi değiştirildi, daha profesyonel
+        JButton btnProfilim = new JButton("Profilimi Güncelle");
         JButton btnSil = new JButton("Öğrenciyi Bırak/Sil");
         JButton btnCikis = new JButton("Çıkış");
-        
-        btnPanel.add(btnGuncelle);
+       
+        btnPanel.add(btnProfilim);
         btnPanel.add(btnSil);
         btnPanel.add(btnCikis);
         getContentPane().add(btnPanel, BorderLayout.SOUTH);
 
-        btnGuncelle.addActionListener(e -> guncelleUye());
+        btnProfilim.addActionListener(e -> kendiProfiliniGuncelle());
         btnSil.addActionListener(e -> silUye());
         btnCikis.addActionListener(e -> cikisYap());
 
         verileriYukle();
     }
+    
+    // KENDİ PROFİLİNİ GÜNCELLE
+    private void kendiProfiliniGuncelle() {
+        KullaniciDialog dialog = new KullaniciDialog(this, this.antrenor);
+        
+        dialog.setIsUyeUpdateOnly(false); 
+        dialog.setTitle("Profil Bilgilerimi Güncelle");
+        dialog.setVisible(true);
+        
+        Kullanici sonuc = dialog.getKullanici();
+        if(sonuc != null && sonuc instanceof Antrenor) {
+            Admin.doğrudanEkle(sonuc); 
+            this.antrenor = (Antrenor) sonuc;
+            
+            setTitle("Antrenör Paneli - " + antrenor.getEmail());
+            verileriYukle();
+            
+            JOptionPane.showMessageDialog(this, "Profiliniz başarıyla güncellendi.");
+        }
+    }
 
+    // VERİLERİ YÜKLE
     private void verileriYukle() {
         tableModel.setRowCount(0);
         for (Uye u : antrenor.listele()) {
             tableModel.addRow(new Object[]{ 
-                u.getId(), // ID artık 0. indekste
+                u.getId(), 
                 u.getIsim(),
                 u.getSoyisim(),
                 u.getEmail(), 
@@ -82,6 +105,7 @@ public class AntrenorPaneli extends JFrame {
         }
     }
 
+    // ÜYE GÜNCELLE
     private void guncelleUye() {
         int row = table.getSelectedRow();
         if (row == -1) {
@@ -89,16 +113,15 @@ public class AntrenorPaneli extends JFrame {
             return;
         }
         
-        // ID ARTIK DOĞRU KOLONDAN ALINIYOR
         String id = (String) tableModel.getValueAt(row, 0);
-        Uye u = antrenor.bul(id); // Antrenör sınıfındaki 'bul' metodunu kullanıyoruz
+        Uye u = antrenor.bul(id);
         
         if (u != null) {
             KullaniciDialog dialog = new KullaniciDialog(this, u);
             dialog.setIsUyeUpdateOnly(true);
             dialog.setVisible(true);
             
-            Kullanici sonuc = dialog.getKullanici(); // getKullanici ismini kontrol et
+            Kullanici sonuc = dialog.getKullanici(); 
             if(sonuc != null) {
                 antrenor.guncelle((Uye)sonuc);
                 verileriYukle();
@@ -106,6 +129,7 @@ public class AntrenorPaneli extends JFrame {
         }
     }
 
+    // ÜYE SİL
     private void silUye() {
         int row = table.getSelectedRow();
         if (row == -1) {
@@ -121,11 +145,11 @@ public class AntrenorPaneli extends JFrame {
             String id = (String) tableModel.getValueAt(row, 0);
             antrenor.sil(id);
             verileriYukle();
-            // Paneldeki başlığı da güncellemek için
             setTitle("Antrenör Paneli - " + antrenor.getEmail()); 
         }
     }
 
+    // ÇIKIŞ YAP
     private void cikisYap() {
         this.dispose();
         new GirişEkranı().setVisible(true);

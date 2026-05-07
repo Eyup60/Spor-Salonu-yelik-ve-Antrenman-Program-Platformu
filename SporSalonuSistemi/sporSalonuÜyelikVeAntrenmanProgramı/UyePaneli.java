@@ -4,9 +4,11 @@ import java.awt.*;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
+// ÜYE PANELİ SINIFI
 public class UyePaneli extends JFrame {
 
     private static final long serialVersionUID = 1L;
+    // ÜYE PANELİ YAPICI METOT
 	public UyePaneli(Uye uye) {
         setTitle("Üye Paneli - " + uye.getEmail());
         setSize(400, 400);
@@ -78,6 +80,7 @@ public class UyePaneli extends JFrame {
         add(btnPanel, BorderLayout.SOUTH);
     }
 
+    // ÇIKIŞ YAP
     private void cikisYap() {
         this.dispose();
         new GirişEkranı().setVisible(true);

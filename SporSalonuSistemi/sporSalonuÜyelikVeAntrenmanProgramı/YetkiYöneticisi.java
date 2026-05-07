@@ -1,11 +1,13 @@
 package sporSalonuÜyelikVeAntrenmanProgramı;
 
+// YETKİ YÖNETİCİSİ SINIFI
 public class YetkiYöneticisi {
     // HATALI GİRİŞ DENEMELERİNİ TAKİP EDEN DEĞİŞKEN
     private int basarisizGirisSayisi = 0;
     // GÜVENLİK İÇİN BELİRLENEN MAKSİMUM DENEME SINIRI
     private static final int MAX_DENEME = 5;
 
+    // GİRİŞ
     public Kullanici giriş(String email, String password) {
         // BELİRLENEN DENEME SINIRI AŞILDIYSA SİSTEME GİRİŞİ ENGELLER
         if (basarisizGirisSayisi >= MAX_DENEME) {
