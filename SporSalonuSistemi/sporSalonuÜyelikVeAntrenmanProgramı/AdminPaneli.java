@@ -26,7 +26,7 @@ public class AdminPaneli extends JFrame {
         lblTitle.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
         add(lblTitle, BorderLayout.NORTH);
 
-        String[] cols = {"ID","İsim","Soyisim", "Email", "Rol"};
+        String[] cols = {"ID", "Email", "Rol"};
         tableModel = new DefaultTableModel(cols, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -41,17 +41,23 @@ public class AdminPaneli extends JFrame {
         JButton btnGuncelle = new JButton("Güncelle");
         JButton btnSil = new JButton("Sil");
         JButton btnCikis = new JButton("Çıkış Yap");
-
+        JButton btnRaporlar = new JButton("Raporlar ve Ödemeler");
+        
         btnPanel.add(btnEkle);
         btnPanel.add(btnGuncelle);
         btnPanel.add(btnSil);
         btnPanel.add(btnCikis);
+        btnPanel.add(btnRaporlar);
         add(btnPanel, BorderLayout.SOUTH);
 
         btnEkle.addActionListener(e -> ekleKullanici());
         btnGuncelle.addActionListener(e -> guncelleKullanici());
         btnSil.addActionListener(e -> silKullanici());
-        btnCikis.addActionListener(e -> cikisYap());
+        btnCikis.addActionListener(e -> cikisYap());btnRaporlar.addActionListener(e -> {
+            RaporlamaVeOdemePaneli raporPaneli = new RaporlamaVeOdemePaneli();
+            raporPaneli.setVisible(true);
+        });
+        
 
         verileriYukle();
     }
@@ -59,7 +65,7 @@ public class AdminPaneli extends JFrame {
     private void verileriYukle() {
         tableModel.setRowCount(0);
         for (Kullanici k : Admin.getKullanicilar()) {
-            tableModel.addRow(new Object[]{k.getId(),k.getIsim(),k.getSoyisim(), k.getEmail(), k.getRole().name()});
+            tableModel.addRow(new Object[]{k.getId(), k.getEmail(), k.getRole().name()});
         }
     }
 
