@@ -17,7 +17,7 @@ public class AdminPaneli extends JFrame {
         this.admin = admin;
 
         setTitle("Yönetici Paneli - " + admin.getIsim()+" "+admin.getSoyisim());
-        setSize(900, 600);
+        setSize(1200, 900);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         
