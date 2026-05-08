@@ -1,9 +1,0 @@
-.idea/
-.project
-.classpath
-.settings/
-bin/
-*.class
-*.jar
-.DS_Store
-/bin/
