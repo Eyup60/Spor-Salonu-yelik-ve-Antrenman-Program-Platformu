@@ -23,7 +23,7 @@ public class UyePaneli extends JFrame {
         
         setTitle("Spor Salonu - Üye Paneli");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // Çarpıya basınca programı tamamen kapatır
-        setSize(450, 300);
+        setSize(450, 400);
         setLocationRelativeTo(null); // Pencerenin ekranın tam ortasında açılmasını sağlar
         
         contentPane = new JPanel();
@@ -59,9 +59,43 @@ public class UyePaneli extends JFrame {
         
         JButton btnCikis = new JButton("Çıkış Yap");
         btnCikis.setPreferredSize(new Dimension(180, 40));
-        
+        JButton btnOdemeYap = new JButton("Ödeme İşlemleri");
+        btnOdemeYap.setPreferredSize(new Dimension(180, 40));
+        btnOdemeYap.setBackground(new Color(0, 153, 204)); 
+        btnOdemeYap.setForeground(Color.WHITE);
         panelButonlar.add(btnPaketSec);
         panelButonlar.add(btnCikis);
+        panelButonlar.add(btnOdemeYap); 
+
+        btnOdemeYap.addActionListener(e -> {
+            // Ödeme penceresini açan kodlar
+            String input = JOptionPane.showInputDialog(this, "Ödemek istediğiniz tutarı giriniz:", "Hızlı Ödeme", JOptionPane.QUESTION_MESSAGE);
+            
+            if (input != null && !input.isEmpty()) {
+                try {
+                    double tutar = Double.parseDouble(input);
+                    
+                    String[] secenekler = {"Kredi Kartı", "Nakit"};
+                    int secim = JOptionPane.showOptionDialog(this, "Ödeme yöntemi seçiniz:", "Yöntem",
+                            JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, secenekler, secenekler[0]);
+
+                    OdemeYontemi odeme;
+                    if (secim == 0) {
+                        odeme = new KrediKartiOdeme(tutar, "5432-****-****-1234");
+                    } else {
+                        odeme = new NakitOdeme(tutar);
+                    }
+
+                    String sonuc = odeme.odemeAl();
+                    JOptionPane.showMessageDialog(this, sonuc, "İşlem Başarılı", JOptionPane.INFORMATION_MESSAGE);
+
+                } catch (NumberFormatException ex) {
+                    JOptionPane.showMessageDialog(this, "Lütfen geçerli bir sayı giriniz!", "Hata", JOptionPane.ERROR_MESSAGE);
+                } catch (GecersizOdemeException ex) {
+                    JOptionPane.showMessageDialog(this, ex.getMessage(), "Ödeme Reddedildi", JOptionPane.WARNING_MESSAGE);
+                }
+            }
+        });
 
         // Event Handling (Olay Yönetimi): Butona tıklandığında dialog penceresini açar
         btnPaketSec.addActionListener(e -> {
