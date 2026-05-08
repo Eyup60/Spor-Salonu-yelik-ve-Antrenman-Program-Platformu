@@ -2,6 +2,7 @@ package sporSalonuÜyelikVeAntrenmanProgramı;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyEvent;
 
 // GİRİŞ DİALOG SINIFI
 public class LoginDialog extends JDialog {
@@ -52,10 +53,39 @@ public class LoginDialog extends JDialog {
                 JOptionPane.showMessageDialog(this, "Hatalı Email veya Şifre!", "Hata", JOptionPane.ERROR_MESSAGE);
             }
         });
+        
+        // Enter tuşu ile form alanları ve butonlar arasında gezinme
+        setupEnterKeyNavigation();
     }
 
     // GİRİŞ YAPAN KULLANICI GETİR
     public Kullanici getLoggedInUser() {
         return loggedInUser;
+    }
+    
+    // Enter tuşu ile form alanları arasında gezinme metod
+    private void setupEnterKeyNavigation() {
+        // Email alanından şifre alanına geçiş
+        txtEmail.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                if (evt.getKeyCode() == java.awt.event.KeyEvent.VK_ENTER) {
+                    txtPassword.requestFocus();
+                }
+            }
+        });
+        
+        // Şifre alanından giriş butonuna geçiş veya giriş yapma
+        txtPassword.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                if (evt.getKeyCode() == java.awt.event.KeyEvent.VK_ENTER) {
+                    // Giriş butonuna tıkla
+                    JButton btnLogin = (JButton) ((JPanel) getContentPane().getComponent(1)).getComponent(0);
+                    btnLogin.doClick();
+                }
+            }
+        });
+        
+        // İlk alana odaklan
+        txtEmail.requestFocus();
     }
 }

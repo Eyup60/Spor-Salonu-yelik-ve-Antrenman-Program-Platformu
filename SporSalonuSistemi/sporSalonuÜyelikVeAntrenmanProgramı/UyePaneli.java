@@ -103,6 +103,9 @@ public class UyePaneli extends JFrame {
         btnCikis.addActionListener(e -> cikisYap());
         btnPanel.add(btnCikis);
         
+        // Enter tuşu ile butonlar arasında gezinme
+        setupEnterKeyNavigation(btnGuncelle, btnCikis);
+        
         panel.add(btnPanel, BorderLayout.SOUTH);
 
         return panel;
@@ -147,6 +150,9 @@ public class UyePaneli extends JFrame {
             ekraniGuncelle();
             JOptionPane.showMessageDialog(this, secilen + " programı başarıyla atandı!", "İşlem Başarılı", JOptionPane.INFORMATION_MESSAGE);
         });
+        
+        // Enter tuşu ile buton arasında gezinme
+        setupEnterKeyNavigation(btnAta);
 
         ekraniGuncelle();
         return panel;
@@ -187,5 +193,35 @@ public class UyePaneli extends JFrame {
     private void cikisYap() {
         this.dispose();
         new GirişEkranı().setVisible(true);
+    }
+    
+    // Enter tuşu ile butonlar arasında gezinme metod
+    private void setupEnterKeyNavigation(JButton... buttons) {
+        for (int i = 0; i < buttons.length; i++) {
+            final int currentIndex = i;
+            final JButton currentButton = buttons[i];
+            
+            currentButton.addKeyListener(new java.awt.event.KeyAdapter() {
+                public void keyPressed(java.awt.event.KeyEvent evt) {
+                    if (evt.getKeyCode() == java.awt.event.KeyEvent.VK_ENTER) {
+                        // Enter tuşuna basıldığında butonun action'ını çalıştır
+                        currentButton.doClick();
+                    } else if (evt.getKeyCode() == java.awt.event.KeyEvent.VK_DOWN) {
+                        // Aşağı ok tuşu ile sonraki butona geç
+                        int nextIndex = (currentIndex + 1) % buttons.length;
+                        buttons[nextIndex].requestFocus();
+                    } else if (evt.getKeyCode() == java.awt.event.KeyEvent.VK_UP) {
+                        // Yukarı ok tuşu ile önceki butona geç
+                        int prevIndex = (currentIndex - 1 + buttons.length) % buttons.length;
+                        buttons[prevIndex].requestFocus();
+                    }
+                }
+            });
+        }
+        
+        // İlk butona odaklan
+        if (buttons.length > 0) {
+            buttons[0].requestFocus();
+        }
     }
 }

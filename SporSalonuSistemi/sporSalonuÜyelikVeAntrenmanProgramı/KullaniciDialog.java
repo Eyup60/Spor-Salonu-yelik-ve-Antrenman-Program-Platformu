@@ -100,6 +100,9 @@ public class KullaniciDialog extends JDialog {
         btnIptal.addActionListener(e -> dispose());
         btnKaydet.addActionListener(this::kaydet);
         
+        // Enter tuşu ile form alanları ve butonlar arasında gezinme
+        setupEnterKeyNavigationForForm();
+        
         if (guncellenecek != null) {
             verileriDoldur(guncellenecek);
         } else {
@@ -223,5 +226,66 @@ public class KullaniciDialog extends JDialog {
     // KULLANICI GETİR
     public Kullanici getKullanici() {
         return sonucKullanici;
+    }
+    
+    // Enter tuşu ile form alanları arasında gezinme metod
+    private void setupEnterKeyNavigationForForm() {
+        // Form alanlarını bir listeye ekle
+        java.util.List<JComponent> formComponents = new java.util.ArrayList<>();
+        formComponents.add(txtIsim);
+        formComponents.add(txtSoyisim);
+        formComponents.add(txtEmail);
+        formComponents.add(txtPassword);
+        formComponents.add(cbRole);
+        formComponents.add(txtBoy);
+        formComponents.add(txtKilo);
+        formComponents.add(txtYas);
+        formComponents.add(txtYagOrani);
+        formComponents.add(txtUzmanlik);
+        
+        // Butonları da ekle
+        java.util.List<JButton> buttons = new java.util.ArrayList<>();
+        // Butonları bulmak için panel içinde arama yap
+        for (Component comp : ((JPanel) getContentPane().getComponent(2)).getComponents()) {
+            if (comp instanceof JButton) {
+                buttons.add((JButton) comp);
+            }
+        }
+        
+        // Form alanlarına Enter tuşu ekle
+        for (int i = 0; i < formComponents.size(); i++) {
+            final int currentIndex = i;
+            final JComponent currentComponent = formComponents.get(i);
+            
+            currentComponent.addKeyListener(new java.awt.event.KeyAdapter() {
+                public void keyPressed(java.awt.event.KeyEvent evt) {
+                    if (evt.getKeyCode() == java.awt.event.KeyEvent.VK_ENTER) {
+                        // Enter tuşuna basıldığında sonraki alana geç
+                        int nextIndex = (currentIndex + 1) % formComponents.size();
+                        formComponents.get(nextIndex).requestFocus();
+                    }
+                }
+            });
+        }
+        
+        // Butonlara Enter tuşu ekle
+        for (int i = 0; i < buttons.size(); i++) {
+            final int currentIndex = i;
+            final JButton currentButton = buttons.get(i);
+            
+            currentButton.addKeyListener(new java.awt.event.KeyAdapter() {
+                public void keyPressed(java.awt.event.KeyEvent evt) {
+                    if (evt.getKeyCode() == java.awt.event.KeyEvent.VK_ENTER) {
+                        // Enter tuşuna basıldığında butonun action'ını çalıştır
+                        currentButton.doClick();
+                    }
+                }
+            });
+        }
+        
+        // İlk alana odaklan
+        if (!formComponents.isEmpty()) {
+            formComponents.get(0).requestFocus();
+        }
     }
 }

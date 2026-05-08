@@ -16,7 +16,7 @@ public class AntrenorPaneli extends JFrame {
     public AntrenorPaneli(Antrenor antrenor) {
         this.antrenor = antrenor;
 
-        setTitle("Antrenör Paneli - " + antrenor.getEmail());
+        setTitle("Antrenör Paneli - " + antrenor.getIsim()+" "+antrenor.getSoyisim());
         setSize(800, 500); // Tablo genişlediği için biraz büyütüldü
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
@@ -62,6 +62,9 @@ public class AntrenorPaneli extends JFrame {
         btnProfilim.addActionListener(e -> kendiProfiliniGuncelle());
         btnSil.addActionListener(e -> silUye());
         btnCikis.addActionListener(e -> cikisYap());
+        
+        // Enter tuşu ile butonlar arasında gezinme
+        setupEnterKeyNavigation(btnProfilim, btnSil, btnCikis);
 
         verileriYukle();
     }
@@ -152,5 +155,35 @@ public class AntrenorPaneli extends JFrame {
     private void cikisYap() {
         this.dispose();
         new GirişEkranı().setVisible(true);
+    }
+    
+    // Enter tuşu ile butonlar arasında gezinme metod
+    private void setupEnterKeyNavigation(JButton... buttons) {
+        for (int i = 0; i < buttons.length; i++) {
+            final int currentIndex = i;
+            final JButton currentButton = buttons[i];
+            
+            currentButton.addKeyListener(new java.awt.event.KeyAdapter() {
+                public void keyPressed(java.awt.event.KeyEvent evt) {
+                    if (evt.getKeyCode() == java.awt.event.KeyEvent.VK_ENTER) {
+                        // Enter tuşuna basıldığında butonun action'ını çalıştır
+                        currentButton.doClick();
+                    } else if (evt.getKeyCode() == java.awt.event.KeyEvent.VK_DOWN) {
+                        // Aşağı ok tuşu ile sonraki butona geç
+                        int nextIndex = (currentIndex + 1) % buttons.length;
+                        buttons[nextIndex].requestFocus();
+                    } else if (evt.getKeyCode() == java.awt.event.KeyEvent.VK_UP) {
+                        // Yukarı ok tuşu ile önceki butona geç
+                        int prevIndex = (currentIndex - 1 + buttons.length) % buttons.length;
+                        buttons[prevIndex].requestFocus();
+                    }
+                }
+            });
+        }
+        
+        // İlk butona odaklan
+        if (buttons.length > 0) {
+            buttons[0].requestFocus();
+        }
     }
 }

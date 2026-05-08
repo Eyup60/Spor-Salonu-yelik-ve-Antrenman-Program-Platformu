@@ -16,14 +16,14 @@ public class AdminPaneli extends JFrame {
     public AdminPaneli(Admin admin) {
         this.admin = admin;
 
-        setTitle("Yönetici Paneli - " + admin.getEmail());
+        setTitle("Yönetici Paneli - " + admin.getIsim()+" "+admin.getSoyisim());
         setSize(700, 500);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         
         setLayout(new BorderLayout());
 
-        JLabel lblTitle = new JLabel("Tüm Kullanıcılar", SwingConstants.CENTER);
+        JLabel lblTitle = new JLabel("Tüm Kullanıcılar("+admin.getKullanicilar().size()+")", SwingConstants.CENTER);
         lblTitle.setFont(new Font("Arial", Font.BOLD, 20));
         lblTitle.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
         add(lblTitle, BorderLayout.NORTH);
@@ -55,10 +55,14 @@ public class AdminPaneli extends JFrame {
         btnEkle.addActionListener(e -> ekleKullanici());
         btnGuncelle.addActionListener(e -> guncelleKullanici());
         btnSil.addActionListener(e -> silKullanici());
-        btnCikis.addActionListener(e -> cikisYap());btnRaporlar.addActionListener(e -> {
+        btnCikis.addActionListener(e -> cikisYap());
+        btnRaporlar.addActionListener(e -> {
             RaporlamaVeOdemePaneli raporPaneli = new RaporlamaVeOdemePaneli();
             raporPaneli.setVisible(true);
         });
+        
+        // Enter tuşu ile butonlar arasında gezinme
+        setupEnterKeyNavigation(btnEkle, btnGuncelle, btnSil, btnRaporlar, btnCikis);
         
 
         verileriYukle();
@@ -129,5 +133,35 @@ public class AdminPaneli extends JFrame {
     private void cikisYap() {
         this.dispose();
         new GirişEkranı().setVisible(true);
+    }
+    
+    // Enter tuşu ile butonlar arasında gezinme metod
+    private void setupEnterKeyNavigation(JButton... buttons) {
+        for (int i = 0; i < buttons.length; i++) {
+            final int currentIndex = i;
+            final JButton currentButton = buttons[i];
+            
+            currentButton.addKeyListener(new java.awt.event.KeyAdapter() {
+                public void keyPressed(java.awt.event.KeyEvent evt) {
+                    if (evt.getKeyCode() == java.awt.event.KeyEvent.VK_ENTER) {
+                        // Enter tuşuna basıldığında butonun action'ını çalıştır
+                        currentButton.doClick();
+                    } else if (evt.getKeyCode() == java.awt.event.KeyEvent.VK_DOWN) {
+                        // Aşağı ok tuşu ile sonraki butona geç
+                        int nextIndex = (currentIndex + 1) % buttons.length;
+                        buttons[nextIndex].requestFocus();
+                    } else if (evt.getKeyCode() == java.awt.event.KeyEvent.VK_UP) {
+                        // Yukarı ok tuşu ile önceki butona geç
+                        int prevIndex = (currentIndex - 1 + buttons.length) % buttons.length;
+                        buttons[prevIndex].requestFocus();
+                    }
+                }
+            });
+        }
+        
+        // İlk butona odaklan
+        if (buttons.length > 0) {
+            buttons[0].requestFocus();
+        }
     }
 }
