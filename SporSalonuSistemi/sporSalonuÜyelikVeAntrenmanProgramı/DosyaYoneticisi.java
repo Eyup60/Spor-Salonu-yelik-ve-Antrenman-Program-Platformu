@@ -14,7 +14,7 @@ public class DosyaYoneticisi {
         System.getProperty("user.home") + File.separator + 
         ".sporSalonu" + File.separator + "kullanicilar.json";
 
-    // JSON DÖNÜŞTÜRÜCÜ VE TARİH ADAPTÖRLERİ YAPILANDIRMASI
+    // JSON DÖNÜŞTÜRÜCÜ VE POLİMORFİK NESNE YAPILANDIRMASI
     private static Gson buildGson() {
         return new GsonBuilder()
             .setPrettyPrinting()
@@ -34,6 +34,14 @@ public class DosyaYoneticisi {
             .registerTypeAdapter(LocalDateTime.class,
                 (JsonDeserializer<LocalDateTime>) (json, t, ctx) ->
                     LocalDateTime.parse(json.getAsString()))
+            // SOYUT SINIFLAR İÇİN ÖZEL OKUMA MANTIĞI (JSON'DAN NESNEYE)
+            .registerTypeAdapter(UyelikPaketi.class, (JsonDeserializer<UyelikPaketi>) (json, typeOfT, context) -> {
+                JsonObject jsonObject = json.getAsJsonObject();
+                String ad = jsonObject.has("ad") ? jsonObject.get("ad").getAsString().toLowerCase() : "";
+                if (ad.contains("vip")) return context.deserialize(json, VIPPaket.class);
+                if (ad.contains("premium")) return context.deserialize(json, PremiumPaket.class);
+                return context.deserialize(json, StandartPaket.class);
+            })
             .create();
     }
     
@@ -49,11 +57,18 @@ public class DosyaYoneticisi {
             for (Kullanici k : Admin.getKullanicilar()) {
                 JsonObject obj = gson.toJsonTree(k).getAsJsonObject(); 
                 obj.addProperty("tip", k.getClass().getSimpleName()); // ALT SINIF BİLGİSİNİ JSONA EKLEME
+
+                // KULLANICI ÜYE İSE PAKET TİPİNİ KAYDEDER
+                if (k instanceof Uye uye && uye.getPaket() != null) {
+                    obj.addProperty("paketTip", uye.getPaket().getClass().getSimpleName());
+                }
                 
                 // ANTRENÖR VE ÜYE BAĞLARINI ID ÜZERİNDEN SAKLAMA
                 if (k instanceof Antrenor antrenor) {
                     JsonArray ids = new JsonArray();
-                    antrenor.listele().forEach(u -> ids.add(u.getId()));
+                    for (Uye u : antrenor.listele()) {
+                        ids.add(u.getId());
+                    }
                     obj.add("antrenorUyeIds", ids);
                 }
 
@@ -67,7 +82,6 @@ public class DosyaYoneticisi {
 
         } catch (IOException e) {
             System.err.println("Kaydetme hatası: " + e.getMessage());
-            e.printStackTrace();
         }
     }
     
@@ -93,37 +107,44 @@ public class DosyaYoneticisi {
             // JSON VERİSİNİ DOĞRU SINIF TİPİNE DÖNÜŞTÜRME
             for (JsonElement el : dizi) {
                 JsonObject obj = el.getAsJsonObject();
-                
-                // TİP BİLGİSİNİ OKUMA VE FORMATLAMA
                 String tipRaw = obj.get("tip").getAsString().trim().toLowerCase();
-                
+
                 // SINIF TİPİNE GÖRE NESNE ÜRETME
                 Kullanici k = switch (tipRaw) {
                     case "admin"    -> gson.fromJson(obj, Admin.class);
                     case "antrenor" -> gson.fromJson(obj, Antrenor.class);
                     case "uye"      -> gson.fromJson(obj, Uye.class);
-                    default -> throw new IllegalStateException("BİLİNMEYEN KULLANICI TİPİ: " + tipRaw);
+                    default -> null;
                 };
+
+                if (k == null) continue;
+
+                // ÜYENİN SOYUT PAKET NESNESİNİ GERİ YÜKLEME
+                if (k instanceof Uye uye && obj.has("paket")) {
+                    String paketTip = obj.has("paketTip") ? obj.get("paketTip").getAsString() : "";
+                    UyelikPaketi paket;
+                    if (paketTip.contains("VIP")) paket = gson.fromJson(obj.get("paket"), VIPPaket.class);
+                    else if (paketTip.contains("Premium")) paket = gson.fromJson(obj.get("paket"), PremiumPaket.class);
+                    else paket = gson.fromJson(obj.get("paket"), StandartPaket.class);
+                    uye.setPaket(paket);
+                }
 
                 liste.add(k);
                 
-                // ANTRENÖR VE ÜYE İLİŞKİLERİNİ EŞLEŞTİRMEK İÇİN SAKLAMA
+                // İLİŞKİLERİ EŞLEŞTİRMEK İÇİN ID LİSTESİNİ SAKLAMA
                 if (tipRaw.equals("antrenor") && obj.has("antrenorUyeIds")) {
                     List<String> ids = new ArrayList<>();
-                    obj.get("antrenorUyeIds").getAsJsonArray()
-                       .forEach(e -> ids.add(e.getAsString()));
+                    obj.get("antrenorUyeIds").getAsJsonArray().forEach(e -> ids.add(e.getAsString()));
                     antrenorMap.put(k.getId(), ids);
                 }
             }
             
-            // YÜKLENEN LİSTEYİ SİSTEME AKTARMA
+            // YÜKLENEN VERİLERİ SİSTEME AKTARMA VE BAĞLARI KURMA
             Admin.setKullanicilar(liste);
             
-            // ID BİLGİLERİNİ GERÇEK NESNE BAĞLANTILARINA ÇEVİRME
             for (Kullanici k : liste) {
                 if (k instanceof Antrenor antrenor) {
                     List<String> uyeIds = antrenorMap.getOrDefault(k.getId(), List.of());
-
                     for (String id : uyeIds) {
                         liste.stream()
                              .filter(x -> x.getId().equals(id) && x instanceof Uye)
@@ -133,22 +154,9 @@ public class DosyaYoneticisi {
                 }
             }
             
-            // ANTRENÖRÜ OLMAYAN ÜYELERİ OTOMATİK ATAMA SİSTEMİNE GÖNDERME
-            for (Kullanici k : Admin.getKullanicilar()) {
-                if (k instanceof Uye uye) {
-                    if (Admin.anternorBulUyeIle(uye).equals("Henüz Atanmadı")) {
-                        System.out.println("Hocasız üye tespit edildi, atama yapılıyor: " + uye.getIsim());
-                        AtamaMotoru.otomatikAtamaYap(uye);
-                    }
-                }
-            }
-            
             System.out.println("Veriler yüklendi. Toplam kullanıcı: " + liste.size());
-        } catch (IOException e) {
-            System.err.println(" Dosya okuma hatası: " + e.getMessage());
-            e.printStackTrace();
         } catch (Exception e) {
-            System.err.println("Yükleme hatası: " + e.getMessage());
+            System.err.println("Yükleme sırasında hata oluştu: " + e.getMessage());
             e.printStackTrace();
         }
     }

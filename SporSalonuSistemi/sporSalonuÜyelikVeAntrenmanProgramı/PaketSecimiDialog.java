@@ -28,6 +28,13 @@ public class PaketSecimiDialog extends JDialog {
         cbPaketler = new JComboBox<>(new String[]{"Standart Paket", "Premium Paket", "VIP Paket"});
         contentPanel.add(cbPaketler);
 
+        // Eğer üyenin zaten bir paketi varsa, combo'yu onunla başlat
+        if (uye.getPaket() != null) {
+            try {
+                cbPaketler.setSelectedItem(uye.getPaket().getAd());
+            } catch (Exception ignored) {}
+        }
+
         contentPanel.add(new JLabel("Ek Özel Ders (Adet):"));
         txtOzelDers = new JTextField("0");
         contentPanel.add(txtOzelDers);
@@ -65,6 +72,15 @@ public class PaketSecimiDialog extends JDialog {
                 int dersSayisi = Integer.parseInt(txtOzelDers.getText());
                 String secilen = (String) cbPaketler.getSelectedItem();
 
+                // Eğer kullanıcı zaten aynı pakete sahipse, yeniden seçmesini engelle
+                if (uye.getPaket() != null) {
+                    String mevcut = uye.getPaket().getAd();
+                    if (secilen.equals(mevcut)) {
+                        JOptionPane.showMessageDialog(this, "Zaten bu pakete sahipsiniz. Lütfen farklı bir paket seçin.", "Uyarı", JOptionPane.INFORMATION_MESSAGE);
+                        return;
+                    }
+                }
+
                 UyelikPaketi paket;
                 if (secilen.equals("VIP Paket")) paket = new VIPPaket();
                 else if (secilen.equals("Premium Paket")) paket = new PremiumPaket();
@@ -75,10 +91,7 @@ public class PaketSecimiDialog extends JDialog {
                 int confirm = JOptionPane.showConfirmDialog(this, "Ödenecek tutar: " + toplamTutar + " TL\nÖdemeye devam edilsin mi?", "Ödeme Onayı", JOptionPane.YES_NO_OPTION);
                 if (confirm != JOptionPane.YES_OPTION) return;
 
-                String[] secenekler = {"Kredi Kartı", "Nakit"};
-                int secim = JOptionPane.showOptionDialog(this, "Ödeme yöntemi seçiniz:", "Yöntem",
-                        JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, secenekler, secenekler[0]);
-
+                // Ödeme yöntemi yalnızca kredi kartı olarak sınırlı
                 OdemeYontemi odeme = null;
                 // Kullanıcıdan ödeme tutarını al (kullanıcının ödeyeceği miktar)
                 String girilenStr = JOptionPane.showInputDialog(this, "Lütfen ödeyeceğiniz tutarı giriniz (TL):", String.valueOf(toplamTutar));
@@ -100,25 +113,24 @@ public class PaketSecimiDialog extends JDialog {
                     return;
                 }
 
-                if (secim == 0) {
-                    String kartInput = JOptionPane.showInputDialog(this, "Kart numarasını giriniz (16 hane, sadece rakam):", "Kart Bilgisi", JOptionPane.QUESTION_MESSAGE);
-                    if (kartInput == null) {
-                        // İptal edildi
-                        return;
-                    }
-                    String kart = kartInput.replaceAll("\\s+", "");
-                    // Kart numarasını sadece rakamlar olarak ve tam 16 hane kontrol et
-                    if (!kart.matches("\\d{16}")) {
-                        JOptionPane.showMessageDialog(this, "Kart numarası 16 haneli olmalı ve sadece rakamlardan oluşmalıdır!", "Geçersiz Kart", JOptionPane.ERROR_MESSAGE);
-                        return;
-                    }
-                    odeme = new KrediKartiOdeme(toplamTutar, kart);
-                } else {
-                    odeme = new NakitOdeme(toplamTutar);
+                // Kredi kartı ile ödeme adımı
+                String kartInput = JOptionPane.showInputDialog(this, "Kart numarasını giriniz (16 hane, sadece rakam):", "Kart Bilgisi", JOptionPane.QUESTION_MESSAGE);
+                if (kartInput == null) {
+                    // İptal edildi
+                    return;
                 }
+                String kart = kartInput.replaceAll("\\s+", "");
+                // Kart numarasını sadece rakamlar olarak ve tam 16 hane kontrol et
+                if (!kart.matches("\\d{16}")) {
+                    JOptionPane.showMessageDialog(this, "Kart numarası 16 haneli olmalı ve sadece rakamlardan oluşmalıdır!", "Geçersiz Kart", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+                odeme = new KrediKartiOdeme(toplamTutar, kart);
 
                 String sonuc = odeme.odemeAl();
                 uye.setPaket(paket);
+                // Paket seçiminden sonra kalıcı olarak kullanıcı verilerini kaydet
+                DosyaYoneticisi.verileriKaydet();
 
                 // Eğer kullanıcı fazla ödediyse, farkı göster
                 if (girilenTutar > toplamTutar) {
@@ -150,7 +162,7 @@ public class PaketSecimiDialog extends JDialog {
         try {
             int dersSayisi = Integer.parseInt(txtOzelDers.getText());
             double toplam = UcretHesaplayici.hesapla(paket, dersSayisi, 0.1);
-            lblSonuc.setText("Tutar: " + toplam + " TL");
+            lblSonuc.setText(String.format("Tutar: %.2f TL", toplam));
         } catch (NumberFormatException ex) {
             lblSonuc.setText("Tutar: - (Geçersiz sayı)");
         } catch (IllegalArgumentException ex) {
