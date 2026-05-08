@@ -59,42 +59,27 @@ public class UyePaneli extends JFrame {
         
         JButton btnCikis = new JButton("Çıkış Yap");
         btnCikis.setPreferredSize(new Dimension(180, 40));
-        JButton btnOdemeYap = new JButton("Ödeme İşlemleri");
-        btnOdemeYap.setPreferredSize(new Dimension(180, 40));
-        btnOdemeYap.setBackground(new Color(0, 153, 204)); 
-        btnOdemeYap.setForeground(Color.WHITE);
+        // Yeni butonlar: Antrenman Programı ve Profil Bilgileri
+        JButton btnAntrenman = new JButton("Antrenman Programı");
+        btnAntrenman.setPreferredSize(new Dimension(180, 40));
+        JButton btnProfil = new JButton("Profil Bilgileri");
+        btnProfil.setPreferredSize(new Dimension(180, 40));
+
         panelButonlar.add(btnPaketSec);
+        panelButonlar.add(btnAntrenman);
+        panelButonlar.add(btnProfil);
         panelButonlar.add(btnCikis);
-        panelButonlar.add(btnOdemeYap); 
 
-        btnOdemeYap.addActionListener(e -> {
-            // Ödeme penceresini açan kodlar
-            String input = JOptionPane.showInputDialog(this, "Ödemek istediğiniz tutarı giriniz:", "Hızlı Ödeme", JOptionPane.QUESTION_MESSAGE);
-            
-            if (input != null && !input.isEmpty()) {
-                try {
-                    double tutar = Double.parseDouble(input);
-                    
-                    String[] secenekler = {"Kredi Kartı", "Nakit"};
-                    int secim = JOptionPane.showOptionDialog(this, "Ödeme yöntemi seçiniz:", "Yöntem",
-                            JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, secenekler, secenekler[0]);
+        // Antrenman programı dialogunu açar
+        btnAntrenman.addActionListener(e -> {
+            AntrenmanProgramiDialog dlg = new AntrenmanProgramiDialog(this, aktifUye);
+            dlg.setVisible(true);
+        });
 
-                    OdemeYontemi odeme;
-                    if (secim == 0) {
-                        odeme = new KrediKartiOdeme(tutar, "5432-****-****-1234");
-                    } else {
-                        odeme = new NakitOdeme(tutar);
-                    }
-
-                    String sonuc = odeme.odemeAl();
-                    JOptionPane.showMessageDialog(this, sonuc, "İşlem Başarılı", JOptionPane.INFORMATION_MESSAGE);
-
-                } catch (NumberFormatException ex) {
-                    JOptionPane.showMessageDialog(this, "Lütfen geçerli bir sayı giriniz!", "Hata", JOptionPane.ERROR_MESSAGE);
-                } catch (GecersizOdemeException ex) {
-                    JOptionPane.showMessageDialog(this, ex.getMessage(), "Ödeme Reddedildi", JOptionPane.WARNING_MESSAGE);
-                }
-            }
+        // Profil bilgileri dialogunu açar
+        btnProfil.addActionListener(e -> {
+            ProfilBilgileriDialog dlg = new ProfilBilgileriDialog(this, aktifUye);
+            dlg.setVisible(true);
         });
 
         // Event Handling (Olay Yönetimi): Butona tıklandığında dialog penceresini açar

@@ -3,16 +3,12 @@ package sporSalonuÜyelikVeAntrenmanProgramı;
 import java.util.ArrayList;
 import java.util.List;
 
-// Üyelik paketlerinin (Standart, Premium, VIP) yönetimini sağlayan servis sınıfı.
-// OOP Prensibi: IVeriYoneticisi arayüzü (Interface) implemente edilerek metotlar zorunlu kılınmıştır.
-public class PaketService implements IVeriYoneticisi<UyelikPaketi> {
+public class PaketService implements VeriYöneticisi<UyelikPaketi> {
 
-    // Farklı paket türlerini (Polimorfizm) tek bir listede tutan veri yapısı
     private List<UyelikPaketi> paketler = new ArrayList<>();
 
     @Override
     public void ekle(UyelikPaketi paket) {
-        // Exception Handling: Boş veri eklenmesini engeller
         if (paket == null) {
             throw new NullPointerException("Eklenecek paket boş (null) olamaz!");
         }
@@ -20,27 +16,32 @@ public class PaketService implements IVeriYoneticisi<UyelikPaketi> {
     }
 
     @Override
-    public void sil(int index) {
-        try {
-            paketler.remove(index);
-        } catch (IndexOutOfBoundsException e) {
-            // Exception Handling: Olmayan bir index silinmeye çalışıldığında program çökmez
-            System.err.println("Silme hatası: Geçersiz paket sıra numarası!");
-        }
+    public void sil(String id) {
+        paketler.removeIf(p -> p.getAd().equalsIgnoreCase(id));
     }
 
     @Override
-    public void guncelle(int index, UyelikPaketi paket) {
-        try {
-            paketler.set(index, paket);
-        } catch (IndexOutOfBoundsException e) {
-            System.err.println("Güncelleme hatası: Belirtilen paket kaydı bulunamadı!");
+    public void guncelle(UyelikPaketi yeniPaket) {
+        for (int i = 0; i < paketler.size(); i++) {
+            if (paketler.get(i).getAd().equalsIgnoreCase(yeniPaket.getAd())) {
+                paketler.set(i, yeniPaket);
+                return;
+            }
         }
     }
 
     @Override
     public List<UyelikPaketi> listele() {
-        // Sisteme ekli olan tüm paketleri geri döndürür
-        return paketler;
+        return new ArrayList<>(paketler);
+    }
+
+    @Override
+    public UyelikPaketi bul(String id) {
+        for (UyelikPaketi p : paketler) {
+            if (p.getAd().equalsIgnoreCase(id)) {
+                return p;
+            }
+        }
+        return null;
     }
 }

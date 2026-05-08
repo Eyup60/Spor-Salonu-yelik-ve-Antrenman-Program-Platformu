@@ -6,6 +6,8 @@ import java.time.LocalDate;
 public class Uye extends Kullanici {
     private static final long serialVersionUID = 1L;
 
+    // Üyenin mevcut paket bilgisi (null ise paket seçilmemiş demektir)
+    private UyelikPaketi paket;
     private double boy;
     private double kilo;
     private int yas;
@@ -22,6 +24,12 @@ public class Uye extends Kullanici {
         setYağOrani(yağOrani);
         // ÜYELİK BAŞLANGIÇ TARİHİNİ SİSTEMİN O ANKİ TARİHİNE GÖRE OTOMATİK ATAR
         setKayitTarihi(LocalDate.now());
+    }
+
+    // Kolay test ve çağrılar için daha kısa bir yapıcı metot (varsayılan fiziksel değerlerle)
+    public Uye(String isim, String soyisim, String email, String password) {
+        // Varsayılan anlamlı değerler atıyoruz
+        this(isim, soyisim, email, password, 170.0, 70.0, 30, 20.0);
     }
     
     // BOY GETİR
@@ -133,5 +141,14 @@ public class Uye extends Kullanici {
         // BOY VE KİLO VERİLERİNİ KULLANARAK VÜCUT KİTLE ENDEKSİNİ (BMI) HESAPLAR
         double boyMetre = this.boy / 100.0;
         return this.kilo / (boyMetre * boyMetre);
+    }
+
+    // Paket getter ve setter
+    public UyelikPaketi getPaket() {
+        return this.paket;
+    }
+
+    public void setPaket(UyelikPaketi paket) {
+        this.paket = paket;
     }
 }

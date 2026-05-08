@@ -19,7 +19,7 @@ public class ProgramAtamaYöneticisi {
 
     public void programAta(Uye uye, String programTipi) {
         depo.hazirProgramYukle(programTipi);
-        uyeProgramlari.put(uye.getEmail(), depo.tumunuListele());
+        uyeProgramlari.put(uye.getEmail(), depo.listele());
         System.out.println(uye.getIsim() + " adlı üyeye '" + programTipi.toUpperCase() + "' programı başarıyla atandı!");
         verileriKaydet();
     }

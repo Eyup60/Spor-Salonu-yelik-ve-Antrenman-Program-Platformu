@@ -3,6 +3,8 @@ package sporSalonuÜyelikVeAntrenmanProgramı;
 import java.awt.*;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
 // Dinamik ücret hesaplama ve paket atama arayüzü
 public class PaketSecimiDialog extends JDialog {
@@ -34,10 +36,33 @@ public class PaketSecimiDialog extends JDialog {
         lblSonuc.setFont(new Font("Tahoma", Font.BOLD, 13));
         contentPanel.add(lblSonuc);
 
-        JButton btnHesapla = new JButton("Hesapla ve Onayla");
+        final JButton btnHesapla = new JButton("Onayla");
         btnHesapla.setBackground(new Color(50, 150, 50));
-        btnHesapla.setForeground(Color.WHITE);
+        btnHesapla.setForeground(Color.BLACK);
         contentPanel.add(btnHesapla);
+
+        // Ödeme butonu: paket seçimi içinde ödeme yapma imkanı
+        final JButton btnOdeme = new JButton("Ödeme Yap");
+        btnOdeme.setBackground(new Color(0, 153, 204));
+        btnOdeme.setForeground(Color.BLACK);
+        contentPanel.add(btnOdeme);
+
+        // Dinamik güncelleme: Paket veya özel ders sayısı değiştiğinde tutarı anında hesapla
+        cbPaketler.addItemListener(e -> updateTutar());
+
+        txtOzelDers.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) { updateTutar(); }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) { updateTutar(); }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) { updateTutar(); }
+        });
+
+        // İlk hesaplama ve buton durumunu ayarla
+        updateTutar();
 
         // Ücret hesaplama ve paketi üyeye atama işlemi
         btnHesapla.addActionListener(e -> {
@@ -69,5 +94,70 @@ public class PaketSecimiDialog extends JDialog {
                 JOptionPane.showMessageDialog(this, ex.getMessage(), "Kural Hatası", JOptionPane.WARNING_MESSAGE);
             }
         });
+
+        // Ödeme butonunun olayı
+        btnOdeme.addActionListener(e -> {
+            try {
+                int dersSayisi = Integer.parseInt(txtOzelDers.getText());
+                String secilen = (String) cbPaketler.getSelectedItem();
+
+                UyelikPaketi paket;
+                if (secilen.equals("VIP Paket")) paket = new VIPPaket();
+                else if (secilen.equals("Premium Paket")) paket = new PremiumPaket();
+                else paket = new StandartPaket();
+
+                double toplamTutar = UcretHesaplayici.hesapla(paket, dersSayisi, 0.1);
+
+                int confirm = JOptionPane.showConfirmDialog(this, "Ödenecek tutar: " + toplamTutar + " TL\nÖdemeye devam edilsin mi?", "Ödeme Onayı", JOptionPane.YES_NO_OPTION);
+                if (confirm != JOptionPane.YES_OPTION) return;
+
+                String[] secenekler = {"Kredi Kartı", "Nakit"};
+                int secim = JOptionPane.showOptionDialog(this, "Ödeme yöntemi seçiniz:", "Yöntem",
+                        JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, secenekler, secenekler[0]);
+
+                OdemeYontemi odeme;
+                if (secim == 0) {
+                    String kart = JOptionPane.showInputDialog(this, "Kart numarasını giriniz:", "Kart Bilgisi", JOptionPane.QUESTION_MESSAGE);
+                    if (kart == null || kart.trim().isEmpty()) {
+                        JOptionPane.showMessageDialog(this, "Kart numarası girilmedi! İşlem iptal edildi.", "İptal", JOptionPane.WARNING_MESSAGE);
+                        return;
+                    }
+                    odeme = new KrediKartiOdeme(toplamTutar, kart);
+                } else {
+                    odeme = new NakitOdeme(toplamTutar);
+                }
+
+                String sonuc = odeme.odemeAl();
+                uye.setPaket(paket);
+                JOptionPane.showMessageDialog(this, sonuc, "Ödeme Başarılı", JOptionPane.INFORMATION_MESSAGE);
+                dispose();
+
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(this, "Lütfen özel ders sayısını rakamla giriniz!", "Giriş Hatası", JOptionPane.ERROR_MESSAGE);
+            } catch (GecersizOdemeException ex) {
+                JOptionPane.showMessageDialog(this, ex.getMessage(), "Ödeme Reddedildi", JOptionPane.WARNING_MESSAGE);
+            } catch (IllegalArgumentException ex) {
+                JOptionPane.showMessageDialog(this, ex.getMessage(), "Kural Hatası", JOptionPane.WARNING_MESSAGE);
+            }
+        });
+    }
+
+    // Yardımcı metot: GUI'deki alanlar değiştiğinde tutarı günceller.
+    private void updateTutar() {
+        String secilen = (String) cbPaketler.getSelectedItem();
+        UyelikPaketi paket;
+        if ("VIP Paket".equals(secilen)) paket = new VIPPaket();
+        else if ("Premium Paket".equals(secilen)) paket = new PremiumPaket();
+        else paket = new StandartPaket();
+
+        try {
+            int dersSayisi = Integer.parseInt(txtOzelDers.getText());
+            double toplam = UcretHesaplayici.hesapla(paket, dersSayisi, 0.1);
+            lblSonuc.setText("Tutar: " + toplam + " TL");
+        } catch (NumberFormatException ex) {
+            lblSonuc.setText("Tutar: - (Geçersiz sayı)");
+        } catch (IllegalArgumentException ex) {
+            lblSonuc.setText("Tutar: - (" + ex.getMessage() + ")");
+        }
     }
 }

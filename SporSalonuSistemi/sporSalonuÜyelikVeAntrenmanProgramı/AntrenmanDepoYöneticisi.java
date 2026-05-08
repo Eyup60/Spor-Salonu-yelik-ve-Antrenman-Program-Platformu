@@ -4,8 +4,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AntrenmanDepoYöneticisi implements IVeriYoneticisi<Antrenman>, Serializable {
-    
+public class AntrenmanDepoYöneticisi implements VeriYöneticisi<Antrenman>, Serializable {
+
     private static final long serialVersionUID = 1L;
     private List<Antrenman> antrenmanListesi;
 
@@ -24,30 +24,30 @@ public class AntrenmanDepoYöneticisi implements IVeriYoneticisi<Antrenman>, Ser
     }
 
     @Override
-    public void guncelle(String id, Antrenman yeniVeri) {
+    public void guncelle(Antrenman yeniVeri) {
         for (int i = 0; i < antrenmanListesi.size(); i++) {
-            if (antrenmanListesi.get(i).getId().equals(id)) {
+            if (antrenmanListesi.get(i).getId().equals(yeniVeri.getId())) {
                 antrenmanListesi.set(i, yeniVeri);
                 return;
             }
         }
     }
-
+    
     @Override
-    public Antrenman ara(String id) {
-        for (Antrenman a : antrenmanListesi) {
+	public Antrenman bul(String id) {
+    	for (Antrenman a : antrenmanListesi) {
             if (a.getId().equals(id)) return a;
         }
         return null;
-    }
+	}
 
     @Override
-    public List<Antrenman> tumunuListele() {
+    public List<Antrenman> listele() {
         return new ArrayList<>(antrenmanListesi);
     }
 
     public void hazirProgramYukle(String secim) {
-        antrenmanListesi.clear(); 
+        antrenmanListesi.clear();
         switch (secim.toLowerCase()) {
             case "kilo verme":
                 ekle(new Kardiyo("Hafif Yürüyüş", "Isınma", 10, "Kolay", 6.0, "Koşu Bandı", 1.0, 1));
