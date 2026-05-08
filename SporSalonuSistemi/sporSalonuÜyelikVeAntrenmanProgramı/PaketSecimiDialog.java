@@ -36,11 +36,6 @@ public class PaketSecimiDialog extends JDialog {
         lblSonuc.setFont(new Font("Tahoma", Font.BOLD, 13));
         contentPanel.add(lblSonuc);
 
-        final JButton btnHesapla = new JButton("Onayla");
-        btnHesapla.setBackground(new Color(50, 150, 50));
-        btnHesapla.setForeground(Color.BLACK);
-        contentPanel.add(btnHesapla);
-
         // Ödeme butonu: paket seçimi içinde ödeme yapma imkanı
         final JButton btnOdeme = new JButton("Ödeme Yap");
         btnOdeme.setBackground(new Color(0, 153, 204));
@@ -64,37 +59,6 @@ public class PaketSecimiDialog extends JDialog {
         // İlk hesaplama ve buton durumunu ayarla
         updateTutar();
 
-        // Ücret hesaplama ve paketi üyeye atama işlemi
-        btnHesapla.addActionListener(e -> {
-            try {
-                int dersSayisi = Integer.parseInt(txtOzelDers.getText());
-                String secilen = (String) cbPaketler.getSelectedItem();
-                
-                // OOP Prensibi: Polimorfizm (Çok Biçimlilik)
-                // Üst sınıf referansına (UyelikPaketi), kullanıcının seçimine göre alt sınıf nesnesi atanır
-                UyelikPaketi paket;
-                if (secilen.equals("VIP Paket")) paket = new VIPPaket();
-                else if (secilen.equals("Premium Paket")) paket = new PremiumPaket();
-                else paket = new StandartPaket();
-
-                // Logic katmanından hesaplama metodunun çağrılması
-                double toplamTutar = UcretHesaplayici.hesapla(paket, dersSayisi, 0.1);
-                
-                lblSonuc.setText("Tutar: " + toplamTutar + " TL");
-                uye.setPaket(paket); // Nesneler arası ilişki: Hesaplanan paket üyeye atanır
-                
-                JOptionPane.showMessageDialog(this, "İşlem Başarılı!\nPaket: " + secilen + "\nÖdenecek Tutar: " + toplamTutar + " TL");
-                dispose(); 
-
-            } catch (NumberFormatException ex) {
-                // Exception Handling: Kullanıcı harf girerse programın çökmesini engeller
-                JOptionPane.showMessageDialog(this, "Lütfen özel ders sayısını rakamla giriniz!", "Giriş Hatası", JOptionPane.ERROR_MESSAGE);
-            } catch (IllegalArgumentException ex) {
-                // Exception Handling: İş mantığı kural hatalarını yakalar (Örn: negatif ders sayısı)
-                JOptionPane.showMessageDialog(this, ex.getMessage(), "Kural Hatası", JOptionPane.WARNING_MESSAGE);
-            }
-        });
-
         // Ödeme butonunun olayı
         btnOdeme.addActionListener(e -> {
             try {
@@ -115,11 +79,37 @@ public class PaketSecimiDialog extends JDialog {
                 int secim = JOptionPane.showOptionDialog(this, "Ödeme yöntemi seçiniz:", "Yöntem",
                         JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, secenekler, secenekler[0]);
 
-                OdemeYontemi odeme;
+                OdemeYontemi odeme = null;
+                // Kullanıcıdan ödeme tutarını al (kullanıcının ödeyeceği miktar)
+                String girilenStr = JOptionPane.showInputDialog(this, "Lütfen ödeyeceğiniz tutarı giriniz (TL):", String.valueOf(toplamTutar));
+                if (girilenStr == null) {
+                    // İptal edildi
+                    return;
+                }
+                double girilenTutar;
+                try {
+                    girilenTutar = Double.parseDouble(girilenStr);
+                } catch (NumberFormatException nfe) {
+                    JOptionPane.showMessageDialog(this, "Lütfen geçerli bir sayı giriniz!", "Hata", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+
+                // Girilen tutarın ödenmesi gereken tutardan az olmaması gerekiyor
+                if (girilenTutar < toplamTutar) {
+                    JOptionPane.showMessageDialog(this, "Girilen tutar ödenecek tutardan az. Lütfen yeterli bir miktar giriniz.", "Eksik Ödeme", JOptionPane.WARNING_MESSAGE);
+                    return;
+                }
+
                 if (secim == 0) {
-                    String kart = JOptionPane.showInputDialog(this, "Kart numarasını giriniz:", "Kart Bilgisi", JOptionPane.QUESTION_MESSAGE);
-                    if (kart == null || kart.trim().isEmpty()) {
-                        JOptionPane.showMessageDialog(this, "Kart numarası girilmedi! İşlem iptal edildi.", "İptal", JOptionPane.WARNING_MESSAGE);
+                    String kartInput = JOptionPane.showInputDialog(this, "Kart numarasını giriniz (16 hane, sadece rakam):", "Kart Bilgisi", JOptionPane.QUESTION_MESSAGE);
+                    if (kartInput == null) {
+                        // İptal edildi
+                        return;
+                    }
+                    String kart = kartInput.replaceAll("\\s+", "");
+                    // Kart numarasını sadece rakamlar olarak ve tam 16 hane kontrol et
+                    if (!kart.matches("\\d{16}")) {
+                        JOptionPane.showMessageDialog(this, "Kart numarası 16 haneli olmalı ve sadece rakamlardan oluşmalıdır!", "Geçersiz Kart", JOptionPane.ERROR_MESSAGE);
                         return;
                     }
                     odeme = new KrediKartiOdeme(toplamTutar, kart);
@@ -129,7 +119,14 @@ public class PaketSecimiDialog extends JDialog {
 
                 String sonuc = odeme.odemeAl();
                 uye.setPaket(paket);
-                JOptionPane.showMessageDialog(this, sonuc, "Ödeme Başarılı", JOptionPane.INFORMATION_MESSAGE);
+
+                // Eğer kullanıcı fazla ödediyse, farkı göster
+                if (girilenTutar > toplamTutar) {
+                    double fark = girilenTutar - toplamTutar;
+                    JOptionPane.showMessageDialog(this, sonuc + "\nLütfen değişim için " + fark + " TL alın.", "Ödeme Başarılı", JOptionPane.INFORMATION_MESSAGE);
+                } else {
+                    JOptionPane.showMessageDialog(this, sonuc, "Ödeme Başarılı", JOptionPane.INFORMATION_MESSAGE);
+                }
                 dispose();
 
             } catch (NumberFormatException ex) {
