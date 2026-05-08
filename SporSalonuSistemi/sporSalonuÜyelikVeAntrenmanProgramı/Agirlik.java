@@ -1,5 +1,6 @@
 package sporSalonuÜyelikVeAntrenmanProgramı;
 
+// AĞIRLIK ANTRENMANI SINIFI
 public class Agirlik extends Antrenman {
     
     private static final long serialVersionUID = 1L;
@@ -89,6 +90,7 @@ public class Agirlik extends Antrenman {
         return 1.0; 
     }
 
+    // KALORİ HESAPLA
     @Override
     public double kaloriHesapla(Uye uye) {
         double aktifSureSaat = (getSureDakika() - ((setSayisi * dinlenmeSuresiSaniye) / 60.0)) / 60.0;
@@ -102,6 +104,7 @@ public class Agirlik extends Antrenman {
         return (temelEfor + hacimEforu) * getZorlukCarpani() * getEkipmanCarpani() * getKasGrubuCarpani();
     }
 
+    // DETAY GÖSTER
     @Override
     public void detayGoster() {
         System.out.println("Ağırlık: " + getIsim() + " [" + hedefKasGrubu + " - " + ekipmanTuru + "] | " + 

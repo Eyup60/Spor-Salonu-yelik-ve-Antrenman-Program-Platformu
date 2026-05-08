@@ -1,7 +1,6 @@
 package sporSalonuÜyelikVeAntrenmanProgramı;
 
-// UyelikPaketi üst sınıfından miras alan temel paket sınıfı.
-// OOP Prensibi: Kalıtım (Inheritance)
+// STANDART PAKET SINIFI
 public class StandartPaket extends UyelikPaketi {
 
     // Yapıcı metot (Constructor)
@@ -11,7 +10,7 @@ public class StandartPaket extends UyelikPaketi {
         super("Standart Paket", 500.0, 30);
     }
 	
-    // OOP Prensibi: Polimorfizm (Çok Biçimlilik) - Metot Ezme (Overriding)
+    // ÜCRET HESAPLA
     @Override
     public double ucretHesapla() {
         // Standart pakette fiyat artışı veya özel bir çarpan olmadığı için 

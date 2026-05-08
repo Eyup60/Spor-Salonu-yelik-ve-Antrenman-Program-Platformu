@@ -1,5 +1,6 @@
 package sporSalonuÜyelikVeAntrenmanProgramı;
 
+// KALİSTENİKS ANTRENMANI SINIFI
 public class Kalisteniks extends Antrenman {
     
     private static final long serialVersionUID = 1L;
@@ -70,6 +71,7 @@ public class Kalisteniks extends Antrenman {
         return 1.1; 
     }
 
+    // KALORİ HESAPLA
     @Override
     public double kaloriHesapla(Uye uye) {
         double etkiKilosu = (uye.getKilo() * vucutAgirligiCarpani) + ekstraAgirlikKg;
@@ -82,6 +84,7 @@ public class Kalisteniks extends Antrenman {
         return (toplamEfor + sureEforu) * getZorlukCarpani() * getHareketCarpani();
     }
 
+    // DETAY GÖSTER
     @Override
     public void detayGoster() {
         String ekstraBilgi = ekstraAgirlikKg > 0 ? " | +Ağırlık: " + ekstraAgirlikKg + " kg" : "";

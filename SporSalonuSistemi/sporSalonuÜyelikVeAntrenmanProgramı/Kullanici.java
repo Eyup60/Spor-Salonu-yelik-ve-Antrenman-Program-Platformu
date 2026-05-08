@@ -91,10 +91,20 @@ public abstract class Kullanici implements java.io.Serializable {
     }
     
     // BİLGİ GÖSTER
+    /**
+     * Kullanıcı bilgilerini gösterir.
+     */
     public abstract void displayInfo();
     
     // GİRİŞ YAP
- public boolean login(String email, String password) {
+    /**
+     * Kullanıcı girişi yapar.
+     * 
+     * @param email    Kullanıcı emaili
+     * @param password Kullanıcı şifresi
+     * @return Giriş başarılı ise true, değilse false
+     */
+    public boolean login(String email, String password) {
         if(email == null || password == null) return false;
         // GİRİLEN ŞİFREYİ HASH'LEYİP DOSYADAKİ HASH İLE KARŞILAŞTIRIR
         String hashedInput = GuvenlikYardimcisi.sifrele(password);

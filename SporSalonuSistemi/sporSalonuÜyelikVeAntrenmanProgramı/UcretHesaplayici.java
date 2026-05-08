@@ -1,10 +1,9 @@
 package sporSalonuÜyelikVeAntrenmanProgramı;
 
-// Arayüzlerden (GUI) gelen verilere göre nihai ücreti hesaplayan yardımcı (Utility) sınıf.
+// ÜCRETLANDIRMA HESAPLAYICI SINIFI
 public class UcretHesaplayici {
 	
-    // Static metot: Sınıftan "new" ile nesne üretilmeden doğrudan UcretHesaplayici.hesapla() şeklinde çağrılır.
-    // OOP Prensibi: Polimorfizm (UyelikPaketi referansı, o anki duruma göre alt sınıfların davranışını sergiler)
+    // ÜCRETLERİ HESAPLA
     public static double hesapla(UyelikPaketi paket, int ozelDers, double indirim) {
 
         // Exception Handling (Hata Yönetimi): Mantıksal veri doğrulama işlemleri.

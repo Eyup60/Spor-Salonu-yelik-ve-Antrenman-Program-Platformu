@@ -3,6 +3,7 @@ package sporSalonuÜyelikVeAntrenmanProgramı;
 import java.util.ArrayList;
 import java.util.List;
 
+// PAKET SERVİS SINIFI
 public class PaketService implements VeriYöneticisi<UyelikPaketi> {
 
     private List<UyelikPaketi> paketler = new ArrayList<>();

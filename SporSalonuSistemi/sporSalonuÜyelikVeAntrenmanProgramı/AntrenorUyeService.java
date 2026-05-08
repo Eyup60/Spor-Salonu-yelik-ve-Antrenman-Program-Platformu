@@ -3,6 +3,7 @@ package sporSalonuÜyelikVeAntrenmanProgramı;
 import java.util.ArrayList;
 import java.util.List;
 
+// ANTRENÖR ÜYE SERVİS SINIFI
 public class AntrenorUyeService implements VeriYöneticisi<AntrenorUye> {
 
     private List<AntrenorUye> liste = new ArrayList<>();

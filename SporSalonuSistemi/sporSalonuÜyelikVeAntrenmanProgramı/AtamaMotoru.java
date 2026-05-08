@@ -6,7 +6,12 @@ import java.util.List;
 public class AtamaMotoru {
 
     // OTOMATİK ATAMA YAP
-    public static void otomatikAtamaYap(Uye yeniUye) {
+    /**
+     * Sistemde bulunan antrenörler arasında en az üyesi olan antrenöre yeni bir üyenin atanmasını sağlar.
+     * 
+     * @param uye Atanacak yeni üye
+     */
+    public static void otomatikAtamaYap(Uye uye) {
         // SİSTEMDEKİ TÜM ANTRENÖRLERİ BULUR (güvenli şekilde)
         List<Antrenor> antrenorList = new java.util.ArrayList<>();
         for (Kullanici k : Admin.getKullanicilar()) {

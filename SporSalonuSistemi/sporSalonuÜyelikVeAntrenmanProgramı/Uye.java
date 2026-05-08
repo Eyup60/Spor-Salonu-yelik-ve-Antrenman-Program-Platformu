@@ -123,6 +123,7 @@ public class Uye extends Kullanici {
         return Admin.anternorBulUyeIle(this);
     }
 
+    // BİLGİ GÖSTER
     @Override
     public void displayInfo() {
         // BİLGİ GÖSTER
@@ -143,11 +144,12 @@ public class Uye extends Kullanici {
         return this.kilo / (boyMetre * boyMetre);
     }
 
-    // Paket getter ve setter
+    // PAKET GETİR
     public UyelikPaketi getPaket() {
         return this.paket;
     }
 
+    // PAKET AYARLA
     public void setPaket(UyelikPaketi paket) {
         this.paket = paket;
     }

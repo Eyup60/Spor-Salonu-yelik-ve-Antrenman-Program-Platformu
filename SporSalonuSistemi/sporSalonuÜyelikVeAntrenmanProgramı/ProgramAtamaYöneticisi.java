@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+// PROGRAM ATAMA YÖNETİCİSİ SINIFI
 public class ProgramAtamaYöneticisi {
     
     private Map<String, List<Antrenman>> uyeProgramlari;

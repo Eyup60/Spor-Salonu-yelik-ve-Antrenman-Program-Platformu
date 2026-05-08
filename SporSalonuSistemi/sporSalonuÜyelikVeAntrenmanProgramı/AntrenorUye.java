@@ -1,7 +1,6 @@
 package sporSalonuÜyelikVeAntrenmanProgramı;
 
-// Antrenör ve Üye arasındaki atama ilişkisini tutan veri modeli (Entity sınıfı)
-// OOP Prensibi: Kapsülleme (Encapsulation) uygulanarak alanlar korunmuştur.
+// ANTRENÖR ÜYE SINIFI
 public class AntrenorUye {
 	
     private int antrenorID;

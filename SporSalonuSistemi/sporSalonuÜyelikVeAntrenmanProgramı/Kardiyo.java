@@ -1,5 +1,6 @@
 package sporSalonuÜyelikVeAntrenmanProgramı;
 
+// KARDİYO ANTRENMANI SINIFI
 public class Kardiyo extends Antrenman {
     
     private static final long serialVersionUID = 1L;
@@ -76,6 +77,7 @@ public class Kardiyo extends Antrenman {
         return 1.0; 
     }
 
+    // KALORİ HESAPLA
     @Override
     public double kaloriHesapla(Uye uye) {
         double sureSaat = getSureDakika() / 60.0;
@@ -87,6 +89,7 @@ public class Kardiyo extends Antrenman {
         return sureSaat * metDegeri * uye.getKilo() * getZorlukCarpani() * egimCarpani * direncCarpani;
     }
 
+    // DETAY GÖSTER
     @Override
     public void detayGoster() {
         System.out.println("Kardiyo: " + getIsim() + " | Alet: " + aletTuru + 

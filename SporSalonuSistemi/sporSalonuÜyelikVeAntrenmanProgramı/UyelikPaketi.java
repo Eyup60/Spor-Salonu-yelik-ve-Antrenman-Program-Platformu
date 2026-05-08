@@ -1,7 +1,6 @@
 package sporSalonuÜyelikVeAntrenmanProgramı;
 
-// Projedeki tüm paketlerin ortak özelliklerini taşıyan Soyut Üst Sınıf (Abstract Class).
-// OOP Prensibi: Soyutlama (Abstraction) - Bu sınıftan doğrudan "new" ile nesne üretilemez, sadece miras alınabilir.
+// ÜYELİK PAKETİ SINIFI
 public abstract class UyelikPaketi {
 
     // OOP Prensibi: Kapsülleme (Encapsulation) - Değişkenler private yapılarak dışarıdan doğrudan erişime kapatılmıştır.

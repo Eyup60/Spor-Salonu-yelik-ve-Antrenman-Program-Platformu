@@ -4,7 +4,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.List;
 
-// Kullanıcının atanan programını GUI üzerinde gösterir
+// ANTRENMAN PROGRAMİ BİLGİLERİ DİALOG SINIFI
 public class AntrenmanProgramiBilgileriDialog extends JDialog {
 
     private static final long serialVersionUID = 1L;

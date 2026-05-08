@@ -2,7 +2,7 @@ package sporSalonuÜyelikVeAntrenmanProgramı;
 
 // Tüm dosyalar aynı pakette olduğu için ekstra import kullanmaya gerek kalmadı.
 
-// Uygulamanın modüllerini konsol üzerinden test etmek için yazılmış ana sınıf.
+// ANA SINIF
 public class Main {
 
     public static void main(String[] args) {

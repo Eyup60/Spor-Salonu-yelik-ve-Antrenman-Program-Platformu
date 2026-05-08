@@ -2,6 +2,7 @@ package sporSalonuÜyelikVeAntrenmanProgramı;
 
 import java.util.UUID;
 
+// ANTRENMAN ABSTRAKT SINIFI
 public abstract class Antrenman implements java.io.Serializable {
     
     private static final long serialVersionUID = 1L;

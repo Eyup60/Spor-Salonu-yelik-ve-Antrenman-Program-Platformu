@@ -3,7 +3,7 @@ package sporSalonuÜyelikVeAntrenmanProgramı;
 import java.awt.*;
 import javax.swing.*;
 
-// Üyenin profil bilgilerini gösteren dialog
+// PROFİL BİLGİLERİ DİALOG SINIFI
 public class ProfilBilgileriDialog extends JDialog {
 
     private static final long serialVersionUID = 1L;

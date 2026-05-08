@@ -63,7 +63,7 @@ public class LoginDialog extends JDialog {
         return loggedInUser;
     }
     
-    // Enter tuşu ile form alanları arasında gezinme metod
+    // ENTER TUŞU İLE FORM ALANLARI ARASINDA GEZİNME METOD
     private void setupEnterKeyNavigation() {
         // Email alanından şifre alanına geçiş
         txtEmail.addKeyListener(new java.awt.event.KeyAdapter() {

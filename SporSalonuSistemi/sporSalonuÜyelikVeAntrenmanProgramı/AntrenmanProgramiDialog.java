@@ -3,8 +3,7 @@ package sporSalonuÜyelikVeAntrenmanProgramı;
 import java.awt.*;
 import javax.swing.*;
 
-// Daha etkileşimli: kullanıcıya hazır program tipleri sunar, seçilen programın
-// hareketlerini ve üyenin tahmini her hareket için yakacağı kaloriyi gösterir.
+// ANTRENMAN PROGRAMİ DİALOG SINIFI
 public class AntrenmanProgramiDialog extends JDialog {
 
     private static final long serialVersionUID = 1L;

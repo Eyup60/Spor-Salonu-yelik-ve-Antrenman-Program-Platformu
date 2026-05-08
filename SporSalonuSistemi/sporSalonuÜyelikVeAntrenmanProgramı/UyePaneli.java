@@ -4,6 +4,7 @@ import java.awt.*;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
+// ÜYE PANELİ SINIFI
 public class UyePaneli extends JFrame {
 
     private static final long serialVersionUID = 1L;

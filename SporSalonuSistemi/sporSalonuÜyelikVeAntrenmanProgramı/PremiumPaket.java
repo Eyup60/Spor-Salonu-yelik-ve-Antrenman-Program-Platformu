@@ -1,7 +1,6 @@
 package sporSalonuÜyelikVeAntrenmanProgramı;
 
-// UyelikPaketi üst sınıfından (Superclass) miras alan alt sınıf (Subclass).
-// OOP Prensibi: Kalıtım (Inheritance)
+// PREMIUM PAKET SINIFI
 public class PremiumPaket extends UyelikPaketi {
 
     // Yapıcı metot (Constructor)
@@ -11,8 +10,7 @@ public class PremiumPaket extends UyelikPaketi {
         super("Premium Paket", 800.0, 30);
     }
 	
-    // OOP Prensibi: Polimorfizm (Çok Biçimlilik) - Metot Ezme (Overriding)
-    // Üst sınıftaki genel hesaplama metodunu, Premium pakete özel kurallarla yeniden yazar.
+    // ÜCRET HESAPLA
     @Override
     public double ucretHesapla() {
         // Premium paketin kendi fiyatlandırma mantığı: Temel fiyatın %10 fazlası

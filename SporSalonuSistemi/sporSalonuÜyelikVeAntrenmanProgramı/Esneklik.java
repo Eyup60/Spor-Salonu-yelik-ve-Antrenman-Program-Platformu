@@ -1,5 +1,6 @@
 package sporSalonuÜyelikVeAntrenmanProgramı;
 
+// ESNEKLİK ANTRENMANI SINIFI
 public class Esneklik extends Antrenman {
     
     private static final long serialVersionUID = 1L;
@@ -45,6 +46,7 @@ public class Esneklik extends Antrenman {
         return 1.1; 
     }
 
+    // KALORİ HESAPLA
     @Override
     public double kaloriHesapla(Uye uye) {
         double sureSaat = getSureDakika() / 60.0;
@@ -55,6 +57,7 @@ public class Esneklik extends Antrenman {
         return (temelEfor + pozEforu) * getZorlukCarpani() * getEkolCarpani();
     }
 
+    // DETAY GÖSTER
     @Override
     public void detayGoster() {
         System.out.println("Esneklik: " + getIsim() + " [" + ekolTuru + "] | Pozda Kalma: " + 

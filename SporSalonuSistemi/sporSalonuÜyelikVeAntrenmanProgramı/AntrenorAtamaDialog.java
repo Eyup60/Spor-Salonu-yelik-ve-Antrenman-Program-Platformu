@@ -4,7 +4,7 @@ import java.awt.*;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
-// Yöneticilerin antrenör ve üyeleri eşleştirdiği arayüz sınıfı
+// ANTRENÖR ATAMA DİALOG SINIFI
 public class AntrenorAtamaDialog extends JDialog {
 
     private static final long serialVersionUID = 1L;

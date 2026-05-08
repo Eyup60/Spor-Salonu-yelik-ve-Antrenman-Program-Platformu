@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+// ANTRENMAN DEPO YÖNETİCİSİ SINIFI
 public class AntrenmanDepoYöneticisi implements VeriYöneticisi<Antrenman>, Serializable {
 
     private static final long serialVersionUID = 1L;

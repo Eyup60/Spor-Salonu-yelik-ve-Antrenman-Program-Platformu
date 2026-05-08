@@ -6,7 +6,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
-// Dinamik ücret hesaplama ve paket atama arayüzü
+// PAKET SEÇİMİ DİALOG SINIFI
 public class PaketSecimiDialog extends JDialog {
 
     private static final long serialVersionUID = 1L;
