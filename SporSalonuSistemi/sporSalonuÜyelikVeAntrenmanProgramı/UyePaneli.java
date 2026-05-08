@@ -3,225 +3,78 @@ package sporSalonuÜyelikVeAntrenmanProgramı;
 import java.awt.*;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-import java.util.List;
 
+// Sisteme giriş yapan üyenin abonelik durumunu ve işlemlerini gördüğü ana panel.
 public class UyePaneli extends JFrame {
 
     private static final long serialVersionUID = 1L;
-    private Uye aktifUye;
-    private ProgramAtamaYöneticisi yonetici;
-    private JTextArea txtProgramDetay;
+    private JPanel contentPane;
+    private Uye aktifUye; // Sisteme giriş yapmış olan kullanıcıyı (üyeyi) tutar
+
+    // OOP Prensibi: Constructor Overloading (Yapıcı Metot Aşırı Yükleme) ve Chaining (Zincirleme)
+    // Eğer bu ekran parametresiz çağrılırsa (örneğin WindowBuilder testlerinde), 
+    // çökmemesi için varsayılan (dummy) bir Uye nesnesi oluşturarak asıl yapıcıyı (this) çağırır.
+    public UyePaneli() {
+        this(new Uye("test", "Test Üye", "test@gym.com", "123")); 
+    }
 
     public UyePaneli(Uye uye) {
         this.aktifUye = uye;
-        this.yonetici = new ProgramAtamaYöneticisi();
-
         
-        setTitle("Üye Paneli - " + uye.getIsim() + " " + uye.getSoyisim());
-        setSize(850, 600); 
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLocationRelativeTo(null);
-        getContentPane().setLayout(new BorderLayout());
-
+        setTitle("Spor Salonu - Üye Paneli");
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // Çarpıya basınca programı tamamen kapatır
+        setSize(450, 300);
+        setLocationRelativeTo(null); // Pencerenin ekranın tam ortasında açılmasını sağlar
         
-        JTabbedPane sekmeler = new JTabbedPane();
-        sekmeler.setFont(new Font("Arial", Font.BOLD, 14));
+        contentPane = new JPanel();
+        contentPane.setBorder(new EmptyBorder(15, 15, 15, 15));
+        setContentPane(contentPane);
+        contentPane.setLayout(new BorderLayout(0, 15));
 
+        // --- Abonelik Durum Paneli ---
+        JPanel panelDurum = new JPanel();
+        panelDurum.setBorder(BorderFactory.createTitledBorder("Abonelik Bilgileriniz"));
+        panelDurum.setLayout(new GridLayout(2, 1, 5, 5));
         
-        JPanel profilPaneli = olusturProfilPaneli(uye);
-        sekmeler.addTab("Profilim", null, profilPaneli, "Kişisel Bilgileriniz");
-
+        // Dinamik Arayüz: Üyenin paketi varsa adını, yoksa "Seçilmedi" uyarısını yazar.
+        String paketAdi = (aktifUye.getPaket() != null) ? aktifUye.getPaket().getAd() : "Paket Seçilmedi";
+        JLabel lblPaket = new JLabel("Mevcut Paketiniz: " + paketAdi);
+        lblPaket.setFont(new Font("Tahoma", Font.BOLD, 14));
         
-        JPanel antrenmanPaneli = olusturAntrenmanPaneli(uye);
-        sekmeler.addTab("Antrenman Programım", null, antrenmanPaneli, "Program Ata ve Görüntüle");
-
+        JLabel lblAktiflik = new JLabel("Durum: " + (aktifUye.getPaket() != null ? "AKTİF" : "PASİF (Lütfen paket seçin)"));
+        // Görsel Geri Bildirim: Paket varsa yazı yeşil, yoksa kırmızı olur
+        lblAktiflik.setForeground(aktifUye.getPaket() != null ? new Color(0, 128, 0) : Color.RED);
         
-        getContentPane().add(sekmeler, BorderLayout.CENTER);
-    }
+        panelDurum.add(lblPaket);
+        panelDurum.add(lblAktiflik);
+        contentPane.add(panelDurum, BorderLayout.NORTH);
 
-    
-    private JPanel olusturProfilPaneli(Uye uye) {
-        JPanel panel = new JPanel(new BorderLayout());
-
-        JLabel lblTitle = new JLabel("Profilim", SwingConstants.CENTER);
-        lblTitle.setFont(new Font("Arial", Font.BOLD, 22));
-        lblTitle.setBorder(BorderFactory.createEmptyBorder(15, 0, 15, 0));
-        panel.add(lblTitle, BorderLayout.NORTH);
-
-        JPanel centerPanel = new JPanel(new GridLayout(9, 2, 10, 15));
-        centerPanel.setBorder(new EmptyBorder(10, 30, 20, 30));
-
-        Font labelFont = new Font("Arial", Font.BOLD, 14);
-        Font valFont = new Font("Arial", Font.PLAIN, 14);
-
-        String[] labels = {"İsim:", "Soyisim:", "Atanan Koç:", "Email:", "Boy (cm):", "Kilo (kg):", "Yaş:", "Yağ Oranı (%):", "Vücut Kitle Endeksi:"};
-        String[] values = {
-            uye.getIsim(),
-            uye.getSoyisim(),
-            uye.antrenorum(),
-            uye.getEmail(),
-            String.valueOf(uye.getBoy()),
-            String.valueOf(uye.getKilo()),
-            String.valueOf(uye.getYas()),
-            String.valueOf(uye.getYağOrani()),
-            String.format("%.2f", uye.vucutKitleEndeksiHesapla())
-        };
-
-        for (int i = 0; i < labels.length; i++) {
-            JLabel lbl = new JLabel(labels[i], SwingConstants.RIGHT);
-            lbl.setFont(labelFont);
-            centerPanel.add(lbl);
-
-            JLabel val = new JLabel(values[i]);
-            val.setFont(valFont);
-            if (i == 4) { 
-                val.setForeground(new Color(0, 102, 204));
-                val.setFont(new Font("Arial", Font.BOLD, 16));
-            }
-            centerPanel.add(val);
-        }
-
-        panel.add(centerPanel, BorderLayout.CENTER);
-
-        JPanel btnPanel = new JPanel();
+        // --- İşlem Butonları Paneli ---
+        JPanel panelButonlar = new JPanel();
+        contentPane.add(panelButonlar, BorderLayout.CENTER);
+        panelButonlar.setLayout(new FlowLayout(FlowLayout.CENTER, 20, 20));
         
-        JButton btnGuncelle = new JButton("Profilimi Güncelle");
-        btnGuncelle.setFont(new Font("Arial", Font.BOLD, 14));
-        btnGuncelle.addActionListener(e -> {
-            KullaniciDialog dialog = new KullaniciDialog(UyePaneli.this, uye);
-            dialog.setIsUyeUpdateOnly(true);
-            dialog.setVisible(true);
-            if (dialog.getKullanici() != null) {
-                dispose();
-                new UyePaneli((Uye) dialog.getKullanici()).setVisible(true);
-            }
-        });
-        btnPanel.add(btnGuncelle);
-
+        JButton btnPaketSec = new JButton("Paket Seç / Güncelle");
+        btnPaketSec.setPreferredSize(new Dimension(180, 40));
+        
         JButton btnCikis = new JButton("Çıkış Yap");
-        btnCikis.setFont(new Font("Arial", Font.BOLD, 14));
-        btnCikis.addActionListener(e -> cikisYap());
-        btnPanel.add(btnCikis);
+        btnCikis.setPreferredSize(new Dimension(180, 40));
         
-        // Enter tuşu ile butonlar arasında gezinme
-        setupEnterKeyNavigation(btnGuncelle, btnCikis);
-        
-        panel.add(btnPanel, BorderLayout.SOUTH);
+        panelButonlar.add(btnPaketSec);
+        panelButonlar.add(btnCikis);
 
-        return panel;
-    }
-
-    // --- SENİN KODUN (Bağımsız Bir Metot Olarak Düzenlendi) ---
-    private JPanel olusturAntrenmanPaneli(Uye uye) {
-        JPanel panel = new JPanel(new BorderLayout());
-
-        JPanel secimPaneli = new JPanel(new FlowLayout());
-        String[] programlar = {
-            "Kilo Verme", "Kas Kütlesi", "Boksör", "Powerlifter", "Maratoncu",
-            "Yüzücü", "Basketbolcu", "Cimnastikçi", "Futbolcu", "Tenisçi",
-            "Güreşçi", "Bisikletçi", "Voleybolcu", "Crossfitçi", "Bilek Güreşçisi"
-        };
-        JComboBox<String> cbProgramlar = new JComboBox<>(programlar);
-        cbProgramlar.setFont(new Font("SansSerif", Font.PLAIN, 15));
-
-        JButton btnAta = new JButton("Programı Seç ve Ata");
-        btnAta.setFont(new Font("SansSerif", Font.BOLD, 15));
-        btnAta.setBackground(new Color(0, 153, 76));
-        btnAta.setForeground(Color.BLACK);
-        btnAta.setFocusPainted(false);
-
-        secimPaneli.add(new JLabel("Hedefinizi Seçin: "));
-        secimPaneli.add(cbProgramlar);
-        secimPaneli.add(btnAta);
-        panel.add(secimPaneli, BorderLayout.NORTH);
-
-        txtProgramDetay = new JTextArea();
-        txtProgramDetay.setEditable(false);
-        txtProgramDetay.setFont(new Font("Monospaced", Font.PLAIN, 15));
-        txtProgramDetay.setBackground(new Color(245, 245, 245));
-
-        JScrollPane scrollPane = new JScrollPane(txtProgramDetay);
-        scrollPane.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
-        panel.add(scrollPane, BorderLayout.CENTER);
-
-        btnAta.addActionListener(e -> {
-            String secilen = (String) cbProgramlar.getSelectedItem();
-            yonetici.programAta(aktifUye, secilen);
-            ekraniGuncelle();
-            JOptionPane.showMessageDialog(this, secilen + " programı başarıyla atandı!", "İşlem Başarılı", JOptionPane.INFORMATION_MESSAGE);
+        // Event Handling (Olay Yönetimi): Butona tıklandığında dialog penceresini açar
+        btnPaketSec.addActionListener(e -> {
+            // İlgili dialog ekranına "this" (bu pencere) ve o anki üye bilgisi gönderilir
+            PaketSecimiDialog dialog = new PaketSecimiDialog(this, aktifUye);
+            dialog.setVisible(true);
+            
+            // İşlem bittikten (Dialog kapandıktan) sonra ana ekranı yenilemek için 
+            // mevcut pencereyi kapatır (dispose) ve güncel verilerle tekrar açar.
+            this.dispose();
+            new UyePaneli(aktifUye).setVisible(true);
         });
         
-        // Enter tuşu ile buton arasında gezinme
-        setupEnterKeyNavigation(btnAta);
-
-        ekraniGuncelle();
-        return panel;
-    }
-
-    // Antrenman listesini ekrana basan kodun
-    private void ekraniGuncelle() {
-        List<Antrenman> program = yonetici.programGetir(aktifUye);
-
-        if (program == null || program.isEmpty()) {
-            txtProgramDetay.setText("\n\n   Henüz bir antrenman programınız bulunmamaktadır.\n   Lütfen yukarıdaki menüden hedefinizi seçip 'Programı Seç ve Ata' butonuna tıklayın.");
-            return;
-        }
-
-        StringBuilder sb = new StringBuilder();
-        sb.append(" =========================================================================\n");
-        sb.append("                       AKTİF ANTRENMAN PROGRAMINIZ\n");
-        sb.append(" =========================================================================\n\n");
-
-        for (int i = 0; i < program.size(); i++) {
-            Antrenman a = program.get(i);
-            sb.append(" ").append(i + 1).append(". ").append(a.getIsim()).append(" (").append(a.getKategori()).append(")\n");
-            sb.append("    -> Süre: ").append(a.getSureDakika()).append(" dk | Zorluk: ").append(a.getZorlukSeviyesi()).append("\n");
-            sb.append("    -> Yakılan Kalori: ").append(String.format("%.2f", a.kaloriHesapla(aktifUye))).append(" kcal\n");
-            sb.append(" -------------------------------------------------------------------------\n");
-        }
-
-        sb.append("\n =========================================================================\n");
-        sb.append("  TOPLAM TAHMİNİ KALORİ YAKIMI: ")
-          .append(String.format("%.2f", yonetici.gunlukKaloriHesapla(aktifUye)))
-          .append(" kcal\n");
-        sb.append(" =========================================================================\n");
-
-        txtProgramDetay.setText(sb.toString());
-    }
-
-   
-    private void cikisYap() {
-        this.dispose();
-        new GirişEkranı().setVisible(true);
-    }
-    
-    // Enter tuşu ile butonlar arasında gezinme metod
-    private void setupEnterKeyNavigation(JButton... buttons) {
-        for (int i = 0; i < buttons.length; i++) {
-            final int currentIndex = i;
-            final JButton currentButton = buttons[i];
-            
-            currentButton.addKeyListener(new java.awt.event.KeyAdapter() {
-                public void keyPressed(java.awt.event.KeyEvent evt) {
-                    if (evt.getKeyCode() == java.awt.event.KeyEvent.VK_ENTER) {
-                        // Enter tuşuna basıldığında butonun action'ını çalıştır
-                        currentButton.doClick();
-                    } else if (evt.getKeyCode() == java.awt.event.KeyEvent.VK_DOWN) {
-                        // Aşağı ok tuşu ile sonraki butona geç
-                        int nextIndex = (currentIndex + 1) % buttons.length;
-                        buttons[nextIndex].requestFocus();
-                    } else if (evt.getKeyCode() == java.awt.event.KeyEvent.VK_UP) {
-                        // Yukarı ok tuşu ile önceki butona geç
-                        int prevIndex = (currentIndex - 1 + buttons.length) % buttons.length;
-                        buttons[prevIndex].requestFocus();
-                    }
-                }
-            });
-        }
-        
-        // İlk butona odaklan
-        if (buttons.length > 0) {
-            buttons[0].requestFocus();
-        }
+        btnCikis.addActionListener(e -> System.exit(0)); // Sistemi güvenlice sonlandırır
     }
 }
