@@ -1,8 +1,6 @@
 package sporSalonuÜyelikVeAntrenmanProgramı;
 
 import java.awt.*;
-import java.util.List;
-import java.util.ArrayList;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
@@ -36,7 +34,7 @@ public class AntrenorPaneli extends JFrame {
         baslikPaneli.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
         getContentPane().add(baslikPaneli, BorderLayout.NORTH);
 
-        // TABLO YAPISI: ID'Yİ GİZLİ TUTMAK VEYA GÖSTERMEK GEREKİR
+        // TABLO YAPISI: ID'Yİ GİZLİ TUTAR
         String[] cols = {"ID", "İsim", "Soyisim", "Email", "Boy", "Kilo", "Yaş", "VKE"};
         tableModel = new DefaultTableModel(cols, 0) {
             @Override
@@ -106,7 +104,8 @@ public class AntrenorPaneli extends JFrame {
     }
 
     // ÜYE GÜNCELLE
-    private void guncelleUye() {
+    @SuppressWarnings("unused")
+	private void guncelleUye() {
         int row = table.getSelectedRow();
         if (row == -1) {
             JOptionPane.showMessageDialog(this, "Güncellemek için listeden bir öğrenci seçin.");

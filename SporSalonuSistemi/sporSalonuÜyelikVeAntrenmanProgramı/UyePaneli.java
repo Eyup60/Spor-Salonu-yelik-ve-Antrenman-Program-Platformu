@@ -3,38 +3,63 @@ package sporSalonuÜyelikVeAntrenmanProgramı;
 import java.awt.*;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
+import java.util.List;
 
-// ÜYE PANELİ SINIFI
 public class UyePaneli extends JFrame {
 
     private static final long serialVersionUID = 1L;
-    // ÜYE PANELİ YAPICI METOT
-	public UyePaneli(Uye uye) {
-        setTitle("Üye Paneli - " + uye.getEmail());
-        setSize(400, 400);
+    private Uye aktifUye;
+    private ProgramAtamaYöneticisi yonetici;
+    private JTextArea txtProgramDetay;
+
+    public UyePaneli(Uye uye) {
+        this.aktifUye = uye;
+        this.yonetici = new ProgramAtamaYöneticisi();
+
+        
+        setTitle("Üye Paneli - " + uye.getIsim() + " " + uye.getSoyisim());
+        setSize(850, 600); 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
-        setResizable(false);
+        getContentPane().setLayout(new BorderLayout());
+
         
-        setLayout(new BorderLayout());
+        JTabbedPane sekmeler = new JTabbedPane();
+        sekmeler.setFont(new Font("Arial", Font.BOLD, 14));
+
+        
+        JPanel profilPaneli = olusturProfilPaneli(uye);
+        sekmeler.addTab("Profilim", null, profilPaneli, "Kişisel Bilgileriniz");
+
+        
+        JPanel antrenmanPaneli = olusturAntrenmanPaneli(uye);
+        sekmeler.addTab("Antrenman Programım", null, antrenmanPaneli, "Program Ata ve Görüntüle");
+
+        
+        getContentPane().add(sekmeler, BorderLayout.CENTER);
+    }
+
+    
+    private JPanel olusturProfilPaneli(Uye uye) {
+        JPanel panel = new JPanel(new BorderLayout());
 
         JLabel lblTitle = new JLabel("Profilim", SwingConstants.CENTER);
         lblTitle.setFont(new Font("Arial", Font.BOLD, 22));
         lblTitle.setBorder(BorderFactory.createEmptyBorder(15, 0, 15, 0));
-        add(lblTitle, BorderLayout.NORTH);
+        panel.add(lblTitle, BorderLayout.NORTH);
 
         JPanel centerPanel = new JPanel(new GridLayout(9, 2, 10, 15));
         centerPanel.setBorder(new EmptyBorder(10, 30, 20, 30));
-        
+
         Font labelFont = new Font("Arial", Font.BOLD, 14);
         Font valFont = new Font("Arial", Font.PLAIN, 14);
 
-        String[] labels = {"İsim:","Soyisim:","Atanan Koç:","Email:", "Boy (cm):", "Kilo (kg):", "Yaş:", "Yağ Oranı (%):", "Vücut Kitle Endeksi (BMI):"};
+        String[] labels = {"İsim:", "Soyisim:", "Atanan Koç:", "Email:", "Boy (cm):", "Kilo (kg):", "Yaş:", "Yağ Oranı (%):", "Vücut Kitle Endeksi:"};
         String[] values = {
-        	uye.getIsim(),
-        	uye.getSoyisim(),
-        	uye.antrenorum(),
-            uye.getEmail(),                                          
+            uye.getIsim(),
+            uye.getSoyisim(),
+            uye.antrenorum(),
+            uye.getEmail(),
             String.valueOf(uye.getBoy()),
             String.valueOf(uye.getKilo()),
             String.valueOf(uye.getYas()),
@@ -49,14 +74,14 @@ public class UyePaneli extends JFrame {
 
             JLabel val = new JLabel(values[i]);
             val.setFont(valFont);
-            if (i == 4) {
+            if (i == 4) { 
                 val.setForeground(new Color(0, 102, 204));
                 val.setFont(new Font("Arial", Font.BOLD, 16));
             }
             centerPanel.add(val);
         }
 
-        add(centerPanel, BorderLayout.CENTER);
+        panel.add(centerPanel, BorderLayout.CENTER);
 
         JPanel btnPanel = new JPanel();
         
@@ -72,15 +97,93 @@ public class UyePaneli extends JFrame {
             }
         });
         btnPanel.add(btnGuncelle);
-        
+
         JButton btnCikis = new JButton("Çıkış Yap");
         btnCikis.setFont(new Font("Arial", Font.BOLD, 14));
         btnCikis.addActionListener(e -> cikisYap());
         btnPanel.add(btnCikis);
-        add(btnPanel, BorderLayout.SOUTH);
+        
+        panel.add(btnPanel, BorderLayout.SOUTH);
+
+        return panel;
     }
 
-    // ÇIKIŞ YAP
+    // --- SENİN KODUN (Bağımsız Bir Metot Olarak Düzenlendi) ---
+    private JPanel olusturAntrenmanPaneli(Uye uye) {
+        JPanel panel = new JPanel(new BorderLayout());
+
+        JPanel secimPaneli = new JPanel(new FlowLayout());
+        String[] programlar = {
+            "Kilo Verme", "Kas Kütlesi", "Boksör", "Powerlifter", "Maratoncu",
+            "Yüzücü", "Basketbolcu", "Cimnastikçi", "Futbolcu", "Tenisçi",
+            "Güreşçi", "Bisikletçi", "Voleybolcu", "Crossfitçi", "Bilek Güreşçisi"
+        };
+        JComboBox<String> cbProgramlar = new JComboBox<>(programlar);
+        cbProgramlar.setFont(new Font("SansSerif", Font.PLAIN, 15));
+
+        JButton btnAta = new JButton("Programı Seç ve Ata");
+        btnAta.setFont(new Font("SansSerif", Font.BOLD, 15));
+        btnAta.setBackground(new Color(0, 153, 76));
+        btnAta.setForeground(Color.BLACK);
+        btnAta.setFocusPainted(false);
+
+        secimPaneli.add(new JLabel("Hedefinizi Seçin: "));
+        secimPaneli.add(cbProgramlar);
+        secimPaneli.add(btnAta);
+        panel.add(secimPaneli, BorderLayout.NORTH);
+
+        txtProgramDetay = new JTextArea();
+        txtProgramDetay.setEditable(false);
+        txtProgramDetay.setFont(new Font("Monospaced", Font.PLAIN, 15));
+        txtProgramDetay.setBackground(new Color(245, 245, 245));
+
+        JScrollPane scrollPane = new JScrollPane(txtProgramDetay);
+        scrollPane.setBorder(BorderFactory.createEmptyBorder(15, 15, 15, 15));
+        panel.add(scrollPane, BorderLayout.CENTER);
+
+        btnAta.addActionListener(e -> {
+            String secilen = (String) cbProgramlar.getSelectedItem();
+            yonetici.programAta(aktifUye, secilen);
+            ekraniGuncelle();
+            JOptionPane.showMessageDialog(this, secilen + " programı başarıyla atandı!", "İşlem Başarılı", JOptionPane.INFORMATION_MESSAGE);
+        });
+
+        ekraniGuncelle();
+        return panel;
+    }
+
+    // Antrenman listesini ekrana basan kodun
+    private void ekraniGuncelle() {
+        List<Antrenman> program = yonetici.programGetir(aktifUye);
+
+        if (program == null || program.isEmpty()) {
+            txtProgramDetay.setText("\n\n   Henüz bir antrenman programınız bulunmamaktadır.\n   Lütfen yukarıdaki menüden hedefinizi seçip 'Programı Seç ve Ata' butonuna tıklayın.");
+            return;
+        }
+
+        StringBuilder sb = new StringBuilder();
+        sb.append(" =========================================================================\n");
+        sb.append("                       AKTİF ANTRENMAN PROGRAMINIZ\n");
+        sb.append(" =========================================================================\n\n");
+
+        for (int i = 0; i < program.size(); i++) {
+            Antrenman a = program.get(i);
+            sb.append(" ").append(i + 1).append(". ").append(a.getIsim()).append(" (").append(a.getKategori()).append(")\n");
+            sb.append("    -> Süre: ").append(a.getSureDakika()).append(" dk | Zorluk: ").append(a.getZorlukSeviyesi()).append("\n");
+            sb.append("    -> Yakılan Kalori: ").append(String.format("%.2f", a.kaloriHesapla(aktifUye))).append(" kcal\n");
+            sb.append(" -------------------------------------------------------------------------\n");
+        }
+
+        sb.append("\n =========================================================================\n");
+        sb.append("  TOPLAM TAHMİNİ KALORİ YAKIMI: ")
+          .append(String.format("%.2f", yonetici.gunlukKaloriHesapla(aktifUye)))
+          .append(" kcal\n");
+        sb.append(" =========================================================================\n");
+
+        txtProgramDetay.setText(sb.toString());
+    }
+
+   
     private void cikisYap() {
         this.dispose();
         new GirişEkranı().setVisible(true);
