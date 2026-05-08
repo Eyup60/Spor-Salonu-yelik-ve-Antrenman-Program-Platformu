@@ -25,7 +25,7 @@ public class RaporlamaVeOdemePaneli extends JFrame {
         baslik.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
         add(baslik, BorderLayout.NORTH);
 
-        String[] kolonlar = {"Üye ID", "Üye Adı Soyadı", "Paket Tipi", "Kalan Borç (TL)"};
+        String[] kolonlar = {"Üye ID", "Üye Adı Soyadı", "Paket Tipi"};
         tabloModeli = new DefaultTableModel(kolonlar, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -47,14 +47,15 @@ public class RaporlamaVeOdemePaneli extends JFrame {
         
         for (Kullanici k : tumKullanicilar) {
             if (k.getRole() == Role.UYE) {
+                Uye uye = (Uye) k; 
                 
-                String kisaId = k.getId().length() > 8 ? k.getId().substring(0, 8) : k.getId();
-                
+                String kisaId = uye.getId().length() > 8 ? uye.getId().substring(0, 8) : uye.getId();
+
+                String paketAdi = (uye.getPaket() != null) ? uye.getPaket().getAd() : "Paket Seçilmedi";
                 tabloModeli.addRow(new Object[]{
                     kisaId, 
-                    k.getIsim() + " " + k.getSoyisim(),
-                    "Atanmadı", 
-                    "Hesaplanmadı"
+                    uye.getIsim() + " " + uye.getSoyisim(),
+                    paketAdi, 
                 });
             }
         }

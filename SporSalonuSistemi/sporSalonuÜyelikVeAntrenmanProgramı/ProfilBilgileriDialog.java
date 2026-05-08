@@ -31,7 +31,6 @@ public class ProfilBilgileriDialog extends JDialog {
         try {
             antrenor = uye.antrenorum();
         } catch (Exception ex) {
-            // hata olursa varsayılan kalır
         }
         pnl.add(new JLabel("Atanan Koç: " + antrenor));
 

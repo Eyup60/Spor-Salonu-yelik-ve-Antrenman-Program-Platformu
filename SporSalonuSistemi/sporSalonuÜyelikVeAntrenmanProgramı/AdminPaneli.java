@@ -21,12 +21,12 @@ public class AdminPaneli extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         
-        setLayout(new BorderLayout());
+        getContentPane().setLayout(new BorderLayout());
 
         JLabel lblTitle = new JLabel("Tüm Kullanıcılar("+admin.getKullanicilar().size()+")", SwingConstants.CENTER);
         lblTitle.setFont(new Font("Arial", Font.BOLD, 20));
         lblTitle.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
-        add(lblTitle, BorderLayout.NORTH);
+        getContentPane().add(lblTitle, BorderLayout.NORTH);
 
         String[] cols = {"ID", "Email", "Rol"};
         tableModel = new DefaultTableModel(cols, 0) {
@@ -36,26 +36,31 @@ public class AdminPaneli extends JFrame {
             }
         };
         table = new JTable(tableModel);
-        add(new JScrollPane(table), BorderLayout.CENTER);
+        getContentPane().add(new JScrollPane(table), BorderLayout.CENTER);
 
         JPanel btnPanel = new JPanel();
         JButton btnEkle = new JButton("Yeni Ekle(Admin / Antrenör)");
         JButton btnGuncelle = new JButton("Profilimi Güncelle");
         JButton btnSil = new JButton("Sil");
         JButton btnCikis = new JButton("Çıkış Yap");
+        
         JButton btnRaporlar = new JButton("Raporlar ve Ödemeler");
         
         btnPanel.add(btnEkle);
         btnPanel.add(btnGuncelle);
         btnPanel.add(btnSil);
+        
+        JButton btnFiyatGüncelleme = new JButton("Fiyat Güncelleme");
+        btnPanel.add(btnFiyatGüncelleme);
         btnPanel.add(btnRaporlar);
         btnPanel.add(btnCikis);
-        add(btnPanel, BorderLayout.SOUTH);
+        getContentPane().add(btnPanel, BorderLayout.SOUTH);
 
         btnEkle.addActionListener(e -> ekleKullanici());
         btnGuncelle.addActionListener(e -> guncelleKullanici());
         btnSil.addActionListener(e -> silKullanici());
         btnCikis.addActionListener(e -> cikisYap());
+        btnFiyatGüncelleme.addActionListener(e -> fiyatlariGuncelle());
         btnRaporlar.addActionListener(e -> {
             RaporlamaVeOdemePaneli raporPaneli = new RaporlamaVeOdemePaneli();
             raporPaneli.setVisible(true);
@@ -64,7 +69,7 @@ public class AdminPaneli extends JFrame {
         // Enter tuşu ile butonlar arasında gezinme
         setupEnterKeyNavigation(btnEkle, btnGuncelle, btnSil, btnRaporlar, btnCikis);
         
-
+        admin.sistemBakimiYap();
         verileriYukle();
     }
 
@@ -164,4 +169,31 @@ public class AdminPaneli extends JFrame {
             buttons[0].requestFocus();
         }
     }
+    
+    private void fiyatlariGuncelle() {
+        FiyatGuncellemeDialog dialog = new FiyatGuncellemeDialog(this);
+        dialog.setVisible(true);
+
+        if (dialog.isOnaylandi()) {
+            try {
+                double sFiyat = Double.parseDouble(dialog.getStandartFiyat());
+                double pFiyat = Double.parseDouble(dialog.getPremiumFiyat());
+                double vFiyat = Double.parseDouble(dialog.getVipFiyat());
+
+                // Statik metotlar aracılığıyla sınıflardaki fiyatları güncelle
+                // (Not: Paket sınıflarında bu değişkenlerin static olması gerekir)
+                StandartPaket.setBaslangicFiyat(sFiyat);
+                PremiumPaket.setBaslangicFiyat(pFiyat);
+                VIPPaket.setBaslangicFiyat(vFiyat);
+
+                // Verileri kalıcı hale getir (DosyaYöneticisi üzerinden)
+                DosyaYoneticisi.verileriKaydet(); 
+
+                JOptionPane.showMessageDialog(this, "Fiyatlar başarıyla güncellendi!");
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(this, "Lütfen geçerli bir sayı giriniz!", "Hata", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
+    
 }

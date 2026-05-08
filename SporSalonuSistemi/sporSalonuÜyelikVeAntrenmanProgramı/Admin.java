@@ -51,15 +51,41 @@ public class Admin extends Kullanici implements VeriYöneticisi<Kullanici>{
         this.sonGiriş = sonGiriş;
     }
     
+    public void sistemBakimiYap() {
+        List<Kullanici> tumKullanicilar = getKullanicilar();
+        int atananSayisi = 0;
+
+        for (Kullanici k : tumKullanicilar) {
+            if (k instanceof Uye uye) {
+                String mevcutHoca = anternorBulUyeIle(uye);
+                
+                if (mevcutHoca.equals("Henüz Atanmadı")) {
+                    AtamaMotoru.otomatikAtamaYap(uye);
+                    atananSayisi++;
+                }
+            }
+        }
+
+        if (atananSayisi > 0) {
+            System.out.println("Sistem Bakımı: " + atananSayisi + " adet sahipsiz üye antrenörlere atandı.");
+            DosyaYoneticisi.verileriKaydet();
+        } else {
+            System.out.println("Sistem Bakımı: Atanmamış üye bulunamadı.");
+        }
+    }
+    
     // ANTRENÖR BUL
     public static String anternorBulUyeIle(Uye uye) {
-        if (uye == null) return "Henüz Atanmadı";
+        if (uye == null || uye.getId() == null) return "Henüz Atanmadı";
 
         for (Kullanici k : Admin.getKullanicilar()) {
             if (k instanceof Antrenor antrenor) {
-                for (Uye u : antrenor.listele()) {
-                    if (u.getId().equals(uye.getId())) { 
-                        return antrenor.getIsim() + " " + antrenor.getSoyisim();
+                List<Uye> hocaUyelari = antrenor.listele();
+                if (hocaUyelari != null) {
+                    for (Uye u : hocaUyelari) {
+                        if (u.getId().trim().equals(uye.getId().trim())) { 
+                            return antrenor.getIsim() + " " + antrenor.getSoyisim();
+                        }
                     }
                 }
             }
