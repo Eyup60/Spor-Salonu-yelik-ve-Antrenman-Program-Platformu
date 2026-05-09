@@ -32,7 +32,7 @@ public class UyePaneli extends JFrame {
         panelDurum.setBorder(BorderFactory.createTitledBorder("Abonelik Bilgileriniz"));
         panelDurum.setLayout(new GridLayout(2, 1, 5, 5));
         
-        String paketAdi = (aktifUye.getPaket() != null) ? aktifUye.getPaket().getAd() : "Paket Seçilmedi";
+        String paketAdi = (aktifUye.getPaket() != null) ? aktifUye.getPaket().getPaketAdi() : "Paket Seçilmedi";
         JLabel lblPaket = new JLabel("Mevcut Paketiniz: " + paketAdi);
         lblPaket.setFont(new Font("Tahoma", Font.BOLD, 14));
         
