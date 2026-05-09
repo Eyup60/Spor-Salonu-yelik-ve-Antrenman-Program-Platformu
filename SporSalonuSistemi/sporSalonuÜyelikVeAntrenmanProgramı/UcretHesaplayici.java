@@ -3,15 +3,18 @@ package sporSalonuÜyelikVeAntrenmanProgramı;
 // ÜCRETLANDIRMA HESAPLAYICI SINIFI
 public class UcretHesaplayici {
 	
-    // ÜCRETLERİ HESAPLA
+    /**
+     * ÜCRETLERİ HESAPLA
+     * Polimorfizm sayesinde her paket kendi ucretHesapla metodunu çalıştırır. [cite: 14, 30]
+     */
     public static double hesapla(UyelikPaketi paket, int ozelDers, double indirim) {
 
-        // Exception Handling (Hata Yönetimi): Mantıksal veri doğrulama işlemleri.
+        // Exception Handling: Negatif ders sayısı kontrolü [cite: 71]
         if (ozelDers < 0) {
             throw new IllegalArgumentException("Özel ders sayısı negatif olamaz!");
         }
-        
-        // 🚨 İŞTE EKSİK OLAN VE SİSTEMİ KORUYACAK KONTROL BURASI 🚨
+
+        // 🚨 PAKET BAZLI LİMİT KONTROLÜ (Daha önce eksik olan kısım)
         if (ozelDers > paket.getMaksimumOzelDers()) {
             throw new IllegalArgumentException("Bu paket en fazla " + paket.getMaksimumOzelDers() + " özel ders alabilir!");
         }
@@ -20,14 +23,9 @@ public class UcretHesaplayici {
             throw new IllegalArgumentException("İndirim oranı 0 ile 1 arasında olmalıdır!");
         }
 		
-        // Polimorfizm sayesinde paket tipine göre dinamik ücret hesaplanır
         double toplam = paket.ucretHesapla();
-		
-        // Ek hizmet bedelleri (Her bir özel ders 100 TL)
-        toplam += ozelDers * 100;
-		
-        // İndirim uygulanır
-        toplam -= toplam * indirim;
+        toplam += ozelDers * 100; // Ek ders ücreti
+        toplam -= toplam * indirim; // İndirim düşülür
 		
         return toplam;
     }
