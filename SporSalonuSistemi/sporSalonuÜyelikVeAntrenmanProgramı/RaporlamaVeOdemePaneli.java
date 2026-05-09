@@ -51,7 +51,7 @@ public class RaporlamaVeOdemePaneli extends JFrame {
                 
                 String kisaId = uye.getId().length() > 8 ? uye.getId().substring(0, 8) : uye.getId();
 
-                String paketAdi = (uye.getPaket() != null) ? uye.getPaket().getAd() : "Paket Seçilmedi";
+                String paketAdi = (uye.getPaket() != null) ? uye.getPaket().getPaketAdi() : "Paket Seçilmedi";
                 tabloModeli.addRow(new Object[]{
                     kisaId, 
                     uye.getIsim() + " " + uye.getSoyisim(),

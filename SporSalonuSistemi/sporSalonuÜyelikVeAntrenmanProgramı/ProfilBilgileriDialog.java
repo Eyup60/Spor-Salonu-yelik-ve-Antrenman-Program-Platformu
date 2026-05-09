@@ -25,7 +25,7 @@ public class ProfilBilgileriDialog extends JDialog {
         pnl.add(new JLabel("Yaş: " + uye.getYas()));
         pnl.add(new JLabel(String.format("Yağ Oranı: %.1f %%", uye.getYağOrani())));
         pnl.add(new JLabel("Kayıt Tarihi: " + uye.getKayitTarihi()));
-        pnl.add(new JLabel("Paket: " + (uye.getPaket() != null ? uye.getPaket().getAd() : "Seçilmedi")));
+        pnl.add(new JLabel("Paket: " + (uye.getPaket() != null ? uye.getPaket().getPaketAdi() : "Seçilmedi")));
         // Atanan koçu göster
         String antrenor = "Henüz Atanmadı";
         try {

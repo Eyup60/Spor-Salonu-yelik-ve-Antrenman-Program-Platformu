@@ -27,7 +27,7 @@ public class Main {
             System.out.println("--- Mevcut Üyelik Paketleri ---");
             for (UyelikPaketi p : paketService.listele()) {
                 // Polimorfizm sayesinde her nesne kendi ucretHesapla() metodunu çalıştırır
-                System.out.println("Paket: " + p.getAd() + " | Taban Aylık Ücret: " + p.ucretHesapla() + " TL");
+                System.out.println("Paket: " + p.getPaketAdi() + " | Taban Aylık Ücret: " + p.ucretHesapla() + " TL");
             }
 
             System.out.println("\n--- Dinamik Ücret Hesaplama Motoru Testi ---");

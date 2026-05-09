@@ -31,7 +31,7 @@ public class PaketSecimiDialog extends JDialog {
         // Eğer üyenin zaten bir paketi varsa, combo'yu onunla başlat
         if (uye.getPaket() != null) {
             try {
-                cbPaketler.setSelectedItem(uye.getPaket().getAd());
+                cbPaketler.setSelectedItem(uye.getPaket().getPaketAdi());
             } catch (Exception ignored) {}
         }
 
@@ -74,7 +74,7 @@ public class PaketSecimiDialog extends JDialog {
 
                 // Eğer kullanıcı zaten aynı pakete sahipse, yeniden seçmesini engelle
                 if (uye.getPaket() != null) {
-                    String mevcut = uye.getPaket().getAd();
+                    String mevcut = uye.getPaket().getPaketAdi();
                     if (secilen.equals(mevcut)) {
                         JOptionPane.showMessageDialog(this, "Zaten bu pakete sahipsiniz. Lütfen farklı bir paket seçin.", "Uyarı", JOptionPane.INFORMATION_MESSAGE);
                         return;
