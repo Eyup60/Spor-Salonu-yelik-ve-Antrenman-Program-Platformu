@@ -3,9 +3,10 @@ package sporSalonuÜyelikVeAntrenmanProgramı;
 import java.util.ArrayList;
 import java.util.List;
 
-// PAKET SERVİS SINIFI
+// Hoca VeriYöneticisi interface'i istemişti, burada onu paketler için implemente ediyoruz.
 public class PaketService implements VeriYöneticisi<UyelikPaketi> {
 
+    // Paketleri RAM'de tuttuğumuz liste
     private List<UyelikPaketi> paketler = new ArrayList<>();
 
     @Override
@@ -16,12 +17,13 @@ public class PaketService implements VeriYöneticisi<UyelikPaketi> {
 
     @Override
     public void sil(String id) {
-        // getAd() yerine getPaketAdi() kullanıldı
+        // ID olarak paket adını kabul edip listeden siliyoruz
         paketler.removeIf(p -> p.getPaketAdi().equalsIgnoreCase(id));
     }
 
     @Override
     public void guncelle(UyelikPaketi yeniPaket) {
+        // İsimler eşleşiyorsa paketin özelliklerini güncelliyoruz
         for (int i = 0; i < paketler.size(); i++) {
             if (paketler.get(i).getPaketAdi().equalsIgnoreCase(yeniPaket.getPaketAdi())) {
                 paketler.set(i, yeniPaket);
@@ -32,7 +34,7 @@ public class PaketService implements VeriYöneticisi<UyelikPaketi> {
 
     @Override
     public List<UyelikPaketi> listele() {
-        return new ArrayList<>(paketler);
+        return new ArrayList<>(paketler); // Dışarıdan asıl listeyi bozmamaları için kopyasını dönüyoruz
     }
 
     @Override
