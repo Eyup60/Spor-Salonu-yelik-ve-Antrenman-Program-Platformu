@@ -4,26 +4,34 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-// ANTRENMAN DEPO YÖNETİCİSİ SINIFI
+/**
+ * ANTRENMAN DEPO YÖNETİCİSİ SINIFI
+ * Bu sınıf, antrenman verilerini bellekte tutar ve hazır program şablonlarını yönetir.
+ * Serializable arayüzü sayesinde veriler dosya sistemine kaydedilebilir.
+ */
 public class AntrenmanDepoYöneticisi implements VeriYöneticisi<Antrenman>, Serializable {
 
     private static final long serialVersionUID = 1L;
     private List<Antrenman> antrenmanListesi;
 
+    // Kurucu metod: Başlangıçta boş bir liste oluşturur
     public AntrenmanDepoYöneticisi() {
         this.antrenmanListesi = new ArrayList<>();
     }
 
+    // Listeye yeni bir antrenman eklemek için kullanılır
     @Override
     public void ekle(Antrenman veri) {
         if (veri != null) antrenmanListesi.add(veri);
     }
 
+    // Belirli bir ID'ye sahip antrenmanı listeden temizler
     @Override
     public void sil(String id) {
         antrenmanListesi.removeIf(a -> a.getId().equals(id));
     }
 
+    // Mevcut antrenmanı ID üzerinden bulup yeni verilerle günceller
     @Override
     public void guncelle(Antrenman yeniVeri) {
         for (int i = 0; i < antrenmanListesi.size(); i++) {
@@ -34,6 +42,7 @@ public class AntrenmanDepoYöneticisi implements VeriYöneticisi<Antrenman>, Ser
         }
     }
     
+    // ID ile antrenman nesnesine erişim sağlar
     @Override
 	public Antrenman bul(String id) {
     	for (Antrenman a : antrenmanListesi) {
@@ -42,15 +51,23 @@ public class AntrenmanDepoYöneticisi implements VeriYöneticisi<Antrenman>, Ser
         return null;
 	}
 
+    // Tüm antrenman listesini kapsüllemeyi bozmadan dışarıya döner
     @Override
     public List<Antrenman> listele() {
         return new ArrayList<>(antrenmanListesi);
     }
 
+    /**
+     * HAZIR PROGRAM YÜKLEME METODU
+     * Seçilen kategoriye göre önceden tanımlanmış egzersiz setlerini listeye doldurur.
+     */
     public void hazirProgramYukle(String secim) {
+        // Mevcut listeyi temizleyerek yeni seçilen programa yer açar
         antrenmanListesi.clear();
+        
         switch (secim.toLowerCase()) {
             case "kilo verme":
+                // Kalori yakımı ve yüksek nabız odaklı kardiyo + kalisteniks seti
                 ekle(new Kardiyo("Hafif Yürüyüş", "Isınma", 10, "Kolay", 6.0, "Koşu Bandı", 1.0, 1));
                 ekle(new Kardiyo("Yağ Yakım Koşusu", "Kardiyo", 25, "Zor", 9.5, "Koşu Bandı", 3.0, 1));
                 ekle(new Kardiyo("Tempo Bisiklet", "Kardiyo", 20, "Orta", 22.0, "Bisiklet", 0.0, 8));
@@ -64,6 +81,7 @@ public class AntrenmanDepoYöneticisi implements VeriYöneticisi<Antrenman>, Ser
                 break;
 
             case "kas kütlesi":
+                // Hipertrofi odaklı, ağır direnç ve bileşik hareketler
                 ekle(new Kardiyo("Hafif Isınma", "Isınma", 10, "Kolay", 6.5, "Eliptik", 0.0, 4));
                 ekle(new Agirlik("Bench Press", "Göğüs", 20, "Zor", 4, 8, 85.0, "Göğüs", "Barbell", 120));
                 ekle(new Agirlik("Incline Dumbbell Press", "Göğüs", 15, "Orta", 3, 12, 25.0, "Göğüs", "Dumbbell", 90));
@@ -77,6 +95,7 @@ public class AntrenmanDepoYöneticisi implements VeriYöneticisi<Antrenman>, Ser
                 break;
 
             case "boksör":
+                // Patlayıcı güç, kondisyon ve dayanıklılık harmanı
                 ekle(new Kardiyo("İp Atlama", "Kondisyon", 15, "Zor", 120.0, "Atlama İpi", 0.0, 1));
                 ekle(new Kardiyo("Gölge Boksu", "Teknik", 10, "Orta", 10.0, "Yok", 0.0, 1));
                 ekle(new Kardiyo("Kum Torbası Interval", "Dayanıklılık", 20, "Çok Zor", 15.0, "Kum Torbası", 0.0, 1));
@@ -90,6 +109,7 @@ public class AntrenmanDepoYöneticisi implements VeriYöneticisi<Antrenman>, Ser
                 break;
 
             case "powerlifter":
+                // Maksimum kuvvet odaklı, düşük tekrar, yüksek ağırlık ve uzun dinlenme
                 ekle(new Kardiyo("Yürüyüş", "Isınma", 10, "Kolay", 5.0, "Koşu Bandı", 0.0, 1));
                 ekle(new Agirlik("Ağır Squat", "Bacak", 40, "Çok Zor", 5, 3, 160.0, "Alt Vücut", "Barbell", 300));
                 ekle(new Agirlik("Pause Squat", "Bacak", 20, "Zor", 3, 5, 120.0, "Alt Vücut", "Barbell", 180));
@@ -103,6 +123,7 @@ public class AntrenmanDepoYöneticisi implements VeriYöneticisi<Antrenman>, Ser
                 break;
 
             case "maratoncu":
+                // Dayanıklılık (Endurance) ve düşük yoğunluklu güç çalışması
                 ekle(new Esneklik("Dinamik Esneme", "Isınma", 10, "Hafif", "Stretching", 15));
                 ekle(new Kardiyo("Uzun Mesafe Koşu", "Dayanıklılık", 60, "Zor", 12.0, "Koşu Bandı", 1.0, 1));
                 ekle(new Kardiyo("Tepe Yürüyüşü", "Kuvvet", 20, "Zor", 6.5, "Koşu Bandı", 12.0, 1));
@@ -116,6 +137,7 @@ public class AntrenmanDepoYöneticisi implements VeriYöneticisi<Antrenman>, Ser
                 break;
 
             case "yüzücü":
+                // Çekiş gücü (Lats) ve omuz mobilitesi odaklı program
                 ekle(new Kardiyo("Isınma Küreği", "Isınma", 10, "Kolay", 15.0, "Kürek", 0.0, 4));
                 ekle(new Kardiyo("Interval Kürek", "Dayanıklılık", 25, "Zor", 28.0, "Kürek", 0.0, 15));
                 ekle(new Agirlik("Lat Pulldown", "Sırt", 15, "Orta", 4, 12, 55.0, "Sırt", "Makine", 60));
@@ -129,6 +151,7 @@ public class AntrenmanDepoYöneticisi implements VeriYöneticisi<Antrenman>, Ser
                 break;
 
             case "basketbolcu":
+                // Dikey sıçrama, çeviklik ve omuz stabilitesi
                 ekle(new Kardiyo("Shuttle Run", "Isınma", 10, "Orta", 14.0, "Koşu Bandı", 0.0, 1));
                 ekle(new Kardiyo("Interval Sprint", "Hız", 15, "Zor", 18.0, "Koşu Bandı", 0.0, 1));
                 ekle(new Kardiyo("Defansif Kayma", "Savunma", 10, "Zor", 10.0, "Yok", 0.0, 1));
@@ -142,6 +165,7 @@ public class AntrenmanDepoYöneticisi implements VeriYöneticisi<Antrenman>, Ser
                 break;
 
             case "cimnastikçi":
+                // İnanılmaz bir core kuvveti ve statik denge üzerine kurulu
                 ekle(new Esneklik("Tam Vücut Isınma", "Isınma", 15, "Orta", "Yoga", 20));
                 ekle(new Esneklik("Bilek Mobilitesi", "Mobilite", 10, "Orta", "Jimnastik", 15));
                 ekle(new Kalisteniks("Handstand Hold", "Denge", 15, "Zor", 5, 60, 1.2, 0.0, "Statik"));
@@ -155,6 +179,7 @@ public class AntrenmanDepoYöneticisi implements VeriYöneticisi<Antrenman>, Ser
                 break;
 
             case "futbolcu":
+                // Hızlanma, ani yön değiştirme ve alt vücut gücü
                 ekle(new Kardiyo("Hafif Tempo Koşu", "Isınma", 10, "Kolay", 8.0, "Koşu Bandı", 0.0, 1));
                 ekle(new Kardiyo("Interval Depar", "Hız", 20, "Zor", 18.0, "Koşu Bandı", 2.0, 1));
                 ekle(new Kardiyo("Merdiven Çalışması", "Çeviklik", 15, "Zor", 12.0, "Eliptik", 5.0, 10));
@@ -168,6 +193,7 @@ public class AntrenmanDepoYöneticisi implements VeriYöneticisi<Antrenman>, Ser
                 break;
 
             case "tenisçi":
+                // Rotasyonel güç (vuruşlar için) ve lateral (yanal) hız
                 ekle(new Kardiyo("Eliptik Bisiklet", "Isınma", 10, "Orta", 12.0, "Eliptik", 0.0, 5));
                 ekle(new Kardiyo("Yana Kayma Sprinti", "Çeviklik", 15, "Zor", 14.0, "Yok", 0.0, 1));
                 ekle(new Agirlik("Dumbbell Woodchopper", "Rotasyon", 15, "Zor", 3, 15, 10.0, "Core", "Dumbbell", 45));
@@ -181,6 +207,7 @@ public class AntrenmanDepoYöneticisi implements VeriYöneticisi<Antrenman>, Ser
                 break;
 
             case "güreşçi":
+                // Ham kuvvet, boyun dayanıklılığı ve sarsılmaz bir grip (kavrama)
                 ekle(new Kardiyo("Dirençli Bisiklet", "Isınma", 15, "Zor", 25.0, "Bisiklet", 0.0, 12));
                 ekle(new Kardiyo("Ağır Kürek Interval", "Dayanıklılık", 20, "Çok Zor", 30.0, "Kürek", 0.0, 15));
                 ekle(new Agirlik("Zercher Squat", "Bacak/Core", 20, "Çok Zor", 4, 8, 80.0, "Tüm Vücut", "Barbell", 120));
@@ -194,6 +221,7 @@ public class AntrenmanDepoYöneticisi implements VeriYöneticisi<Antrenman>, Ser
                 break;
 
             case "bisikletçi":
+                // Alt vücut laktat eşiği ve yüksek kadans dayanıklılığı
                 ekle(new Esneklik("Bacak Dinamik Esneme", "Isınma", 10, "Hafif", "Stretching", 15));
                 ekle(new Kardiyo("Hafif Tempo Bisiklet", "Isınma", 15, "Kolay", 15.0, "Bisiklet", 0.0, 5));
                 ekle(new Kardiyo("Uzun Mesafe Bisiklet", "Dayanıklılık", 45, "Zor", 22.0, "Bisiklet", 0.0, 10));
@@ -207,6 +235,7 @@ public class AntrenmanDepoYöneticisi implements VeriYöneticisi<Antrenman>, Ser
                 break;
 
             case "voleybolcu":
+                // Sıçrama yüksekliği (Vertical) ve omuz stabilitesi
                 ekle(new Kardiyo("Kısa Sprint", "Isınma", 10, "Orta", 14.0, "Koşu Bandı", 0.0, 1));
                 ekle(new Kardiyo("Yanal Hareketler", "Çeviklik", 10, "Zor", 10.0, "Yok", 0.0, 1));
                 ekle(new Agirlik("Push Press", "Omuz/Güç", 15, "Zor", 4, 8, 40.0, "Omuz", "Barbell", 90));
@@ -220,6 +249,7 @@ public class AntrenmanDepoYöneticisi implements VeriYöneticisi<Antrenman>, Ser
                 break;
 
             case "crossfitçi":
+                // Her şeyden biraz: Güç, hız, dayanıklılık (WOD tarzı)
                 ekle(new Kardiyo("Isınma Küreği", "Isınma", 10, "Orta", 20.0, "Kürek", 0.0, 5));
                 ekle(new Kardiyo("Yüksek Yoğunluklu Kürek", "Kardiyo", 15, "Çok Zor", 30.0, "Kürek", 0.0, 10));
                 ekle(new Agirlik("Thruster", "Tüm Vücut", 20, "Çok Zor", 4, 12, 40.0, "Tüm Vücut", "Barbell", 60));
@@ -233,6 +263,7 @@ public class AntrenmanDepoYöneticisi implements VeriYöneticisi<Antrenman>, Ser
                 break;
 
             case "bilek güreşçisi":
+                // Spesifik olarak ön kol, bilek ve kavrama (grip) kuvveti
                 ekle(new Kardiyo("Isınma Bisikleti", "Isınma", 10, "Kolay", 15.0, "Bisiklet", 0.0, 5));
                 ekle(new Agirlik("Barbell Wrist Curl", "Önkol", 15, "Zor", 4, 15, 40.0, "Bilek", "Barbell", 60));
                 ekle(new Agirlik("Reverse Barbell Curl", "Önkol/Biceps", 15, "Zor", 4, 12, 35.0, "Kol", "Barbell", 60));
@@ -246,7 +277,8 @@ public class AntrenmanDepoYöneticisi implements VeriYöneticisi<Antrenman>, Ser
                 break;
 
             default:
+                // Tanımlanmamış bir kategori gelirse liste boş bırakılır
                 break;
         }
     }
-}
+
