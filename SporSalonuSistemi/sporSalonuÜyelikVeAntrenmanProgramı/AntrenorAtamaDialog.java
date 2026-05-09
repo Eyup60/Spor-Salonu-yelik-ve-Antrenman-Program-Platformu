@@ -49,7 +49,7 @@ public class AntrenorAtamaDialog extends JDialog {
                 
                 // Servis sınıfı çağrılarak mantıksal eşleştirme yapılır
                 AntrenorUyeService service = new AntrenorUyeService();
-                service.ata(antrenorIndex, uyeIndex);
+                service.ata(String.valueOf(antrenorIndex), String.valueOf(uyeIndex));
                 
                 JOptionPane.showMessageDialog(this, "Eşleştirme Başarıyla Kaydedildi!", "Başarılı", JOptionPane.INFORMATION_MESSAGE);
                 dispose(); // İşlem bitince pencereyi kapat

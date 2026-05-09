@@ -3,11 +3,11 @@ package sporSalonuÜyelikVeAntrenmanProgramı;
 // ANTRENÖR ÜYE SINIFI
 public class AntrenorUye {
 	
-    private int antrenorID;
-    private int uyeID;
+    private String antrenorID;
+    private String uyeID;
 	
     // Constructor (Yapıcı Metot) - Nesne oluşturulurken ID'leri atar
-    public AntrenorUye(int antrenorID, int uyeID) {
+    public AntrenorUye(String antrenorID, String uyeID) {
         this.antrenorID = antrenorID;
         this.uyeID = uyeID;
     }
@@ -15,19 +15,19 @@ public class AntrenorUye {
     // --- Getter ve Setter Metotları ---
     // Verilere dışarıdan kontrollü erişim ve değişiklik imkanı sağlar
 
-    public int getAntrenorID() {
+    public String getAntrenorID() {
         return antrenorID;
     }
 
-    public void setAntrenorID(int antrenorID) {
+    public void setAntrenorID(String antrenorID) {
         this.antrenorID = antrenorID;
     }
 
-    public int getUyeID() {
+    public String getUyeID() {
         return uyeID;
     }
 
-    public void setUyeID(int uyeID) {
+    public void setUyeID(String uyeID) {
         this.uyeID = uyeID;
     }
 	

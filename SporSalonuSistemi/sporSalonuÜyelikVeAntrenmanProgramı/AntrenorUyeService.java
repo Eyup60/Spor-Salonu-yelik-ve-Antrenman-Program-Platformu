@@ -46,7 +46,7 @@ public class AntrenorUyeService implements VeriYöneticisi<AntrenorUye> {
         return null;
     }
     
-    public void ata(int antrenorId, int uyeId) {
+    public void ata(String antrenorId, String uyeId) {
         liste.add(new AntrenorUye(antrenorId, uyeId));
     }
 }

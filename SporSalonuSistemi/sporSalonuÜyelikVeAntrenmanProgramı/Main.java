@@ -37,8 +37,8 @@ public class Main {
 
             System.out.println("\n--- Antrenör-Üye İlişki Atamaları Testi ---");
             // ID'ler üzerinden atama işlemleri gerçekleştiriliyor
-            antrenorService.ata(1, 101);
-            antrenorService.ata(2, 102);
+            antrenorService.ata("1", "101");
+            antrenorService.ata("2", "102");
 
             for (AntrenorUye a : antrenorService.listele()) {
                 System.out.println("Atama Kaydı -> Antrenör ID: " + a.getAntrenorID() + " | Üye ID: " + a.getUyeID());
