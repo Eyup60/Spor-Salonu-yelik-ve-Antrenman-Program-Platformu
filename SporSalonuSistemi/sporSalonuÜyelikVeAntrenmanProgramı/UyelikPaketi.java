@@ -1,49 +1,78 @@
 package sporSalonuÜyelikVeAntrenmanProgramı;
 
-// ÜYELİK PAKETİ SINIFI
-public abstract class UyelikPaketi {
+import java.io.Serializable;
 
-    // OOP Prensibi: Kapsülleme (Encapsulation) - Değişkenler private yapılarak dışarıdan doğrudan erişime kapatılmıştır.
-    private String ad;
+/**
+ * UyelikPaketi: Projenin "Abstraction" (Soyutlama) temelidir.
+ * Bu sınıf 'abstract' olduğu için direkt nesnesi oluşturulamaz (new UyelikPaketi() yapılamaz).
+ * Sadece Standart, Premium veya VIP paketler üzerinden kalıtım alınarak kullanılır.
+ */
+public abstract class UyelikPaketi implements Serializable {
+    private static final long serialVersionUID = 1L;
+
+    // Encapsulation: Değişkenler private tutularak doğrudan erişim engellenmiştir.
+    private String paketAdi;
     private double temelFiyat;
-    private int sure; // Paket süresi (Gün cinsinden)
-	
-    // Yapıcı Metot (Constructor) - Alt sınıflar oluşturulurken bu üst sınıfın verilerini doldurur
-    public UyelikPaketi(String ad, double temelFiyat, int sure) {
-        this.ad = ad;
+    private int sureAy;
+
+    // Yapıcı Metot (Constructor)
+    public UyelikPaketi(String paketAdi, double temelFiyat, int sureAy) {
+        this.paketAdi = paketAdi;
         this.temelFiyat = temelFiyat;
-        this.sure = sure;
+        this.sureAy = sureAy;
     }
-	
-    // Gövdesiz (Abstract) Metot: Miras alan her alt sınıf (Standart, Premium, VIP)
-    // bu metodu kendine özgü kurallarla ezmek (Override) ve doldurmak zorundadır.
+
+    /**
+     * Polymorphism (Çok Biçimlilik) İsteri:
+     * Bu metot abstract tanımlanmıştır. Her alt sınıf (Standart, Premium, VIP)
+     * kendi fiyat hesaplama mantığını bu metodu @Override ederek uygulayacaktır.
+     */
     public abstract double ucretHesapla();
 
-    // --- Getter ve Setter Metotları ---
-    // Private değişkenlere güvenli bir şekilde erişim ve müdahale edilmesini sağlar.
+    /**
+     * UcretHesaplayici sınıfında yaşadığımız hatayı çözen kritik metot.
+     * Her paketin kendine has bir özel ders sınırı olacağını garanti eder.
+     */
+    public abstract int getMaksimumOzelDers();
 
-    public String getAd() {
-        return ad;
+    // --- GETTER VE SETTER METOTLARI (Encapsulation) ---
+
+    public String getPaketAdi() {
+        return paketAdi;
     }
 
-    public void setAd(String ad) {
-        this.ad = ad;
+    public void setPaketAdi(String paketAdi) {
+        this.paketAdi = paketAdi;
     }
 
     public double getTemelFiyat() {
         return temelFiyat;
     }
 
+    // Mantıksal kontrol eklenmiş Setter örneği
     public void setTemelFiyat(double temelFiyat) {
+        if (temelFiyat < 0) {
+            throw new IllegalArgumentException("Fiyat negatif olamaz!");
+        }
         this.temelFiyat = temelFiyat;
     }
 
-    public int getSure() {
-        return sure;
+    public int getSureAy() {
+        return sureAy;
     }
 
-    public void setSure(int sure) {
-        this.sure = sure;
+    public void setSureAy(int sureAy) {
+        if (sureAy <= 0) {
+            throw new IllegalArgumentException("Süre en az 1 ay olmalıdır!");
+        }
+        this.sureAy = sureAy;
     }
-	
+
+    /**
+     * Nesnenin yazdırılabilir halini döndürür.
+     */
+    @Override
+    public String toString() {
+        return paketAdi + " (" + sureAy + " Ay)";
+    }
 }
