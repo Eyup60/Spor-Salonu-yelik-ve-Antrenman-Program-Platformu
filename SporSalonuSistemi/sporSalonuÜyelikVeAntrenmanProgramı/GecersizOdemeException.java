@@ -1,10 +1,14 @@
 package sporSalonuÜyelikVeAntrenmanProgramı;
 
 // GEÇERSİZ ÖDEME İSTİSNASI SINIFI
+// ÖDEME İŞLEMLERİNDE HATA DURUMLARINDA KULLANILIR
+// EXCEPTION SINIFINDAN MİRAS ALIR
 public class GecersizOdemeException extends Exception {
+    // SERİALİZASYON VERSİYON NUMARASI
     private static final long serialVersionUID = 1L;
 
-    // YAPICI METOT
+    // GEÇERSİZ ÖDEME İSTİSNASI YAPICI METOT
+    // HATA MESAJI İLE İSTİSNA OLUŞTURUR
     public GecersizOdemeException(String mesaj) {
         super(mesaj);
     }

@@ -5,21 +5,33 @@ import java.awt.*;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 
+// KAYIT DİALOG SINIFI
+// YENİ ÜYE KAYIT İŞLEMLERİ İÇİN KULLANILIR
+// SWING JDIALOG MİRAS ALIR
 public class KayıtDialog extends JDialog {
+    
+    // SERİALİZASYON VERSİYON NUMARASI
     private static final long serialVersionUID = 1L;
+    
+    // FORM DEĞİŞKENLERİ
     private JTextField txtIsim, txtSoyIsim, txtEmail, txtBoy, txtKilo, txtYas, txtYagOrani;
     private JPasswordField txtPassword;
+    // YENİ OLUŞTURULACAK ÜYE NESNESİ
     private Kullanici yeniUye;
 
+    // KAYIT DİALOG YAPICI METOT
+    // MODAL PENCERE OLARAK KAYIT FORMU OLUŞTURUR
     public KayıtDialog(JFrame parent) {
         super(parent, "Yeni Üye Kaydı", true);
         setSize(350, 400);
         setLocationRelativeTo(parent);
         setLayout(new BorderLayout());
 
+        // FORM PANELİ OLUŞTUR
         JPanel formPanel = new JPanel(new GridLayout(8, 2, 10, 10));
         formPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
+        // FORM ALANLARI EKLE
         formPanel.add(new JLabel("Isim:"));
         txtIsim = new JTextField();
         formPanel.add(txtIsim);
@@ -54,6 +66,7 @@ public class KayıtDialog extends JDialog {
 
         add(formPanel, BorderLayout.CENTER);
 
+        // BUTON PANELİ
         JPanel btnPanel = new JPanel();
         JButton btnKaydet = new JButton("Kayıt Ol");
         JButton btnIptal = new JButton("İptal");
@@ -61,18 +74,22 @@ public class KayıtDialog extends JDialog {
         btnPanel.add(btnIptal);
         add(btnPanel, BorderLayout.SOUTH);
 
+        // BUTON AKSİYONLARI
         btnIptal.addActionListener(e -> dispose());
         btnKaydet.addActionListener(e -> kayitOl());
 
+        // ENTER TUŞU İLE FORM DOLDURMA
         KeyAdapter enterKeyAdapter = new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
+                // ENTER TUŞUNA BASILDIĞINDA KAYIT İŞLEMİNİ BAŞLAT
                 if (e.getKeyCode() == KeyEvent.VK_ENTER) {
                     kayitOl();
                 }
             }
         };
 
+        // TÜM FORM ALANLARINA ENTER TUŞU DİNLEYİCİSİ EKLE
         txtIsim.addKeyListener(enterKeyAdapter);
         txtSoyIsim.addKeyListener(enterKeyAdapter);
         txtEmail.addKeyListener(enterKeyAdapter);
@@ -84,7 +101,10 @@ public class KayıtDialog extends JDialog {
         btnKaydet.addKeyListener(enterKeyAdapter);
     }
 
+    // KAYIT OL METOTU
+    // FORM VERİLERİNİ DOĞRULAR VE ÜYE OLUŞTURUR
     private void kayitOl() {
+        // FORM ALANLARININ DOLU OLDUĞUNU KONTROL ET
         if (txtIsim.getText().isEmpty() || txtSoyIsim.getText().isEmpty() || 
             txtEmail.getText().isEmpty() || new String(txtPassword.getPassword()).isEmpty() ||
             txtBoy.getText().isEmpty() || txtKilo.getText().isEmpty() || 
@@ -95,6 +115,7 @@ public class KayıtDialog extends JDialog {
         }
 
         try {
+            // FORM VERİLERİNİ AL
             String isim = txtIsim.getText();
             String soyIsim = txtSoyIsim.getText();
             String email = txtEmail.getText();
@@ -104,20 +125,26 @@ public class KayıtDialog extends JDialog {
             int yas = Integer.parseInt(txtYas.getText());
             double yag = Double.parseDouble(txtYagOrani.getText());
 
+            // YENİ ÜYE NESNESİ OLUŞTUR VE SİSTEME EKLE
             yeniUye = new Uye(isim, soyIsim, email, pwd, boy, kilo, yas, yag);
             Admin.doğrudanEkle(yeniUye);
 
             JOptionPane.showMessageDialog(this, "Kayıt Başarılı!", "BİLGİ", JOptionPane.INFORMATION_MESSAGE);
             dispose();
         } catch (NumberFormatException ex) {
+            // SAYISAL DEĞER HATASI
             JOptionPane.showMessageDialog(this, "Boy, Kilo, Yaş ve Yağ Oranı alanlarına geçerli sayısal değerler giriniz.", "Girdi Hatası", JOptionPane.ERROR_MESSAGE);
         } catch (IllegalArgumentException ex) {
+            // GEÇERSİZ DEĞER HATASI
             JOptionPane.showMessageDialog(this, ex.getMessage(), "Geçersiz Girdi", JOptionPane.ERROR_MESSAGE);
         } catch (Exception ex) {
+            // GENEL HATA DURUMU
             JOptionPane.showMessageDialog(this, "Beklenmedik bir hata oluştu: " + ex.getMessage(), "Hata", JOptionPane.ERROR_MESSAGE);
         }
     }
 
+    // YENİ KULLANICI GETİR
+    // OLUŞTURULAN ÜYE NESNESİNİ DÖNDÜRÜR
     public Kullanici getYeniKullanici() {
         return yeniUye;
     }

@@ -7,14 +7,18 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 // VERİ YÖNETİMİ VE KALICI SAKLAMA SINIFI
+// JSON İLE DOSYA İŞLEMLERİNİ YÖNETİR
+// SERİALİZASYON VE DESERİALİZASYON SAĞLAR
 public class DosyaYoneticisi {
 
     // DOSYA KONUMU VE FİZİKSEL ADRES TANIMI
+    // KULLANICI ANA DİZİNİNDE GİZLİ KLASÖRDE SAKLANIR
     private static final String DOSYA_YOLU =
         System.getProperty("user.home") + File.separator + 
         ".sporSalonu" + File.separator + "kullanicilar.json";
 
     // JSON DÖNÜŞTÜRÜCÜ VE POLİMORFİK NESNE YAPILANDIRMASI
+    // GELİŞMİŞ TİP DÖNÜŞÜMLERİ İÇİN GSON BUILDER KULLANIR
     private static Gson buildGson() {
         return new GsonBuilder()
             .setPrettyPrinting()
@@ -34,7 +38,8 @@ public class DosyaYoneticisi {
             .registerTypeAdapter(LocalDateTime.class,
                 (JsonDeserializer<LocalDateTime>) (json, t, ctx) ->
                     LocalDateTime.parse(json.getAsString()))
-            // SOYUT SINIFLAR İÇİN ÖZEL OKUMA MANTIĞI (JSON'DAN NESNEYE)
+            // SOYUT SINIFLAR İÇİN ÖZEL OKUMA MANTIĞI
+            // JSON'DAN NESNEYE DÖNÜŞÜM İÇİN POLİMORFİK YAPI
             .registerTypeAdapter(UyelikPaketi.class, (JsonDeserializer<UyelikPaketi>) (json, typeOfT, context) -> {
                 JsonObject jsonObject = json.getAsJsonObject();
                 String ad = jsonObject.has("ad") ? jsonObject.get("ad").getAsString().toLowerCase() : "";
@@ -46,6 +51,7 @@ public class DosyaYoneticisi {
     }
     
     // BELLEKTEKİ VERİLERİ DOSYAYA YAZMA İŞLEMİ
+    // TÜM KULLANICI VERİLERİNİ JSON FORMATINDA KAYDEDER
     public static void verileriKaydet() {
         try {
             File dosya = new File(DOSYA_YOLU);
@@ -86,6 +92,7 @@ public class DosyaYoneticisi {
     }
     
     // DOSYADAN VERİ OKUMA VE NESNELEŞTİRME İŞLEMİ
+    // KAYITLI VERİLERİ SİSTEME YÜKLER VE NESNELERİ OLUŞTURUR
     public static void verileriYukle() {
         File dosya = new File(DOSYA_YOLU);
         

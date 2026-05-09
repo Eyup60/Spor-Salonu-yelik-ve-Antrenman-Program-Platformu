@@ -14,7 +14,7 @@ public class UcretHesaplayici {
             throw new IllegalArgumentException("Özel ders sayısı negatif olamaz!");
         }
 
-        // 🚨 PAKET BAZLI LİMİT KONTROLÜ (Daha önce eksik olan kısım)
+        //  PAKET BAZLI LİMİT KONTROLÜ (Daha önce eksik olan kısım)
         if (ozelDers > paket.getMaksimumOzelDers()) {
             throw new IllegalArgumentException("Bu paket en fazla " + paket.getMaksimumOzelDers() + " özel ders alabilir!");
         }

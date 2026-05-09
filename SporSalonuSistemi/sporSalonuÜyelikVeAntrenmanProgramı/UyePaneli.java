@@ -11,10 +11,6 @@ public class UyePaneli extends JFrame {
     private JPanel contentPane;
     private Uye aktifUye;
 
-    public UyePaneli() {
-        this(new Uye("test", "Test Üye", "test@gym.com", "123")); 
-    }
-
     public UyePaneli(Uye uye) {
         this.aktifUye = uye;
         

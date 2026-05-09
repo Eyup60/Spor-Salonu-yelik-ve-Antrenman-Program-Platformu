@@ -7,27 +7,27 @@ import java.util.Random;
 import java.util.concurrent.CopyOnWriteArrayList;
 import javax.swing.JOptionPane;
 
-// YÖNETİCİ SINIFI
+// SİSTEMİN TÜM YÖNETİMSEL YETKİLERİNE SAHİP OLAN VE KULLANICI İŞLEMLERİNİ YÖNETEN ANA SINIF
 public class Admin extends Kullanici implements VeriYöneticisi<Kullanici>{
     
     private static final long serialVersionUID = 1L;
     
-    // TÜM SİSTEM KULLANICILARINI RAM ÜZERİNDE TUTAN ANA VERİ LİSTESİ
-    private static List<Kullanici> kullanicilar = new CopyOnWriteArrayList<>();
+    // TÜM SİSTEM KULLANICILARINI RAM ÜZERİNDE TUTAR
+    private static List<Kullanici> kullanicilar = new CopyOnWriteArrayList<>(); // DEĞİŞİKLİKLER KOPYA ÜZERİNE YAPILIR
     
     private LocalDateTime sonGiriş;
 
-    // YÖNETİCİ YAPICI METOT
+    // ADMİN YAPICI METODU PROTECTED İLE KORUMAYA ALIR
     protected Admin(String isim ,String soyisim,String email,String password) {
         super(isim ,soyisim,email, password, Role.ADMIN);
     }
     
-    // KULLANICILARI GETİR
+    // SİSTEMDEKİ TÜM KULLANICILARIN LİSTESİNİ DIŞARIYA GÜVENLİ BİR KOPYA OLARAK GÖNDERİR
     public static List<Kullanici> getKullanicilar() {
         return new ArrayList<>(kullanicilar);
     }
 
-    // KULLANICILARI AYARLA
+    // DOSYADAN OKUNAN VERİLERİN SİSTEME YÜKLENMESİNİ SAĞLAYAN STATİK METOT
     public static void setKullanicilar(List<Kullanici> kullanicilar) {
         if(kullanicilar == null) {
             throw new IllegalArgumentException("Kullanıcı listesi sisteme yüklenemedi!");
@@ -35,12 +35,12 @@ public class Admin extends Kullanici implements VeriYöneticisi<Kullanici>{
         Admin.kullanicilar = kullanicilar;
     }
     
-    // SON GİRİŞ GETİR
+    // YÖNETİCİNİN SİSTEME EN SON NE ZAMAN GİRDİĞİ BİLGİSİNİ DÖNDÜRÜR
     public LocalDateTime getSonGiriş() {
         return sonGiriş;
     }
 
-    // SON GİRİŞ AYARLA
+    // YÖNETİCİNİN GİRİŞ ZAMANINI DOĞRULAYARAK GÜNCELLEYEN METOT
     public void setSonGiriş(LocalDateTime sonGiriş) {
         if(sonGiriş == null) {
             throw new IllegalArgumentException("Son giriş zamanı boş olamaz!");
@@ -51,6 +51,7 @@ public class Admin extends Kullanici implements VeriYöneticisi<Kullanici>{
         this.sonGiriş = sonGiriş;
     }
     
+    // SİSTEMDEKİ BOŞTA KALAN TÜM ÜYELERİ TARAYIP OTOMATİK OLARAK ANTRENÖR ATAYAN BAKIM METODU
     public void sistemBakimiYap() {
         List<Kullanici> tumKullanicilar = getKullanicilar();
         int atananSayisi = 0;
@@ -59,6 +60,7 @@ public class Admin extends Kullanici implements VeriYöneticisi<Kullanici>{
             if (k instanceof Uye uye) {
                 String mevcutHoca = anternorBulUyeIle(uye);
                 
+                // ÜYENİN HOCASI YOKSA OTOMATİK ATAMA MOTORUNU ÇALIŞTIRIR
                 if (mevcutHoca.equals("Henüz Atanmadı")) {
                     AtamaMotoru.otomatikAtamaYap(uye);
                     atananSayisi++;
@@ -66,15 +68,16 @@ public class Admin extends Kullanici implements VeriYöneticisi<Kullanici>{
             }
         }
 
+        // ATAMA YAPILDIYSA VERİLERİ KALICI OLARAK KAYDEDER
         if (atananSayisi > 0) {
-            System.out.println("Sistem Bakımı: " + atananSayisi + " adet sahipsiz üye antrenörlere atandı.");
+            System.out.println("Sistem Bakımı " + atananSayisi + " adet sahipsiz üye antrenörlere atandı.");
             DosyaYoneticisi.verileriKaydet();
         } else {
-            System.out.println("Sistem Bakımı: Atanmamış üye bulunamadı.");
+            System.out.println("Sistem Bakımı Atanmamış üye bulunamadı.");
         }
     }
     
-    // ANTRENÖR BUL
+    // BELİRLİ BİR ÜYENİN HANGİ ANTRENÖRE KAYITLI OLDUĞUNU LİSTELERİ TARAYARAK BULUR
     public static String anternorBulUyeIle(Uye uye) {
         if (uye == null || uye.getId() == null) return "Henüz Atanmadı";
 
@@ -83,6 +86,7 @@ public class Admin extends Kullanici implements VeriYöneticisi<Kullanici>{
                 List<Uye> hocaUyelari = antrenor.listele();
                 if (hocaUyelari != null) {
                     for (Uye u : hocaUyelari) {
+                        // ID BAZLI KARŞILAŞTIRMA YAPARAK DOĞRU EŞLEŞMEYİ BULUR
                         if (u.getId().trim().equals(uye.getId().trim())) { 
                             return antrenor.getIsim() + " " + antrenor.getSoyisim();
                         }
@@ -93,7 +97,7 @@ public class Admin extends Kullanici implements VeriYöneticisi<Kullanici>{
         return "Henüz Atanmadı";
     }
 
-    // DOĞRUDAN EKLE
+    // KAYIT EKRANI GİBİ DIŞ YAPILARDAN GELEN KULLANICIYI DOĞRUDAN LİSTEYE EKLEYEN METOT
     public static void doğrudanEkle(Kullanici k) {
         if (!kullanicilar.contains(k)) {
             kullanicilar.add(k);
@@ -101,53 +105,56 @@ public class Admin extends Kullanici implements VeriYöneticisi<Kullanici>{
         }
     }
     
-    // BİLGİ GÖSTER
+    // YÖNETİCİNİN ÖZEL BİLGİLERİNİ KONSOLA YAZDIRAN METOT
     @Override
     public void displayInfo() {
         System.out.println("--- YÖNETİCİ PANELİ ---");
-        System.out.println("İsim: "+getIsim());
-        System.out.println("Soyisim: "+getSoyisim());
-        System.out.println("Email: " + getEmail());
-        System.out.println("Son Erişim: " + sonGiriş);
+        System.out.println("İsim "+getIsim());
+        System.out.println("Soyisim "+getSoyisim());
+        System.out.println("Email " + getEmail());
+        System.out.println("Son Erişim " + sonGiriş);
     }
 
-    // EKLE
+    // YENİ BİR KULLANICIYI SİSTEME EKLEYEN VE EĞER ÜYEYSE ANTRENÖR ATAYAN METOT
     @Override
     public void ekle(Kullanici nesne) {
-    	if(kullanicilar.contains(nesne)) {
+        if(kullanicilar.contains(nesne)) {
             System.out.println("Bu kullanici zaten var!");
             return;
         }
         
         kullanicilar.add(nesne);
         
-        // KULLANICI UYE İSE OTOMATİK ATAMA YAPILIR
+        // EKLENEN KİŞİ ÜYE İSE ANLIK OLARAK ANTRENÖR ATAMASI YAPILIR
         if (nesne instanceof Uye yeniUye) {
             AtamaMotoru.otomatikAtamaYap(yeniUye);
         }
         
-        DosyaYoneticisi.verileriKaydet(); // VERİLER KAYDEDİLİR
+        DosyaYoneticisi.verileriKaydet(); 
         System.out.println("Ekleme işlemi başarılı.");
     }
 
-    // SİL
+    // ID BİLGİSİNE GÖRE KULLANICIYI SİSTEMDEN SİLEN VE SON ADMİNİN SİLİNMESİNİ ENGELLEYEN METOT
     @Override
     public void sil(String id) {
         Kullanici silinecek = bul(id);
+        
+        // SİSTEMİN YÖNETİCİSİZ KALMAMASI İÇİN KRİTİK KONTROL MEKANİZMASI
         if (silinecek instanceof Admin && kullanicilar.stream().filter(k -> k instanceof Admin).count() <= 1) {
             JOptionPane.showMessageDialog(null, "Son yönetici hesabı silinemez!", "Kritik Yetki Hatası", JOptionPane.ERROR_MESSAGE);
             throw new IllegalStateException("Sistemde en az 1 Admin kalmak zorundadır!");
         }
+        
         boolean silindi = kullanicilar.removeIf(nesne -> nesne.getId().equals(id));
         if(silindi) {
             DosyaYoneticisi.verileriKaydet();
-            System.out.println("Silme işlemi başarılı. ID: "+id);
+            System.out.println("Silme işlemi başarılı. ID "+id);
         } else {
             System.out.println("ID bulunamadı!");
         }
     }
 
-    // GÜNCELLE
+    // MEVCUT BİR KULLANICININ BİLGİLERİNİ LİSTE ÜZERİNDE GÜNCELLEYEN METOT
     @Override
     public void guncelle(Kullanici nesne) {
         for(int i = 0; i < kullanicilar.size(); i++) {
@@ -161,13 +168,13 @@ public class Admin extends Kullanici implements VeriYöneticisi<Kullanici>{
         System.out.println("Güncelleme başarısız!");
     }
 
-    // LİSTELE
+    // SİSTEMDEKİ TÜM KULLANICILARIN LİSTESİNİ GERİ DÖNDÜRÜR
     @Override
     public List<Kullanici> listele() {
         return new ArrayList<>(kullanicilar);
     }
     
-    // BUL
+    // BENZERSİZ ID NUMARASINA GÖRE LİSTEDEN KULLANICI NESNESİNİ BULUR
     @Override
     public Kullanici bul(String id) {
         for(Kullanici nesne : kullanicilar) {

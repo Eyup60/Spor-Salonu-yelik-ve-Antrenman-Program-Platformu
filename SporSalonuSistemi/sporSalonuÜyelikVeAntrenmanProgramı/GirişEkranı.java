@@ -5,17 +5,24 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 
 // GİRİŞ EKRANI SINIFI
+// ANA GİRİŞ VE KAYIT ARAYÜZÜ SAĞLAR
+// JFRAME MİRAS ALIR
 public class GirişEkranı extends JFrame {
 
+    // SERİALİZASYON VERSİYON NUMARASI
     private static final long serialVersionUID = 1L;
+    
+    // PANEL VE KULLANICI DEĞİŞKENLERİ
     private JPanel adminBtnPanel;
     private Kullanici loggedInUser = null; // OTURUM AÇAN KULLANICIYI TAKİP EDER
-
+    
+    // BUTON VE ETİKET DEĞİŞKENLERİ
     private JButton btnLoginHeader;
     private JButton btnRegister;
     private JLabel lblUyeOlmadiniz;
 
     // ANA METOT
+    // UYGULAMAYI BAŞLATIR VE VERİLERİ YÜKLER
     public static void main(String[] args) {
         
         // UYGULAMA BAŞLATILIRKEN KAYITLI VERİLERİ DOSYADAN YÜKLER
@@ -40,6 +47,7 @@ public class GirişEkranı extends JFrame {
     }
 
     // GİRİŞ EKRANI YAPICI METOT
+    // ANA ARAYÜZÜ OLUŞTURUR VE BİLEŞENLERİ AYARLAR
     public GirişEkranı() {
         // PENCERE GENEL AYARLARI
         setTitle("Spor Salonu Ana Giriş ve Kayıt Arayüzü");
@@ -54,6 +62,7 @@ public class GirişEkranı extends JFrame {
         topPanel.setBackground(new Color(245, 245, 245));
         topPanel.setBorder(new EmptyBorder(15, 20, 15, 20));
         
+        // BAŞLIK PANELİ
         JPanel titlePanel = new JPanel(new GridLayout(2, 1));
         titlePanel.setBackground(new Color(245, 245, 245));
         JLabel mainTitle = new JLabel("Spor Salonu Üyelik ve Antrenman Programı");
@@ -65,6 +74,7 @@ public class GirişEkranı extends JFrame {
         titlePanel.add(mainTitle);
         titlePanel.add(subTitle);
         
+        // GİRİŞ PANELİ
         JPanel loginPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         loginPanel.setBackground(new Color(245, 245, 245));
         btnLoginHeader = new JButton("Giriş Yap");
@@ -79,16 +89,18 @@ public class GirişEkranı extends JFrame {
         topPanel.add(loginPanel, BorderLayout.EAST);
         getContentPane().add(topPanel, BorderLayout.NORTH);
 
-        // SOL PANEL: BİLGİ KARTLARI (PAKETLER, ANTRENÖRLER, TESİS)
+        // SOL PANEL BİLGİ KARTLARI (PAKETLER ANTRENÖRLER TESİS)
         JPanel cardsPanel = new JPanel();
         cardsPanel.setLayout(new BoxLayout(cardsPanel, BoxLayout.Y_AXIS));
         cardsPanel.setBorder(new EmptyBorder(30, 20, 30, 20));
         cardsPanel.setBackground(Color.WHITE);
         
+        // BİLGİ KARTLARI BUTONLARI
         JButton btnPaketler = createCardButton("Paketlerimiz");
         JButton btnAntrenorler = createCardButton("Antrenörlerimiz");
         JButton btnTesis = createCardButton("Tesisimiz");
         
+        // KART BUTONLARI AKSİYONLARI
         btnPaketler.addActionListener(e -> JOptionPane.showMessageDialog(this, "Aylık, 3 Aylık ve Yıllık paketlerimiz mevcuttur."));
         btnAntrenorler.addActionListener(e -> JOptionPane.showMessageDialog(this, "Uzman kadromuzla hedeflerinize ulaşın."));
         btnTesis.addActionListener(e -> JOptionPane.showMessageDialog(this, "Modern aletler ve hijyenik çalışma ortamı."));
@@ -102,10 +114,11 @@ public class GirişEkranı extends JFrame {
         
         getContentPane().add(cardsPanel, BorderLayout.WEST);
 
-        // MERKEZ PANEL: ATATÜRK'ÜN SÖZÜNÜ HTML OLARAK TUTAR (RESİM DOSYASI GEREKTİRMEZ)
+        // MERKEZ PANEL ATATÜRK'ÜN SÖZÜNÜ HTML OLARAK TUTAR
         JPanel centerPanel = new JPanel(new GridBagLayout());
         centerPanel.setBackground(new Color(250, 250, 250));
         
+        // ATATÜRK SÖZÜ HTML FORMATINDA
         JLabel quoteLabel = new JLabel("<html><div style='text-align: center; width: 450px;'>"
                 + "<span style='font-size: 22px; font-style: italic; color: #2C3E50; font-family: Serif;'>"
                 + "\"Ben sporcunun zeki, çevik ve aynı zamanda ahlaklısını severim.\""
@@ -118,15 +131,17 @@ public class GirişEkranı extends JFrame {
         
         getContentPane().add(centerPanel, BorderLayout.CENTER);
 
-        // ALT PANEL: KAYIT VE ADMİN ÖZEL İŞLEMLERİ
+        // ALT PANEL KAYIT VE ADMİN ÖZEL İŞLEMLERİ
         JPanel bottomPanel = new JPanel(new BorderLayout());
         bottomPanel.setBorder(new EmptyBorder(15, 20, 15, 20));
         bottomPanel.setBackground(SystemColor.control);
         
+        // KAYIT PANELİ
         JPanel registerPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         lblUyeOlmadiniz = new JLabel("Üye olmadınız mı?");
         lblUyeOlmadiniz.setFont(new Font("SansSerif", Font.PLAIN, 15));
         
+        // KAYIT OL BUTONU
         btnRegister = new JButton("Kayıt Ol");
         btnRegister.setFont(new Font("SansSerif", Font.BOLD, 15));
         btnRegister.setForeground(new Color(204, 0, 0));
@@ -138,7 +153,7 @@ public class GirişEkranı extends JFrame {
         registerPanel.add(lblUyeOlmadiniz);
         registerPanel.add(btnRegister);
 
-        // ADMİN PANELİ: SADECE YÖNETİCİ GİRİŞ YAPTIĞINDA GÖRÜNÜR OLUR
+        // ADMİN PANELİ SADECE YÖNETİCİ GİRİŞ YAPTIĞINDA GÖRÜNÜR OLUR
         adminBtnPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         JButton btnAddAdmin = new JButton("+ Admin Ekle");
         JButton btnAddCoach = new JButton("+ Antrenör Ekle");
@@ -149,6 +164,7 @@ public class GirişEkranı extends JFrame {
         adminBtnPanel.add(btnManageAll);
         adminBtnPanel.setVisible(false); 
 
+        // ADMİN BUTONLARI AKSİYONLARI
         btnAddAdmin.addActionListener(e -> createSpecificUser(Role.ADMIN));
         btnAddCoach.addActionListener(e -> createSpecificUser(Role.ANTRENOR));
         btnManageAll.addActionListener(e -> openDashboard()); 
@@ -160,6 +176,7 @@ public class GirişEkranı extends JFrame {
     }
 
     // KART BUTONU OLUŞTUR
+    // ÖZEL STİLDE BİLGİ KARTLARI İÇİN BUTON YARATIR
     private JButton createCardButton(String text) {
         JButton btn = new JButton(text);
         btn.setPreferredSize(new Dimension(200, 60));
@@ -173,8 +190,10 @@ public class GirişEkranı extends JFrame {
     }
 
     // GİRİŞ YAP
+    // KULLANICI GİRİŞİ VE ÇIKIŞ İŞLEMLERİNİ YÖNETİR
     private void performLogin() {
         if (loggedInUser != null) { 
+            // ÇIKIŞ İŞLEMİ
             loggedInUser = null;
             btnLoginHeader.setText("Giriş Yap");
             btnRegister.setVisible(true);
@@ -184,28 +203,34 @@ public class GirişEkranı extends JFrame {
             return;
         }
 
+        // GİRİŞ DİALOGUNU AÇ
         LoginDialog ld = new LoginDialog(this);
         ld.setVisible(true);
         Kullanici k = ld.getLoggedInUser();
         
         if(k != null) {
+            // GİRİŞ BAŞARILI İSE OTURUMU AÇ
             loggedInUser = k;
             btnLoginHeader.setText("Çıkış Yap ("+k.getEmail()+")");
 
             if(k.getRole() == Role.ADMIN) {
+                // ADMİN İSE ÖZEL BUTONLARI GÖSTER
                 btnRegister.setVisible(false);
                 lblUyeOlmadiniz.setVisible(false);
                 adminBtnPanel.setVisible(true);
             } else {
+                // DİĞER KULLANICILAR İÇİN PANELİ AÇ
                 openDashboard();
             }
         }
     }
 
     // PANEL AÇ
+    // KULLANICI ROLÜNE GÖRE İLGİLİ PANELİ AÇAR
     private void openDashboard() {
         if(loggedInUser == null) return;
         
+        // ROLÜNE GÖRE PANEL SEÇİMİ
         switch (loggedInUser.getRole()) {
             case ADMIN -> { new AdminPaneli((Admin) loggedInUser).setVisible(true); this.dispose(); }
             case ANTRENOR -> { new AntrenorPaneli((Antrenor) loggedInUser).setVisible(true); this.dispose(); }
@@ -214,18 +239,21 @@ public class GirişEkranı extends JFrame {
     }
 
     // KAYIT OL
+    // YENİ KULLANICI KAYIT İŞLEMİNİ BAŞLATIR
     private void performRegister() {
         KayıtDialog kd = new KayıtDialog(this);
         kd.setVisible(true);
     }
 
     // ÖZEL KULLANICI OLUŞTUR
+    // ADMİN TARAFINDAN ÖZEL KULLANICI OLUŞTURMA İŞLEMİ
     private void createSpecificUser(Role type) {
         KullaniciDialog dialog = new KullaniciDialog(this, null);
         dialog.setIsUyeUpdateOnly(false);
         dialog.setRoleSelection(type);
         dialog.setVisible(true);
         
+        // YENİ KULLANICIYI SİSTEME EKLE
         Kullanici yeni = dialog.getKullanici();
         if (yeni != null && loggedInUser instanceof Admin a) {
             a.ekle(yeni);

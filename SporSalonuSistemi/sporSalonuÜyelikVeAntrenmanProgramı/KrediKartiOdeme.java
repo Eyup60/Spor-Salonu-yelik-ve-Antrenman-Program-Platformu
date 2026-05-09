@@ -1,21 +1,28 @@
 package sporSalonuÜyelikVeAntrenmanProgramı;
 
 // KREDİ KARTI ÖDEME SINIFI
+// ÖDEME YÖNTEMİ SINIFINDAN MİRAS ALIR
+// KREDİ KARTI İLE ÖDEME İŞLEMLERİNİ YÖNETİR
 public class KrediKartiOdeme extends OdemeYontemi {
+    // KART NUMARASI DEĞİŞKENİ
     private String kartNumarasi;
 
     // KREDİ KARTI ÖDEME YAPICI METOT
+    // TUTAR VE KART NUMARASI BİLGİLERİNİ ALIR
     public KrediKartiOdeme(double tutar, String kartNumarasi) {
         super(tutar);
         this.kartNumarasi = kartNumarasi;
     }
 
-    // ÖDEME AL
+    // ÖDEME AL METOTU
+    // KREDİ KARTI İLE ÖDEME İŞLEMİNİ GERÇEKLEŞTİRİR
     @Override
     public String odemeAl() throws GecersizOdemeException {
+        // TUTAR KONTROLÜ YAPAR
         if (tutar <= 0) {
             throw new GecersizOdemeException("Hata: Ödenecek tutar 0 veya negatif olamaz!");
         }
+        // BAŞARILI ÖDEME MESAJI DÖNDÜRÜR
         return tutar + " TL, " + kartNumarasi + " numaralı kart ile başarıyla ödendi.";
     }
 }

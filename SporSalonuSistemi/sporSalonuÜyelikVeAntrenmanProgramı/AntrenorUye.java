@@ -1,32 +1,42 @@
 package sporSalonuÜyelikVeAntrenmanProgramı;
 
 // ANTRENÖR ÜYE SINIFI
+// ANTRENÖR VE ÜYE İLİŞKİSİNİ TEMSİL EDER
+// VERİ TAŞIMA NESNESİ OLARAK KULLANILIR
 public class AntrenorUye {
 	
+    // ANTRENÖR ID ÖZELLİĞİ
     private String antrenorID;
+    
+    // ÜYE ID ÖZELLİĞİ
     private String uyeID;
 	
-    // Constructor (Yapıcı Metot) - Nesne oluşturulurken ID'leri atar
+    // YAPICI METOT
+    // NESNE OLUŞTURURKEN IDLERİ ATAR
     public AntrenorUye(String antrenorID, String uyeID) {
         this.antrenorID = antrenorID;
         this.uyeID = uyeID;
     }
 		
-    // --- Getter ve Setter Metotları ---
-    // Verilere dışarıdan kontrollü erişim ve değişiklik imkanı sağlar
+    // GETTER VE SETTER METOTLARI
+    // VERİLERE KONTROLLÜ ERİŞİM SAĞLAR
 
+    // ANTRENÖR ID GETİR
     public String getAntrenorID() {
         return antrenorID;
     }
 
+    // ANTRENÖR ID AYARLA
     public void setAntrenorID(String antrenorID) {
         this.antrenorID = antrenorID;
     }
 
+    // ÜYE ID GETİR
     public String getUyeID() {
         return uyeID;
     }
 
+    // ÜYE ID AYARLA
     public void setUyeID(String uyeID) {
         this.uyeID = uyeID;
     }

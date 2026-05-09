@@ -25,12 +25,6 @@ public class Uye extends Kullanici {
         // ÜYELİK BAŞLANGIÇ TARİHİNİ SİSTEMİN O ANKİ TARİHİNE GÖRE OTOMATİK ATAR
         setKayitTarihi(LocalDate.now());
     }
-
-    // Kolay test ve çağrılar için daha kısa bir yapıcı metot (varsayılan fiziksel değerlerle)
-    public Uye(String isim, String soyisim, String email, String password) {
-        // Varsayılan anlamlı değerler atıyoruz
-        this(isim, soyisim, email, password, 170.0, 70.0, 30, 20.0);
-    }
     
     // BOY GETİR
     public double getBoy() {

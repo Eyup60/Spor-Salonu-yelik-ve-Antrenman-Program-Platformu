@@ -3,8 +3,12 @@ package sporSalonuÜyelikVeAntrenmanProgramı;
 // Tüm dosyalar aynı pakette olduğu için ekstra import kullanmaya gerek kalmadı.
 
 // ANA SINIF
+// UYGULAMANIN BAŞLANGIÇ NOKTASI
+// MODÜL TESTLERİNİ GERÇEKLEŞTİRİR
 public class Main {
 
+    // ANA METOT
+    // SİSTEMİ BAŞLATIR VE TEST İŞLEMLERİNİ YÜRÜTÜR
     public static void main(String[] args) {
         
         // Exception Handling: Hatalara karşı sistemi korumak için try-catch-finally yapısı kullanıldı
@@ -24,17 +28,20 @@ public class Main {
             paketService.ekle(p2);
             paketService.ekle(p3);
 
+            // MEVCUT ÜYELİK PAKETLERİNİ LİSTELE
             System.out.println("--- Mevcut Üyelik Paketleri ---");
             for (UyelikPaketi p : paketService.listele()) {
                 // Polimorfizm sayesinde her nesne kendi ucretHesapla() metodunu çalıştırır
                 System.out.println("Paket: " + p.getPaketAdi() + " | Taban Aylık Ücret: " + p.ucretHesapla() + " TL");
             }
 
+            // DİNAMİK ÜCRET HESAPLAMA MOTORU TESTİ
             System.out.println("\n--- Dinamik Ücret Hesaplama Motoru Testi ---");
             // Premium paket, 2 adet özel ders ve %10 (0.1) kampanya indirimi ile hesaplama yapılıyor
             double toplam = UcretHesaplayici.hesapla(p2, 2, 0.1); 
             System.out.println("Hesaplanan Toplam Ücret: " + toplam + " TL");
 
+            // ANTRENÖR-ÜYE İLİŞKİ ATAMALARI TESTİ
             System.out.println("\n--- Antrenör-Üye İlişki Atamaları Testi ---");
             // ID'ler üzerinden atama işlemleri gerçekleştiriliyor
             antrenorService.ata("1", "101");
