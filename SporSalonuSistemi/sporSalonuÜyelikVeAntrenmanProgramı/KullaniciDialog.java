@@ -5,8 +5,13 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 
 // KULLANICI DİALOG SINIFI
+// KULLANICI EKLEME VE GÜNCELLEME İŞLEMLERİ İÇİN KULLANILIR
+// SWING JDIALOG MİRAS ALIR
 public class KullaniciDialog extends JDialog {
+    // SERİALİZASYON VERSİYON NUMARASI
     private static final long serialVersionUID = 1L;
+    
+    // FORM DEĞİŞKENLERİ
     private JTextField txtIsim;
     private JTextField txtSoyisim;
     private JTextField txtEmail;
@@ -16,23 +21,29 @@ public class KullaniciDialog extends JDialog {
     private JTextField txtUzmanlik;
     private JPanel dynamicPanel;
     
+    // SONUÇ VE GÜNCELLEME DEĞİŞKENLERİ
     private Kullanici sonucKullanici;
     private Kullanici guncellenecek;
     
+    // ÜYE GÜNCELLEME KONTROLÜ
     private boolean isUyeUpdateOnly = false; 
 
     // KULLANICI DİALOG YAPICI METOT
+    // YENİ KULLANICI EKLEME VEYA GÜNCELLEME İÇİN FORM OLUŞTURUR
     public KullaniciDialog(JFrame parent, Kullanici guncellenecek) {
         super(parent, guncellenecek == null ? "Yeni Kullanıcı Ekle" : "Kullanıcı Güncelle", true);
         this.guncellenecek = guncellenecek;
         
+        // PENCERE AYARLARI
         setSize(400, 500);
         setLocationRelativeTo(parent);
         setLayout(new BorderLayout());
         
+        // ANA PANEL OLUŞTUR
         JPanel mainPanel = new JPanel(new GridLayout(0, 2, 10, 10));
         mainPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         
+        // TEMEL FORM ALANLARI
         mainPanel.add(new JLabel("Isim:"));
         txtIsim = new JTextField();
         mainPanel.add(txtIsim);
@@ -53,17 +64,21 @@ public class KullaniciDialog extends JDialog {
         cbRole = new JComboBox<>(Role.values());
         mainPanel.add(cbRole);
 
+        // DİNAMİK PANEL KURULUMU
         dynamicPanel = new JPanel(new CardLayout());
         
+        // ADMİN PANELİ (BOŞ)
         JPanel adminPanel = new JPanel();
         dynamicPanel.add(adminPanel, Role.ADMIN.name());
         
+        // ANTRENÖR PANELİ
         JPanel antrenorPanel = new JPanel(new GridLayout(0, 2, 5, 5));
         antrenorPanel.add(new JLabel("Uzmanlık Alanı:"));
         txtUzmanlik = new JTextField();
         antrenorPanel.add(txtUzmanlik);
         dynamicPanel.add(antrenorPanel, Role.ANTRENOR.name());
         
+        // ÜYE PANELİ
         JPanel uyePanel = new JPanel(new GridLayout(0, 2, 5, 5));
         uyePanel.add(new JLabel("Boy (cm):"));
         txtBoy = new JTextField();
@@ -79,6 +94,7 @@ public class KullaniciDialog extends JDialog {
         uyePanel.add(txtYagOrani);
         dynamicPanel.add(uyePanel, Role.UYE.name());
         
+        // ROL DEĞİŞİMİNDE PANEL GEÇİŞİ
         cbRole.addActionListener(e -> {
             Object selected = cbRole.getSelectedItem();
             if (selected != null) {
@@ -87,6 +103,7 @@ public class KullaniciDialog extends JDialog {
             }
         });
 
+        // PANEL EKLEME VE BUTONLAR
         add(mainPanel, BorderLayout.NORTH);
         add(dynamicPanel, BorderLayout.CENTER);
 
@@ -97,12 +114,14 @@ public class KullaniciDialog extends JDialog {
         btnPanel.add(btnIptal);
         add(btnPanel, BorderLayout.SOUTH);
 
+        // BUTON AKSİYONLARI
         btnIptal.addActionListener(e -> dispose());
         btnKaydet.addActionListener(this::kaydet);
         
-        // Enter tuşu ile form alanları ve butonlar arasında gezinme
+        // ENTER TUŞU İLE FORM DOLDURMA
         setupEnterKeyNavigationForForm();
         
+        // VERİ DOLDURMA VEYA VARSAYILAN AYARLAR
         if (guncellenecek != null) {
             verileriDoldur(guncellenecek);
         } else {
@@ -110,7 +129,8 @@ public class KullaniciDialog extends JDialog {
         }
     }
     
-    // ÜYE GÜNCELLE SADECE
+    // ÜYE GÜNCELLE SADECE METOTU
+    // ANTRENÖRÜN SADECE BELİRLİ ALANLARI GÜNCELLEMESİ İÇİN KISITLAMA
     public void setIsUyeUpdateOnly(boolean isOnly) {
         this.isUyeUpdateOnly = isOnly;
         if(isOnly) {
@@ -126,7 +146,8 @@ public class KullaniciDialog extends JDialog {
         }
     }
 
-    // ROL SEÇİMİ AYARLA
+    // ROL SEÇİMİ AYARLA METOTU
+    // BELİRLİ BİR ROLÜ ÖNCEDEN SEÇER VE DEĞİŞTİRİLMESİNİ ENGELLER
     public void setRoleSelection(Role type) {
         cbRole.setSelectedItem(type);
         cbRole.setEnabled(false);
@@ -134,7 +155,8 @@ public class KullaniciDialog extends JDialog {
         cl.show(dynamicPanel, type.name());
     }
     
-    // KISITLI ROLLER AYARLA
+    // KISITLI ROLLER AYARLA METOTU
+    // SADECE İZİN VERİLEN ROLLERİ SEÇİME SUNAR
     public void setRestrictedRoles(Role[] allowedRoles) {
         cbRole.removeAllItems(); // Mevcut tüm rolleri (Admin, Antrenör, Üye) temizle
         for (Role role : allowedRoles) {
@@ -142,7 +164,8 @@ public class KullaniciDialog extends JDialog {
         }
     }
     
-    // VERİLERİ DOLDUR
+    // VERİLERİ DOLDUR METOTU
+    // GÜNCELLEME MODUNDA MEVCUT KULLANICI BİLGİLERİNİ FORMA YÜKLER
     private void verileriDoldur(Kullanici k) {
         txtIsim.setText(k.getIsim());
         txtSoyisim.setText(k.getSoyisim());
@@ -155,6 +178,7 @@ public class KullaniciDialog extends JDialog {
              cbRole.setEnabled(false); 
         }
         
+        // ROL'E GÖRE ÖZEL ALANLARI DOLDUR
         if (k instanceof Antrenor) {
             txtUzmanlik.setText(((Antrenor) k).getUzmanlıkAlanı());
         } else if (k instanceof Uye u) {
@@ -165,7 +189,8 @@ public class KullaniciDialog extends JDialog {
         }
     }
 
-    // KAYDET
+    // KAYDET METOTU
+    // FORM VERİLERİNİ DOĞRULAR VE KULLANICI OLUŞTURUR/GÜNCELLER
     private void kaydet(ActionEvent e) {
         try {
             // Eğer Antrenör güncelliyorsa, sadece fiziksel verileri set etmeliyiz
@@ -187,6 +212,7 @@ public class KullaniciDialog extends JDialog {
                 Role r = (Role) cbRole.getSelectedItem();
 
                 if (guncellenecek != null) {
+                    // MEVCUT KULLANICI GÜNCELLEME
                     guncellenecek.setEmail(email);
                     guncellenecek.setIsim(isim);
                     guncellenecek.setSoyisim(soyisim);
@@ -223,12 +249,14 @@ public class KullaniciDialog extends JDialog {
         }
     }
 
-    // KULLANICI GETİR
+    // KULLANICI GETİR METOTU
+    // OLUŞTURULAN VEYA GÜNCELLENEN KULLANICI NESNESİNİ DÖNDÜRÜR
     public Kullanici getKullanici() {
         return sonucKullanici;
     }
     
-    // Enter tuşu ile form alanları arasında gezinme metod
+    // ENTER TUŞU İLE FORM ALANLARI ARASINDA GEZİNME METOTU
+    // KULLANICI DENEYİMİNİ İYİLEŞTİRİR
     private void setupEnterKeyNavigationForForm() {
         // Form alanlarını bir listeye ekle
         java.util.List<JComponent> formComponents = new java.util.ArrayList<>();
