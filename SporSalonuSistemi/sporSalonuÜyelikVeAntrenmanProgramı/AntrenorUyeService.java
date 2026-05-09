@@ -34,7 +34,7 @@ public class AntrenorUyeService implements VeriYöneticisi<AntrenorUye> {
     public void guncelle(AntrenorUye yeniNesne) {
         for (int i = 0; i < liste.size(); i++) {
             // ÜYE ID ESASINA GÖRE GÜNCELLEME
-            if (liste.get(i).getUyeID() == yeniNesne.getUyeID()) {
+            if (liste.get(i).getUyeID().equals(yeniNesne.getUyeID())) {
                 liste.set(i, yeniNesne);
                 return;
             }
