@@ -56,7 +56,7 @@ public class Kalisteniks extends Antrenman {
         this.hareketTuru = hareketTuru.trim();
     }
 
-    // Zorluk çarpanları daha makul bir seviyeye (maksimum %20-25 artış) çekildi.
+    // Zorluk çarpanları
     private double getZorlukCarpani() {
         String z = getZorlukSeviyesi().toLowerCase();
         if (z.contains("ileri")) return 1.25; 
@@ -64,7 +64,7 @@ public class Kalisteniks extends Antrenman {
         return 1.0;
     }
 
-    // Hareket türü çarpanları, statik tutuşlar ve büyük kas grupları dikkate alınarak dengelendi.
+    // Hareket türü çarpanları, statik tutuşlar ve büyük kas grupları dikkate alındı.
     private double getHareketCarpani() {
         String h = hareketTuru.toLowerCase();
         if (h.contains("statik") || h.contains("izometrik")) return 1.15;
@@ -82,7 +82,7 @@ public class Kalisteniks extends Antrenman {
         // Kalisteniks için temel efor katsayısı 3.5-4.0 (orta-yüksek yoğunluk) olarak belirlendi.
         double sureEforu = aktifSureSaat * 3.8 * uye.getKilo();
         
-        // Hacim çarpanı 0.02'den 0.004'e çekildi. 
+         
         // Bu sayede yapılan her tekrar, toplam kaloriye küçük ama gerçekçi bir ek yük bindirir.
         double toplamEfor = setSayisi * tekrarSayisi * etkiKilosu * 0.004;
         
