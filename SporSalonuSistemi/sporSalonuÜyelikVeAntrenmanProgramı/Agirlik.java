@@ -83,7 +83,7 @@ public class Agirlik extends Antrenman {
      */
     private double getZorlukCarpani() {
         String z = getZorlukSeviyesi().toLowerCase();
-        if (z.contains("ileri")) return 1.2; // Bilimsel olarak %20 artış daha makul.
+        if (z.contains("ileri")) return 1.2; 
         if (z.contains("orta")) return 1.1;
         return 1.0;
     }
@@ -125,7 +125,7 @@ public class Agirlik extends Antrenman {
         // Temel Efor: Ağırlık çalışması için ortalama 3.5 MET değeri kullanılır.
         double temelEfor = aktifSureSaat * 3.5 * uye.getKilo(); 
         
-        // Hacim Eforu: Kaldırılan tonajın (set x tekrar x kg) metabolik yükü (0.015'ten 0.002'ye çekildi).
+        // Hacim Eforu: Kaldırılan tonajın (set x tekrar x kg) metabolik yükü 
         double toplamHacim = setSayisi * tekrarSayisi * ortalamaAgirlik;
         double hacimEforu = toplamHacim * 0.002;
         
