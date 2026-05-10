@@ -81,15 +81,15 @@ public class Admin extends Kullanici implements VeriYöneticisi<Kullanici>{
     public static String anternorBulUyeIle(Uye uye) {
         if (uye == null || uye.getId() == null) return "Henüz Atanmadı";
 
-        for (Kullanici k : Admin.getKullanicilar()) {
-            if (k instanceof Antrenor antrenor) {
-                List<Uye> hocaUyelari = antrenor.listele();
-                if (hocaUyelari != null) {
-                    for (Uye u : hocaUyelari) {
-                        // ID BAZLI KARŞILAŞTIRMA YAPARAK DOĞRU EŞLEŞMEYİ BULUR
-                        if (u.getId().trim().equals(uye.getId().trim())) { 
-                            return antrenor.getIsim() + " " + antrenor.getSoyisim();
-                        }
+        AntrenorUyeService servis = new AntrenorUyeService();
+        java.util.List<AntrenorUye> tumAtamalar = servis.listele();
+
+        for (AntrenorUye atama : tumAtamalar) {
+            if (atama.getUyeID().trim().equals(uye.getId().trim())) {
+                // Atama kaydı bulundu, şimdi antrenörün ismini bulalım
+                for (Kullanici k : Admin.getKullanicilar()) {
+                    if (k.getId().trim().equals(atama.getAntrenorID().trim())) {
+                        return k.getIsim() + " " + k.getSoyisim();
                     }
                 }
             }
