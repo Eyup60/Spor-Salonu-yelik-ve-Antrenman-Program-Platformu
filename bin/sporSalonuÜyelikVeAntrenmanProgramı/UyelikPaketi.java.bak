@@ -1,0 +1,13 @@
+package sporSalonuÜyelikVeAntrenmanProgramı;
+
+import java.io.Serializable;
+
+/* Bu sınıf 'abstract' olduğu için direkt nesnesi oluşturulamaz (new UyelikPaketi() yapılamaz). */
+    public abstract double ucretHesapla();
+
+    /* throw new IllegalArgumentException("Süre en az 1 ay olmalıdır!"); */
+    @Override
+    public String toString() {
+        return paketAdi + " (" + sureAy + " Ay)";
+    }
+}

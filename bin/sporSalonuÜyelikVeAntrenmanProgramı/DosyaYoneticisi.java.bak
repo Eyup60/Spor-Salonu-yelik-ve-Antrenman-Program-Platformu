@@ -1,0 +1,165 @@
+package sporSalonuÜyelikVeAntrenmanProgramı;
+
+import com.google.gson.*;
+import java.io.*;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.*;
+
+// JSON İLE DOSYA İŞLEMLERİNİ YÖNETİR
+public class DosyaYoneticisi {
+
+    // KULLANICI ANA DİZİNİNDE GİZLİ KLASÖRDE SAKLANIR
+    private static final String DOSYA_YOLU =
+        System.getProperty("user.home") + File.separator + 
+        ".sporSalonu" + File.separator + "kullanicilar.json";
+
+    // GELİŞMİŞ TİP DÖNÜŞÜMLERİ İÇİN GSON BUILDER KULLANIR
+    private static Gson buildGson() {
+        return new GsonBuilder()
+            .setPrettyPrinting()
+            // LOCALDATE TİPİNİ METNE ÇEVİRİR
+            .registerTypeAdapter(LocalDate.class,
+                (JsonSerializer<LocalDate>) (src, t, ctx) ->
+                    new JsonPrimitive(src.toString()))
+            // METNİ TEKRAR LOCALDATE NESNESİNE ÇEVİRİR
+            .registerTypeAdapter(LocalDate.class,
+                (JsonDeserializer<LocalDate>) (json, t, ctx) ->
+                    LocalDate.parse(json.getAsString()))
+            // LOCALDATETIME NESNESİNİ JSON UYUMLU YAPAR
+            .registerTypeAdapter(LocalDateTime.class,
+                (JsonSerializer<LocalDateTime>) (src, t, ctx) ->
+                    new JsonPrimitive(src.toString()))
+            // JSON VERİSİNİ LOCALDATETIME NESNESİNE DÖNÜŞTÜRÜR
+            .registerTypeAdapter(LocalDateTime.class,
+                (JsonDeserializer<LocalDateTime>) (json, t, ctx) ->
+                    LocalDateTime.parse(json.getAsString()))
+            // SOYUT SINIFLAR İÇİN ÖZEL OKUMA MANTIĞI
+            // JSON'DAN NESNEYE DÖNÜŞÜM İÇİN POLİMORFİK YAPI
+            .registerTypeAdapter(UyelikPaketi.class, (JsonDeserializer<UyelikPaketi>) (json, typeOfT, context) -> {
+                JsonObject jsonObject = json.getAsJsonObject();
+                String ad = jsonObject.has("ad") ? jsonObject.get("ad").getAsString().toLowerCase() : "";
+                if (ad.contains("vip")) return context.deserialize(json, VIPPaket.class);
+                if (ad.contains("premium")) return context.deserialize(json, PremiumPaket.class);
+                return context.deserialize(json, StandartPaket.class);
+            })
+            .create();
+    }
+    
+    // TÜM KULLANICI VERİLERİNİ JSON FORMATINDA KAYDEDER
+    public static void verileriKaydet() {
+        try {
+            File dosya = new File(DOSYA_YOLU);
+            dosya.getParentFile().mkdirs(); // KLASÖR YOKSA OTOMATİK OLUŞTURMA
+            Gson gson = buildGson(); 
+            List<JsonObject> kayitlar = new ArrayList<>();
+            
+            // NESNE TİPİNİ KORUYARAK LİSTEYİ TARAMA
+            for (Kullanici k : Admin.getKullanicilar()) {
+                JsonObject obj = gson.toJsonTree(k).getAsJsonObject(); 
+                obj.addProperty("tip", k.getClass().getSimpleName()); // ALT SINIF BİLGİSİNİ JSONA EKLEME
+
+                // KULLANICI ÜYE İSE PAKET TİPİNİ KAYDEDER
+                if (k instanceof Uye uye && uye.getPaket() != null) {
+                    obj.addProperty("paketTip", uye.getPaket().getClass().getSimpleName());
+                }
+                
+                // ANTRENÖR VE ÜYE BAĞLARINI ID ÜZERİNDEN SAKLAMA
+                if (k instanceof Antrenor antrenor) {
+                    JsonArray ids = new JsonArray();
+                    for (Uye u : antrenor.listele()) {
+                        ids.add(u.getId());
+                    }
+                    obj.add("antrenorUyeIds", ids);
+                }
+
+                kayitlar.add(obj);
+            }
+            // TÜM VERİLERİ JSON DOSYASINA AKTARMA
+            try (Writer w = new FileWriter(dosya)) {
+                gson.toJson(kayitlar, w);
+                System.out.println("Veriler kaydedildi: " + DOSYA_YOLU);
+            }
+
+        } catch (IOException e) {
+            System.err.println("Kaydetme hatası: " + e.getMessage());
+        }
+    }
+    
+    // KAYITLI VERİLERİ SİSTEME YÜKLER VE NESNELERİ OLUŞTURUR
+    public static void verileriYukle() {
+        File dosya = new File(DOSYA_YOLU);
+        
+        // DOSYA YOKSA İLK ADMİN HESABINI OLUŞTURMA
+        if (!dosya.exists()) {
+            System.out.println("Kayıt dosyası bulunamadı. İlk yönetici hesabı oluşturuluyor...");
+            Admin ilkAdmin = new Admin("İlk","Admin","admin@gym.com", "123456");
+            Admin.doğrudanEkle(ilkAdmin); 
+            return;
+        }
+
+        try (Reader r = new FileReader(dosya)) {
+            Gson gson = buildGson(); 
+            JsonArray dizi = JsonParser.parseReader(r).getAsJsonArray();
+
+            List<Kullanici> liste = new ArrayList<>();
+            Map<String, List<String>> antrenorMap = new HashMap<>();
+
+            // JSON VERİSİNİ DOĞRU SINIF TİPİNE DÖNÜŞTÜRME
+            for (JsonElement el : dizi) {
+                JsonObject obj = el.getAsJsonObject();
+                String tipRaw = obj.get("tip").getAsString().trim().toLowerCase();
+
+                // SINIF TİPİNE GÖRE NESNE ÜRETME
+                Kullanici k = switch (tipRaw) {
+                    case "admin"    -> gson.fromJson(obj, Admin.class);
+                    case "antrenor" -> gson.fromJson(obj, Antrenor.class);
+                    case "uye"      -> gson.fromJson(obj, Uye.class);
+                    default -> null;
+                };
+
+                if (k == null) continue;
+
+                // ÜYENİN SOYUT PAKET NESNESİNİ GERİ YÜKLEME
+                if (k instanceof Uye uye && obj.has("paket")) {
+                    String paketTip = obj.has("paketTip") ? obj.get("paketTip").getAsString() : "";
+                    UyelikPaketi paket;
+                    if (paketTip.contains("VIP")) paket = gson.fromJson(obj.get("paket"), VIPPaket.class);
+                    else if (paketTip.contains("Premium")) paket = gson.fromJson(obj.get("paket"), PremiumPaket.class);
+                    else paket = gson.fromJson(obj.get("paket"), StandartPaket.class);
+                    uye.setPaket(paket);
+                }
+
+                liste.add(k);
+                
+                // İLİŞKİLERİ EŞLEŞTİRMEK İÇİN ID LİSTESİNİ SAKLAMA
+                if (tipRaw.equals("antrenor") && obj.has("antrenorUyeIds")) {
+                    List<String> ids = new ArrayList<>();
+                    obj.get("antrenorUyeIds").getAsJsonArray().forEach(e -> ids.add(e.getAsString()));
+                    antrenorMap.put(k.getId(), ids);
+                }
+            }
+            
+            // YÜKLENEN VERİLERİ SİSTEME AKTARMA VE BAĞLARI KURMA
+            Admin.setKullanicilar(liste);
+            
+            // ANTRENÖR-ÜYE BAĞLARINI DOĞRUDAN YENİDEN KUR
+            for (Kullanici k : liste) {
+                if (k instanceof Antrenor antrenor) {
+                    List<String> uyeIds = antrenorMap.getOrDefault(k.getId(), List.of());
+                    for (String id : uyeIds) {
+                        liste.stream()
+                             .filter(x -> x.getId().equals(id) && x instanceof Uye)
+                             .findFirst()
+                             .ifPresent(u -> antrenor.yuklemeSirasindaEkle((Uye) u));
+                    }
+                }
+            }
+            
+            System.out.println("Veriler yüklendi. Toplam kullanıcı: " + liste.size());
+        } catch (Exception e) {
+            System.err.println("Yükleme sırasında hata oluştu: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+}
