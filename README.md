@@ -27,9 +27,7 @@
 
 Bu proje, bir spor salonunun günlük operasyonlarını dijitalleştirmek amacıyla geliştirilmiş masaüstü tabanlı bir yönetim platformudur. Sistem; üye yönetimi, antrenör takibi, üyelik paketleri, antrenman programları, ödeme işlemleri ve raporlama süreçlerini tek bir uygulama altında toplamayı hedeflemektedir.
 
-Projenin temel amacı, spor salonlarında manuel olarak yürütülen kayıt, takip ve ödeme işlemlerini daha düzenli, hızlı ve hatasız bir hale getirmektir. Kullanıcıların fiziksel bilgileri, üyelik durumları, antrenman programları ve ödeme kayıtları sistem üzerinden yönetilebilmektedir.
-
-Ayrıca proje, Nesne Yönelimli Programlama (OOP) prensiplerini uygulamalı olarak kullanmak amacıyla tasarlanmıştır. Bu kapsamda kalıtım, soyutlama, kapsülleme, çok biçimlilik, interface kullanımı ve hata yönetimi gibi temel OOP kavramları proje içerisinde uygulanmıştır.
+Projenin temel amacı, spor salonlarında manuel olarak yürütülen kayıt, takip ve ödeme işlemlerini daha düzenli, hızlı ve hatasız bir hale getirmektir. Ayrıca proje, Nesne Yönelimli Programlama (OOP) prensiplerini (kalıtım, soyutlama, kapsülleme, çok biçimlilik) uygulamalı olarak kullanmak amacıyla tasarlanmıştır.
 
 ---
 
@@ -37,23 +35,23 @@ Ayrıca proje, Nesne Yönelimli Programlama (OOP) prensiplerini uygulamalı olar
 
 ### 1. Akıllı Üye Kayıt ve Profilleme
 
-Sistem yalnızca temel kullanıcı bilgilerini değil, aynı zamanda üyelerin fiziksel verilerini de kayıt altında tutmaktadır. Boy, kilo, yaş ve yağ oranı gibi veriler üzerinden Vücut Kitle Endeksi (VKE) hesaplamaları yapılmaktadır.
+Üyelerin fiziksel verileri (boy, kilo, yaş, yağ oranı) üzerinden Vücut Kitle Endeksi (VKE) hesaplamaları yapılarak gelişim takibi sağlanır.
 
 ### 2. Dinamik Antrenman Programlayıcı
 
-Üyenin fiziksel bilgilerine göre kardiyo veya ağırlık odaklı antrenman türleri oluşturulur. **Polymorphism** yapısı kullanılarak her antrenman türü için özelleşmiş kalori hesaplama mantığı devreye girer.
+**Polymorphism** yapısı kullanılarak kardiyo ve ağırlık odaklı antrenman türleri için özelleşmiş kalori hesaplama ve program oluşturma mantığı sunulur.
 
 ### 3. Antrenör - Üye İlişki Modülü
 
-Antrenörler uzmanlık alanlarına göre üyelere sistem tarafından atanır. Antrenörler kendi panelleri üzerinden sorumlu oldukları üyeleri listeleyebilir, gelişimlerini takip edebilir veya üye üzerinde düzenleme yapabilirler.
+Antrenörler uzmanlık alanlarına göre üyelere atanır. Antrenörler kendi panelleri üzerinden sorumlu oldukları üyeleri listeleyebilir ve programlarını güncelleyebilirler.
 
 ### 4. Üyelik Paketleri ve Dinamik Ücretlendirme
 
-Standart, Premium ve VIP paket seçenekleri mevcuttur. Ücretlendirme motoru; paket türü, ek özel ders sayısı ve vergi oranlarını hesaplayarak hata payını minimize eder.
+Standart, Premium ve VIP paket seçenekleri, özel ders limitleri ve vergi oranları dahil edilerek dinamik bir ücretlendirme motoru ile yönetilir.
 
 ### 5. Finansal Takip ve Raporlama
 
-Yönetici paneli üzerinden tüm üyelerin ödeme durumları ve paket bilgileri izlenebilir. Veriler finansal raporlama amacıyla listelenebilir ve takip edilebilir.
+Yönetici paneli üzerinden tüm üyelerin ödeme durumları izlenebilir ve finansal veriler listelenebilir.
 
 ---
 
@@ -62,15 +60,18 @@ Yönetici paneli üzerinden tüm üyelerin ödeme durumları ve paket bilgileri 
 * **Dil:** Java
 * **Arayüz:** Java Swing / AWT / WindowBuilder
 * **Veri Yapısı:** JSON / CSV (Dosya Sistemi)
-* **IDE:** Eclipse IDE
+* **Güvenlik:** SHA-256 Şifreleme Algoritması
 * **Versiyon Kontrol:** GitHub
-* **Harici Kütüphaneler:** JSON işleme ve veri yönetimi için ek kütüphaneler kullanılmıştır.
+* **Harici Kütüphaneler:** GSON (JSON işleme için kullanılmıştır ve repository içerisinde yer almaktadır).
 
 ---
 
 ## Veri Saklama Yapısı
 
-Projede harici bir veritabanı sunucusu kullanılmamaktadır. Veriler taşınabilirlik ve akademik standartlar gereği yerel dosya sistemi üzerinde **JSON** formatında saklanmaktadır.
+Proje, profesyonel yazılım standartlarına uygun olarak tasarlanmış bir veri saklama mimarisine sahiptir:
+
+* **Platform Bağımsızlığı:** Uygulama, platform bağımsız çalışabilmesi için verileri işletim sistemine göre dinamik olarak belirler ve kullanıcının ana dizinindeki (`user.home`) `.sporSalonu` klasöründe saklar.
+* **Veri Güvenliği:** Kullanıcı şifreleri, veri güvenliği protokolü gereği JSON dosyası içerisinde **SHA-256** hash algoritması ile şifrelenmiş olarak tutulur.
 
 ---
 
@@ -87,17 +88,19 @@ Projeyi GitHub üzerinden `git clone` komutuyla veya **Download ZIP** seçeneği
 
 ### 3. Kütüphane Bağımlılıkları (Önemli)
 
-Proje içerisinde kullanılan ek kütüphaneler (örneğin JSON işleme kütüphaneleri), GitHub repository'sindeki **`lib/`** klasörü altında yer almaktadır.
+Proje içerisinde kullanılan harici kütüphaneler repository'deki **`lib/`** klasörü altındadır.
 
-* Eclipse üzerinde projeye sağ tıklayın.
-* `Properties -> Java Build Path -> Libraries -> Add JARs` yolunu izleyin.
-* `lib` klasöründeki tüm `.jar` dosyalarını seçerek projeye dahil edin.
+* Eclipse üzerinden `Properties -> Java Build Path -> Libraries -> Add JARs` yolunu izleyerek `lib` klasöründeki `.jar` dosyalarını projeye dahil edin.
 
 ### 4. Uygulamanın Başlatılması
 
-* Proje yapısı içindeki `GirişEkranı.java` dosyasına sağ tıklayın.
-* `Run As -> Java Application` seçeneği ile uygulamayı başlatın.
+* `GirişEkranı.java` dosyasına sağ tıklayıp `Run As -> Java Application` seçeneği ile uygulamayı başlatın.
 
-### 5. Veri Dosyaları
+### 5. İlk Giriş ve Otomatik Yapılandırma
 
-Uygulama ilk kez çalıştığında gerekli veri dosyalarını (kullanicilar.json vb.) otomatik olarak oluşturacaktır. Yazma hataları almamak için projenin bulunduğu klasörde yazma izinlerinin açık olduğundan emin olun.
+Uygulama ilk kez çalıştırıldığında gerekli dosya dizinlerini otomatik olarak oluşturur. Sisteme giriş yapabilmek için tanımlanan varsayılan yönetici bilgileri şöyledir:
+
+* **E-posta:** `admin@gym.com`
+* **Şifre:** `123456`
+
+> **Not:** Veri dosyası konumu işletim sistemine göre `~/.sporSalonu/kullanicilar.json` adresinde otomatik olarak yönetilir.
