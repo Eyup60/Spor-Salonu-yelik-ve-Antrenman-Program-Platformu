@@ -34,7 +34,7 @@ public class Esneklik extends Antrenman {
         this.pozdaKalmaSuresiSaniye = pozdaKalmaSuresiSaniye;
     }
 
-    // Zorluk çarpanı daha gerçekçi bir seviyeye (%10-20 artış) çekildi.
+    
     private double getZorlukCarpani() {
         String z = getZorlukSeviyesi().toLowerCase();
         if (z.contains("ileri")) return 1.2;
@@ -42,7 +42,7 @@ public class Esneklik extends Antrenman {
         return 1.0;
     }
 
-    // Ekol türüne göre enerji harcama farkı normalize edildi.
+    // Ekol türüne göre enerji harcama farkı 
     private double getEkolCarpani() {
         String e = ekolTuru.toLowerCase();
         if (e.contains("pilates")) return 1.15; // Pilates, statik esnemeye göre daha aktiftir.
@@ -55,10 +55,8 @@ public class Esneklik extends Antrenman {
     public double kaloriHesapla(Uye uye) {
         double sureSaat = getSureDakika() / 60.0;
         
-        // Temel efor katsayısı (MET) 3.0'dan 2.5'e (Standart Esneme seviyesi) çekildi.
         double temelEfor = sureSaat * 2.5 * uye.getKilo(); 
         
-        // Pozda kalma süresinin bonus etkisi 0.05'ten 0.01'e çekildi.
         // Esnemede uzun süre kalmak eforu değil, esnekliği artırır.
         double pozEforu = (pozdaKalmaSuresiSaniye * 0.01);
         
